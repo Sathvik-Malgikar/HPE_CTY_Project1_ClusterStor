@@ -1,4 +1,3 @@
-from selenium.webdriver import Chrome
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -6,14 +5,17 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 import pytest
 from time import sleep
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
 
 
 @pytest.fixture
 def driver():
     # svc = Service(executable_path="./chromedriver.exe")
-    webdriver = Chrome(executable_path="./chromedriver.exe")
-    yield webdriver
-    webdriver.quit()
+    service = Service(executable_path="chromedriver.exe")
+    web_driver = webdriver.Chrome(service=service)
+    yield web_driver
+    web_driver.quit()
 
 
 @pytest.fixture
@@ -47,6 +49,6 @@ def test_signin(driver, actionchain):
         "beautifulselena4@gmail.com").send_keys(Keys.ENTER).perform()
     sleep(7)
     actionchain.reset_actions()  # does not seem to work
-    actionchain.send_keys("S").send_keys(Keys.ENTER).perform()
-    sleep(5)
+    actionchain.send_keys("SeleniumHPE$$").send_keys(Keys.ENTER).perform()
+    sleep(15)
     assert driver.title == "Home - Google Drive"
