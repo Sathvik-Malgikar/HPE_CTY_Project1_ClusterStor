@@ -1,3 +1,4 @@
+from selenium.webdriver import Chrome
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -5,17 +6,14 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 import pytest
 from time import sleep
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
 
 
 @pytest.fixture
 def driver():
     # svc = Service(executable_path="./chromedriver.exe")
-    service = Service(executable_path="chromedriver.exe")
-    web_driver = webdriver.Chrome(service=service)
-    yield web_driver
-    web_driver.quit()
+    webdriver = Chrome(executable_path="./chromedriver.exe")
+    yield webdriver
+    webdriver.quit()
 
 
 @pytest.fixture
