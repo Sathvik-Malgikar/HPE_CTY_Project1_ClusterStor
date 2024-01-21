@@ -1,1 +1,1 @@
-py -3.6 -m pytest login_test.py 
+py -3.6 -m pytest -v drive_automation_test.py
