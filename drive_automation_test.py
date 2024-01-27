@@ -1,5 +1,5 @@
-import configparser
 from time import sleep
+import configparser
 
 import pytest
 from selenium.webdriver import Chrome
@@ -131,7 +131,7 @@ def test_signin(driver, action_chain, web_driver_wait):
     driver.switch_to.window(sign_in_tab)
     sleep(1.3)
     cfp = configparser.ConfigParser()
-    cfp.read()
+    cfp.read("config.ini")
     account_email_id = cfp.get("Account Credentials","email")
     print("Sending email")
     action_chain.send_keys(account_email_id)
