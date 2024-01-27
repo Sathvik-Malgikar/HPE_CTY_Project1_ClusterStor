@@ -1,5 +1,5 @@
-from time import sleep
 import configparser
+from time import sleep
 
 import pytest
 from selenium.webdriver import Chrome
@@ -132,7 +132,7 @@ def test_signin(driver, action_chain, web_driver_wait):
     sleep(1.3)
     cfp = configparser.ConfigParser()
     cfp.read("config.ini")
-    account_email_id = cfp.get("Account Credentials","email")
+    account_email_id = cfp.get("Account Credentials", "email")
     print("Sending email")
     action_chain.send_keys(account_email_id)
     action_chain.send_keys(Keys.ENTER)
@@ -181,38 +181,71 @@ def test_get_filenames(driver, action_chain, web_driver_wait):
     sleep(4)
     assert len(file_name_divs) > 0
 
+
+"""
+Test function to remove a file from the Google Drive web GUI.
+
+Parameters:
+- driver (WebDriver): The Selenium WebDriver instance.
+- action_chain (ActionChains): The Selenium ActionChains instance for performing user actions.
+- web_driver_wait (WebDriverWait): The Selenium WebDriverWait instance for waiting on elements.
+
+Returns:
+None
+
+Raises:
+AssertionError: If the file is not found or cannot be deleted.
+
+Usage:
+test_remove_file(driver, action_chain, web_driver_wait)
+"""
+
+
 def test_remove_file(driver, action_chain, web_driver_wait):
-    file_name = 'test.txt'
+    file_name = "test.txt"
     # Click on Show more results to view all files
     web_driver_wait.until(
         EC.presence_of_element_located(
             (By.XPATH, '//button[@class="UywwFc-d UywwFc-d-Qu-dgl2Hf"]')
         ),
     )
-    show_more_button = driver.find_element(By.XPATH, '//button[@class="UywwFc-d UywwFc-d-Qu-dgl2Hf"]')
+    show_more_button = driver.find_element(
+        By.XPATH, '//button[@class="UywwFc-d UywwFc-d-Qu-dgl2Hf"]'
+    )
     show_more_button.click()
     sleep(3)
     # Find file
     try:
         web_driver_wait.until(
             EC.presence_of_element_located(
-                (By.XPATH,f'//div[@class="uXB7xe" and contains(@aria-label,"{file_name}" )]')
+                (
+                    By.XPATH,
+                    f'//div[@class="uXB7xe" and contains(@aria-label,"{file_name}" )]',
+                )
             ),
         )
     except:
-        assert False,"File Not Found"
+        assert False, "File Not Found"
     else:
-        file_element = driver.find_element(By.XPATH,f'//div[@class="uXB7xe" and contains(@aria-label, "{file_name}")]')
+        file_element = driver.find_element(
+            By.XPATH, f'//div[@class="uXB7xe" and contains(@aria-label, "{file_name}")]'
+        )
         action_chain.move_to_element(file_element).click()
         action_chain.perform()
         sleep(3)
-        #click on delete button
+        # click on delete button
         web_driver_wait.until(
             EC.presence_of_element_located(
-                (By.XPATH,f"//div[@role='button' and @aria-label='Move to trash' and @aria-hidden='false' and @aria-disabled='false']")
+                (
+                    By.XPATH,
+                    "//div[@role='button' and @aria-label='Move to trash' and @aria-hidden='false' and @aria-disabled='false']",
+                )
             ),
         )
-        delete_button = driver.find_element(By.XPATH,f"//div[@role='button' and @aria-label='Move to trash' and @aria-hidden='false' and @aria-disabled='false']")
+        delete_button = driver.find_element(
+            By.XPATH,
+            "//div[@role='button' and @aria-label='Move to trash' and @aria-hidden='false' and @aria-disabled='false']",
+        )
         delete_button.click()
         sleep(3)
         assert True
