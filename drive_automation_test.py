@@ -1,4 +1,4 @@
-import os
+import configparser
 from time import sleep
 
 import pytest
@@ -130,9 +130,11 @@ def test_signin(driver, action_chain, web_driver_wait):
     sign_in_tab = driver.window_handles[-1]
     driver.switch_to.window(sign_in_tab)
     sleep(1.3)
-
+    cfp = configparser.ConfigParser()
+    cfp.read()
+    account_email_id = cfp.get("Account Credentials","email")
     print("Sending email")
-    action_chain.send_keys("beautifulselena4@gmail.com")
+    action_chain.send_keys(account_email_id)
     action_chain.send_keys(Keys.ENTER)
     action_chain.perform()
     web_driver_wait.until(
@@ -144,8 +146,7 @@ def test_signin(driver, action_chain, web_driver_wait):
     action_chain.reset_actions()
     for device in action_chain.w3c_actions.devices:
         device.clear_actions()
-
-    account_pwd = os.environ.get("webdriver_google_acc_pass")
+    account_pwd = cfp.get("Account Credentials", "password")
     action_chain.send_keys(account_pwd)
     action_chain.send_keys(Keys.ENTER)
     action_chain.perform()
