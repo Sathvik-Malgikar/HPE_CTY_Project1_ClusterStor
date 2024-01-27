@@ -1,0 +1,1 @@
+C:\Users\Saad\venv\py3.6\Scripts\activate
