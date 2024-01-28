@@ -300,3 +300,43 @@ def test_rename_file(driver, action_chain, web_driver_wait):
         sleep(3)
         rename_button.click()
         sleep(3)
+
+
+
+def test_create_folder(driver, action_chain, web_driver_wait):
+    #wait until the New button is clickable
+    new_btn = web_driver_wait.until(
+        EC.element_to_be_clickable((By.XPATH, '//*[@id="drive_main_page"]/div/div[3]/div/button[1]/span[1]/span'))
+    )
+    new_btn.click()
+    sleep(4)
+
+    #wait for the list of options to appear
+    new_folder_option = web_driver_wait.until(
+        EC.element_to_be_clickable((By.XPATH,'//*[@id="drive_main_page"]/div/div[3]/div/button[1]'))
+    )
+
+    #move to the list and click on the New folder option
+    action_chain.move_to_element(new_folder_option).click().perform()
+
+    #Wait for the new folder dialog to appear
+    # new_folder_dialog = web_driver_wait.until(
+    #     EC.presence_of_element_located((By.CLASS_NAME,"FidVJb"))
+    # )
+
+    web_driver_wait.until(EC.presence_of_element_located((By.CLASS_NAME, "LUNIy")))
+
+    #Find the input field and clear any existing text
+    input_field = driver.find_element(By.CSS_SELECTOR, ".LUNIy")
+    input_field.clear()
+    # sleep(5)
+   
+    input_field.send_keys("Applied crypto")
+    input_field.send_keys(Keys.ENTER)
+    
+    
+
+    sleep(10)
+    # #Wait for the folder element to appear in the list
+    folder_element = web_driver_wait.until(EC.presence_of_element_located((By.XPATH, "//*[text()='Applied crypto']")))
+    assert folder_element.is_displayed(), "Folder element is not visible"
