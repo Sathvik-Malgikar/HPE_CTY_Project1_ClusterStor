@@ -272,7 +272,9 @@ test_rename_file(driver, action_chain, web_driver_wait)
 
 
 def test_rename_file(driver, action_chain, web_driver_wait):
-    file_name = "test.txt"
+    
+    file_name = "cty_ppt.pdf"
+    new_file_name = "renamed_cty.pdf"
 
     web_driver_wait.until(
         EC.presence_of_element_located(
