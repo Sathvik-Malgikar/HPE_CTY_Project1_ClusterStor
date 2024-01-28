@@ -320,6 +320,22 @@ def test_rename_file(driver, action_chain, web_driver_wait):
         rename_button.click()
         sleep(3)
 
+        textbox_locator = (
+            By.XPATH, '//input[@class="lb-k-Kk g-Gh" and contains(@id, ":bt.ie")]'
+        )
+        textbox = web_driver_wait.until(EC.presence_of_element_located(textbox_locator))
+        textbox.clear()  # Clear existing text
+        textbox.send_keys(new_file_name)  # Fill in the new file name
+
+        # Locate and click the OK button
+        ok_button_locator = (
+            By.XPATH, '//button[@name="ok" and contains(@class, "h-De-Vb h-De-Y")]'
+        )
+        ok_button = web_driver_wait.until(EC.element_to_be_clickable(ok_button_locator))
+        ok_button.click()
+
+        sleep(10)
+
 
 
 def test_create_folder(driver, action_chain, web_driver_wait):
