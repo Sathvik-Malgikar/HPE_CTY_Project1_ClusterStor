@@ -252,6 +252,25 @@ def test_remove_file(driver, action_chain, web_driver_wait):
         assert True
 
 
+"""
+Test function to rename a file in the Google Drive web GUI.
+
+Parameters:
+- driver (WebDriver): The Selenium WebDriver instance.
+- action_chain (ActionChains): The Selenium ActionChains instance for performing user actions.
+- web_driver_wait (WebDriverWait): The Selenium WebDriverWait instance for waiting on elements.
+
+Returns:
+None
+
+Raises:
+AssertionError: If the file is not found or cannot be renamed.
+
+Usage:
+test_rename_file(driver, action_chain, web_driver_wait)
+"""
+
+
 def test_rename_file(driver, action_chain, web_driver_wait):
     file_name = "test.txt"
 
