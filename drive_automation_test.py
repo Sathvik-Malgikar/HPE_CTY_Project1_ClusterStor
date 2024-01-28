@@ -116,7 +116,6 @@ def web_driver_wait(driver):
     test_signin(driver, action_chain, web_driver_wait)
 """
 
-
 def test_signin(driver, action_chain, web_driver_wait):
     driver.get("https://www.google.com/intl/en-US/drive/")
     driver.maximize_window()
@@ -172,6 +171,102 @@ def test_signin(driver, action_chain, web_driver_wait):
     Usage:
     test_get_filenames(driver, action_chain, web_driver_wait)
 """
+
+
+"""
+Test function to rename a file in the Google Drive web GUI.
+
+Parameters:
+- driver (WebDriver): The Selenium WebDriver instance.
+- action_chain (ActionChains): The Selenium ActionChains instance for performing user actions.
+- web_driver_wait (WebDriverWait): The Selenium WebDriverWait instance for waiting on elements.
+
+Returns:
+None
+
+Raises:
+AssertionError: If the file is not found or cannot be renamed.
+
+Usage:
+test_rename_file(driver, action_chain, web_driver_wait)
+"""
+
+
+def test_rename_file(driver, action_chain, web_driver_wait):
+    file_name = "cty_ppt.pdf"
+    new_file_name = "renamed_cty"
+
+    web_driver_wait.until(
+        EC.presence_of_element_located(
+            (By.XPATH, '//button[@class="UywwFc-d UywwFc-d-Qu-dgl2Hf"]')
+        ),
+    )
+    # show_more_button = driver.find_element(
+    #     By.XPATH, '//button[@class="UywwFc-d UywwFc-d-Qu-dgl2Hf"]'
+    # )
+    # show_more_button.click()
+    # sleep(3)
+    try:
+        web_driver_wait.until(
+            EC.presence_of_element_located(
+                (
+                    By.XPATH,
+                    f'//div[@class="uXB7xe" and contains(@aria-label,"{file_name}" )]',
+                )
+            ),
+        )
+    except:
+        assert False, "File Not Found"
+    else:
+        pyautogui.keyDown("ctrl")
+        pyautogui.press("-")
+        pyautogui.keyUp("ctrl")
+        file_element = driver.find_element(
+            By.XPATH, f'//div[@class="uXB7xe" and contains(@aria-label, "{file_name}")]'
+        )
+        action_chain.move_to_element(file_element).click()
+        action_chain.perform()
+        sleep(3)
+
+
+        action_chain.reset_actions()
+        for device in action_chain.w3c_actions.devices:
+            device.clear_actions()
+
+        rename_button_locator = (
+            By.XPATH,
+            "//div[@role='button' and @aria-label='Rename' and @aria-expanded='false']",
+        )
+
+        web_driver_wait.until(EC.presence_of_element_located(rename_button_locator))
+        # print(more_actions_button)
+        rename_button = driver.find_element(
+            rename_button_locator[0], rename_button_locator[1]
+        )
+        sleep(3)
+        rename_button.click()
+        sleep(3)
+
+
+        # textbox_locator = (
+        #     By.XPATH, '//input[@class="lb-k-Kk g-Gh" and contains(@id, ":bt.ie")]'
+        # )
+        # textbox = web_driver_wait.until(EC.presence_of_element_located(textbox_locator))
+        # textbox = driver.find_element(By.XPATH, '//input[@class="lb-k-Kk g-Gh" and contains(@id, ":bt.ie")]')
+        # textbox.clear()  # Clear existing text
+        # textbox.send_keys(new_file_name)  # Fill in the new file name
+
+        action_chain.send_keys(new_file_name).perform()
+
+        # Locate and click the OK button
+        ok_button_locator = (
+            By.XPATH, '//button[@name="ok" and contains(@class, "h-De-Vb h-De-Y")]'
+        )
+        ok_button = web_driver_wait.until(EC.element_to_be_clickable(ok_button_locator))
+        ok_button = driver.find_element(By.XPATH, '//button[@name="ok" and contains(@class, "h-De-Vb h-De-Y")]')
+        ok_button.click()
+
+        sleep(10)
 
 
 def test_get_filenames(driver, action_chain, web_driver_wait):
@@ -251,101 +346,6 @@ def test_remove_file(driver, action_chain, web_driver_wait):
         sleep(3)
         assert True
 
-
-"""
-Test function to rename a file in the Google Drive web GUI.
-
-Parameters:
-- driver (WebDriver): The Selenium WebDriver instance.
-- action_chain (ActionChains): The Selenium ActionChains instance for performing user actions.
-- web_driver_wait (WebDriverWait): The Selenium WebDriverWait instance for waiting on elements.
-
-Returns:
-None
-
-Raises:
-AssertionError: If the file is not found or cannot be renamed.
-
-Usage:
-test_rename_file(driver, action_chain, web_driver_wait)
-"""
-
-
-def test_rename_file(driver, action_chain, web_driver_wait):
-    file_name = "cty_ppt.pdf"
-    new_file_name = "renamed_cty.pdf"
-
-    web_driver_wait.until(
-        EC.presence_of_element_located(
-            (By.XPATH, '//button[@class="UywwFc-d UywwFc-d-Qu-dgl2Hf"]')
-        ),
-    )
-    # show_more_button = driver.find_element(
-    #     By.XPATH, '//button[@class="UywwFc-d UywwFc-d-Qu-dgl2Hf"]'
-    # )
-    # show_more_button.click()
-    # sleep(3)
-    try:
-        web_driver_wait.until(
-            EC.presence_of_element_located(
-                (
-                    By.XPATH,
-                    f'//div[@class="uXB7xe" and contains(@aria-label,"{file_name}" )]',
-                )
-            ),
-        )
-    except:
-        assert False, "File Not Found"
-    else:
-        pyautogui.keyDown("ctrl")
-        pyautogui.press("-")
-        pyautogui.keyUp("ctrl")
-        file_element = driver.find_element(
-            By.XPATH, f'//div[@class="uXB7xe" and contains(@aria-label, "{file_name}")]'
-        )
-        action_chain.move_to_element(file_element).click()
-        action_chain.perform()
-        sleep(3)
-
-
-        action_chain.reset_actions()
-        for device in action_chain.w3c_actions.devices:
-            device.clear_actions()
-
-        rename_button_locator = (
-            By.XPATH,
-            "//div[@role='button' and @aria-label='Rename' and @aria-expanded='false']",
-        )
-
-        web_driver_wait.until(EC.presence_of_element_located(rename_button_locator))
-        # print(more_actions_button)
-        rename_button = driver.find_element(
-            rename_button_locator[0], rename_button_locator[1]
-        )
-        sleep(3)
-        rename_button.click()
-        sleep(3)
-
-
-        # textbox_locator = (
-        #     By.XPATH, '//input[@class="lb-k-Kk g-Gh" and contains(@id, ":bt.ie")]'
-        # )
-        # textbox = web_driver_wait.until(EC.presence_of_element_located(textbox_locator))
-        # textbox = driver.find_element(By.XPATH, '//input[@class="lb-k-Kk g-Gh" and contains(@id, ":bt.ie")]')
-        # textbox.clear()  # Clear existing text
-        # textbox.send_keys(new_file_name)  # Fill in the new file name
-
-        action_chain.send_keys(new_file_name).perform()
-
-        # Locate and click the OK button
-        ok_button_locator = (
-            By.XPATH, '//button[@name="ok" and contains(@class, "h-De-Vb h-De-Y")]'
-        )
-        ok_button = web_driver_wait.until(EC.element_to_be_clickable(ok_button_locator))
-        ok_button = driver.find_element(By.XPATH, '//button[@name="ok" and contains(@class, "h-De-Vb h-De-Y")]')
-        ok_button.click()
-
-        sleep(10)
 
 def test_create_folder(driver, action_chain, web_driver_wait):
     #wait until the New button is clickable
