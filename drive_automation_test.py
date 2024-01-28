@@ -233,6 +233,8 @@ def test_rename_file(driver, action_chain, web_driver_wait):
         for device in action_chain.w3c_actions.devices:
             device.clear_actions()
 
+        
+
         rename_button_locator = (
             By.XPATH,
             "//div[@role='button' and @aria-label='Rename' and @aria-expanded='false']",
@@ -240,10 +242,17 @@ def test_rename_file(driver, action_chain, web_driver_wait):
 
         web_driver_wait.until(EC.presence_of_element_located(rename_button_locator))
         # print(more_actions_button)
-        rename_button = driver.find_element(
+        rename_button =  file_element.find_element(
             rename_button_locator[0], rename_button_locator[1]
         )
         sleep(3)
+        action_chain.move_to_element(rename_button)
+        action_chain.perform()
+        sleep(0.5)
+        action_chain.reset_actions()
+        for device in action_chain.w3c_actions.devices:
+            device.clear_actions()
+
         rename_button.click()
         sleep(3)
 
