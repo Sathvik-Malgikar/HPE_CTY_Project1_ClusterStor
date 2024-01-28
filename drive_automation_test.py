@@ -326,6 +326,7 @@ def test_rename_file(driver, action_chain, web_driver_wait):
             By.XPATH, '//input[@class="lb-k-Kk g-Gh" and contains(@id, ":bt.ie")]'
         )
         textbox = web_driver_wait.until(EC.presence_of_element_located(textbox_locator))
+        textbox = driver.find_element(By.XPATH, '//input[@class="lb-k-Kk g-Gh" and contains(@id, ":bt.ie")]')
         textbox.clear()  # Clear existing text
         textbox.send_keys(new_file_name)  # Fill in the new file name
 
@@ -334,6 +335,7 @@ def test_rename_file(driver, action_chain, web_driver_wait):
             By.XPATH, '//button[@name="ok" and contains(@class, "h-De-Vb h-De-Y")]'
         )
         ok_button = web_driver_wait.until(EC.element_to_be_clickable(ok_button_locator))
+        ok_button = driver.find_element(By.XPATH, '//button[@name="ok" and contains(@class, "h-De-Vb h-De-Y")]')
         ok_button.click()
 
         sleep(10)
