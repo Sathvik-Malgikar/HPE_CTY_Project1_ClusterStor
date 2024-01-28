@@ -272,7 +272,6 @@ test_rename_file(driver, action_chain, web_driver_wait)
 
 
 def test_rename_file(driver, action_chain, web_driver_wait):
-    
     file_name = "cty_ppt.pdf"
     new_file_name = "renamed_cty.pdf"
 
@@ -281,11 +280,11 @@ def test_rename_file(driver, action_chain, web_driver_wait):
             (By.XPATH, '//button[@class="UywwFc-d UywwFc-d-Qu-dgl2Hf"]')
         ),
     )
-    show_more_button = driver.find_element(
-        By.XPATH, '//button[@class="UywwFc-d UywwFc-d-Qu-dgl2Hf"]'
-    )
-    show_more_button.click()
-    sleep(3)
+    # show_more_button = driver.find_element(
+    #     By.XPATH, '//button[@class="UywwFc-d UywwFc-d-Qu-dgl2Hf"]'
+    # )
+    # show_more_button.click()
+    # sleep(3)
     try:
         web_driver_wait.until(
             EC.presence_of_element_located(
@@ -308,6 +307,11 @@ def test_rename_file(driver, action_chain, web_driver_wait):
         action_chain.perform()
         sleep(3)
 
+
+        action_chain.reset_actions()
+        for device in action_chain.w3c_actions.devices:
+            device.clear_actions()
+
         rename_button_locator = (
             By.XPATH,
             "//div[@role='button' and @aria-label='Rename' and @aria-expanded='false']",
@@ -322,13 +326,16 @@ def test_rename_file(driver, action_chain, web_driver_wait):
         rename_button.click()
         sleep(3)
 
-        textbox_locator = (
-            By.XPATH, '//input[@class="lb-k-Kk g-Gh" and contains(@id, ":bt.ie")]'
-        )
-        textbox = web_driver_wait.until(EC.presence_of_element_located(textbox_locator))
-        textbox = driver.find_element(By.XPATH, '//input[@class="lb-k-Kk g-Gh" and contains(@id, ":bt.ie")]')
-        textbox.clear()  # Clear existing text
-        textbox.send_keys(new_file_name)  # Fill in the new file name
+
+        # textbox_locator = (
+        #     By.XPATH, '//input[@class="lb-k-Kk g-Gh" and contains(@id, ":bt.ie")]'
+        # )
+        # textbox = web_driver_wait.until(EC.presence_of_element_located(textbox_locator))
+        # textbox = driver.find_element(By.XPATH, '//input[@class="lb-k-Kk g-Gh" and contains(@id, ":bt.ie")]')
+        # textbox.clear()  # Clear existing text
+        # textbox.send_keys(new_file_name)  # Fill in the new file name
+
+        action_chain.send_keys(new_file_name).perform()
 
         # Locate and click the OK button
         ok_button_locator = (
@@ -339,43 +346,3 @@ def test_rename_file(driver, action_chain, web_driver_wait):
         ok_button.click()
 
         sleep(10)
-
-
-
-def test_create_folder(driver, action_chain, web_driver_wait):
-    #wait until the New button is clickable
-    new_btn = web_driver_wait.until(
-        EC.element_to_be_clickable((By.XPATH, '//*[@id="drive_main_page"]/div/div[3]/div/button[1]/span[1]/span'))
-    )
-    new_btn.click()
-    sleep(4)
-
-    #wait for the list of options to appear
-    new_folder_option = web_driver_wait.until(
-        EC.element_to_be_clickable((By.XPATH,'//*[@id="drive_main_page"]/div/div[3]/div/button[1]'))
-    )
-
-    #move to the list and click on the New folder option
-    action_chain.move_to_element(new_folder_option).click().perform()
-
-    #Wait for the new folder dialog to appear
-    # new_folder_dialog = web_driver_wait.until(
-    #     EC.presence_of_element_located((By.CLASS_NAME,"FidVJb"))
-    # )
-
-    web_driver_wait.until(EC.presence_of_element_located((By.CLASS_NAME, "LUNIy")))
-
-    #Find the input field and clear any existing text
-    input_field = driver.find_element(By.CSS_SELECTOR, ".LUNIy")
-    input_field.clear()
-    # sleep(5)
-   
-    input_field.send_keys("Applied crypto")
-    input_field.send_keys(Keys.ENTER)
-    
-    
-
-    sleep(10)
-    # #Wait for the folder element to appear in the list
-    folder_element = web_driver_wait.until(EC.presence_of_element_located((By.XPATH, "//*[text()='Applied crypto']")))
-    assert folder_element.is_displayed(), "Folder element is not visible"
