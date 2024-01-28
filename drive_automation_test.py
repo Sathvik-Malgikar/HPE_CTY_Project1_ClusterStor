@@ -1,6 +1,7 @@
 import configparser
 from time import sleep
 
+import pyautogui
 import pytest
 from selenium.webdriver import Chrome
 from selenium.webdriver.common.action_chains import ActionChains
@@ -249,3 +250,53 @@ def test_remove_file(driver, action_chain, web_driver_wait):
         delete_button.click()
         sleep(3)
         assert True
+
+
+def test_rename_file(driver, action_chain, web_driver_wait):
+    file_name = "test.txt"
+
+    web_driver_wait.until(
+        EC.presence_of_element_located(
+            (By.XPATH, '//button[@class="UywwFc-d UywwFc-d-Qu-dgl2Hf"]')
+        ),
+    )
+    show_more_button = driver.find_element(
+        By.XPATH, '//button[@class="UywwFc-d UywwFc-d-Qu-dgl2Hf"]'
+    )
+    show_more_button.click()
+    sleep(3)
+    try:
+        web_driver_wait.until(
+            EC.presence_of_element_located(
+                (
+                    By.XPATH,
+                    f'//div[@class="uXB7xe" and contains(@aria-label,"{file_name}" )]',
+                )
+            ),
+        )
+    except:
+        assert False, "File Not Found"
+    else:
+        pyautogui.keyDown("ctrl")
+        pyautogui.press("-")
+        pyautogui.keyUp("ctrl")
+        file_element = driver.find_element(
+            By.XPATH, f'//div[@class="uXB7xe" and contains(@aria-label, "{file_name}")]'
+        )
+        action_chain.move_to_element(file_element).click()
+        action_chain.perform()
+        sleep(3)
+
+        rename_button_locator = (
+            By.XPATH,
+            "//div[@role='button' and @aria-label='Rename' and @aria-expanded='false']",
+        )
+
+        web_driver_wait.until(EC.presence_of_element_located(rename_button_locator))
+        # print(more_actions_button)
+        rename_button = driver.find_element(
+            rename_button_locator[0], rename_button_locator[1]
+        )
+        sleep(3)
+        rename_button.click()
+        sleep(3)
