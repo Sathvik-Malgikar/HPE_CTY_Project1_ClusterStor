@@ -302,6 +302,7 @@ def test_rename_file(driver, action_chain, web_driver_wait):
         sleep(3)
 
 
+
 def test_create_folder(driver, action_chain, web_driver_wait):
     #wait until the New button is clickable
     new_btn = web_driver_wait.until(
@@ -319,9 +320,9 @@ def test_create_folder(driver, action_chain, web_driver_wait):
     action_chain.move_to_element(new_folder_option).click().perform()
 
     #Wait for the new folder dialog to appear
-    new_folder_dialog = web_driver_wait.until(
-        EC.presence_of_element_located((By.CLASS_NAME,"FidVJb"))
-    )
+    # new_folder_dialog = web_driver_wait.until(
+    #     EC.presence_of_element_located((By.CLASS_NAME,"FidVJb"))
+    # )
 
     web_driver_wait.until(EC.presence_of_element_located((By.CLASS_NAME, "LUNIy")))
 
@@ -329,9 +330,13 @@ def test_create_folder(driver, action_chain, web_driver_wait):
     input_field = driver.find_element(By.CSS_SELECTOR, ".LUNIy")
     input_field.clear()
     # sleep(5)
-    action_chain.send_keys_to_element(input_field, "Cloud computing").send_keys(Keys.ENTER).perform()
+   
+    input_field.send_keys("Applied crypto")
+    input_field.send_keys(Keys.ENTER)
+    
+    
 
     sleep(10)
-    #Wait for the folder element to appear in the list
-    folder_element = web_driver_wait.until(EC.presence_of_element_located((By.XPATH, "//*[text()='Cloud computing']")))
+    # #Wait for the folder element to appear in the list
+    folder_element = web_driver_wait.until(EC.presence_of_element_located((By.XPATH, "//*[text()='Applied crypto']")))
     assert folder_element.is_displayed(), "Folder element is not visible"
