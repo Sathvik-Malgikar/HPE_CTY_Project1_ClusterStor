@@ -233,27 +233,33 @@ def test_rename_file(driver, action_chain, web_driver_wait):
         for device in action_chain.w3c_actions.devices:
             device.clear_actions()
 
-        
+        # rename_button_locator = (
+        #     By.XPATH,
+        #     "//div[@role='button' and @aria-label='Rename' and @aria-expanded='false']",
+        # )
 
-        rename_button_locator = (
-            By.XPATH,
-            "//div[@role='button' and @aria-label='Rename' and @aria-expanded='false']",
-        )
-
-        web_driver_wait.until(EC.presence_of_element_located(rename_button_locator))
+        # web_driver_wait.until(EC.presence_of_element_located(rename_button_locator))
         # print(more_actions_button)
-        rename_button =  file_element.find_element(
-            rename_button_locator[0], rename_button_locator[1]
-        )
-        sleep(3)
-        action_chain.move_to_element(rename_button)
+        # rename_button =  file_element.find_element(
+        #     rename_button_locator[0], rename_button_locator[1]
+        # )
+        # sleep(3)
+        # action_chain.move_to_element(rename_button)
+        # action_chain.perform()
+        # sleep(0.5)
+        # action_chain.reset_actions()
+        # for device in action_chain.w3c_actions.devices:
+        #     device.clear_actions()
+
+        # rename_button.click()
+        sleep(1)
+        action_chain.move_to_element(file_element).click()
+        action_chain.send_keys("n")
         action_chain.perform()
-        sleep(0.5)
         action_chain.reset_actions()
         for device in action_chain.w3c_actions.devices:
             device.clear_actions()
 
-        rename_button.click()
         sleep(3)
 
 
@@ -355,6 +361,23 @@ def test_remove_file(driver, action_chain, web_driver_wait):
         sleep(3)
         assert True
 
+"""
+Test function to create a new folder in the Google Drive web GUI.
+
+Parameters:
+- driver (WebDriver): The Selenium WebDriver instance.
+- action_chain (ActionChains): The Selenium ActionChains instance for performing user actions.
+- web_driver_wait (WebDriverWait): The Selenium WebDriverWait instance for waiting on elements.
+
+Returns:
+None
+
+Raises:
+AssertionError: If the folder is not created successfully.
+
+Usage:
+test_create_folder(driver, action_chain, web_driver_wait)
+"""
 
 def test_create_folder(driver, action_chain, web_driver_wait):
     #wait until the New button is clickable
@@ -393,3 +416,53 @@ def test_create_folder(driver, action_chain, web_driver_wait):
     # #Wait for the folder element to appear in the list
     folder_element = web_driver_wait.until(EC.presence_of_element_located((By.XPATH, "//*[text()='Applied crypto']")))
     assert folder_element.is_displayed(), "Folder element is not visible"
+    
+
+"""
+Test function to logout from the Google Drive web GUI.
+
+Parameters:
+- driver (WebDriver): The Selenium WebDriver instance.
+- action_chain (ActionChains): The Selenium ActionChains instance for performing user actions.
+- web_driver_wait (WebDriverWait): The Selenium WebDriverWait instance for waiting on elements.
+
+Returns:
+None
+
+Raises:
+AssertionError: If logout fails or the login screen is not visible after logout.
+
+Usage:
+test_logout(driver, action_chain, web_driver_wait)
+"""    
+
+def test_logout(driver, action_chain, web_driver_wait):
+    try:
+        # Click on the user profile button to open the menu
+        user_profile_button_locator = (By.XPATH, '//*[@id="gb"]/div[2]/div[3]/div[1]/div[2]/div/a')
+        web_driver_wait.until(EC.presence_of_element_located(user_profile_button_locator))
+        user_profile_button = driver.find_element(*user_profile_button_locator)
+        action_chain.move_to_element(user_profile_button).click().perform()
+        sleep(2)
+        action_chain.reset_actions()
+        for device in action_chain.w3c_actions.devices:
+            device.clear_actions()
+        sleep(1)
+
+        # Click on the "Sign out" button in the menu
+        sign_out_button_locator = (By.XPATH, '//*[@id="yDmH0d"]/c-wiz/div[2]/div/div/div/div[2]/div/div[2]/div[2]/span[3]/a/span[2]/div/div')
+        
+        web_driver_wait.until(EC.presence_of_element_located(sign_out_button_locator))
+        sign_out_button = driver.find_element(*sign_out_button_locator)
+        action_chain.move_to_element(sign_out_button).click().perform()
+
+        # Wait for the logout to complete
+        web_driver_wait.until(EC.visibility_of_element_located((By.LINK_TEXT, "Sign in")))
+
+        # Assert that the login screen is visible after logging out
+        assert "Sign in" in driver.page_source
+
+    except Exception as e:
+        # Handle any exceptions and print an error message
+        print(f"Error during logout: {e}")
+        assert False, "Logout failed"
