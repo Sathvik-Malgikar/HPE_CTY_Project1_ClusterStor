@@ -9,6 +9,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
+import locators
 
 """
     Pytest fixture for providing a Selenium WebDriver instance with Chrome.
@@ -152,7 +153,19 @@ def test_signin(driver, action_chain, web_driver_wait):
     action_chain.send_keys(Keys.ENTER)
     action_chain.perform()
     sleep(5)
-    assert driver.title == "Home - Google Drive"
+  
+    try:
+        web_driver_wait.until(EC.title_is("Home - Google Drive"))
+        assert True
+       
+    except TimeoutError:
+        assert False
+    else:
+        pyautogui.keyDown("ctrl")
+        pyautogui.press("-")
+        pyautogui.press("-")
+        pyautogui.keyUp("ctrl")
+        
 
 
 
@@ -198,9 +211,6 @@ def test_rename_file(driver, action_chain, web_driver_wait):
     except:
         assert False, "File Not Found"
     else:
-        pyautogui.keyDown("ctrl")
-        pyautogui.press("-")
-        pyautogui.keyUp("ctrl")
         file_element = driver.find_element(
             By.XPATH, f'//div[@class="uXB7xe" and contains(@aria-label, "{file_name}")]'
         )
@@ -439,3 +449,26 @@ def test_logout(driver, action_chain, web_driver_wait):
         
     # Assert that the login screen is visible after logging out
     assert driver.title == "Home - Google Drive"
+    
+def test_upload_file(driver,web_driver_wait,action_chain):
+    web_driver_wait.until(EC.element_to_be_clickable(locators.new_button_selector))
+    btn = driver.find_element(*locators.new_button_selector)
+    btn.click()
+    sleep(2)
+    web_driver_wait.until(EC.element_to_be_clickable(locators.file_upload_button_selector))
+    btn = driver.find_element(*locators.file_upload_button_selector)
+    btn.click()
+    sleep(2)
+    
+def test_download_file(driver,web_driver_wait,action_chain):
+    # download's first file
+    web_driver_wait.until(EC.element_to_be_clickable(locators.file_selector))
+    sleep(2)
+    btn = driver.find_element(*locators.file_selector)
+    btn.click()
+    web_driver_wait.until(EC.element_to_be_clickable(locators.download_file_selector))
+    sleep(2)
+    btn = driver.find_element(*locators.download_file_selector)
+    btn.click()
+    sleep(10)
+    
