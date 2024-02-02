@@ -5,6 +5,7 @@ import pyautogui
 import pytest
 from selenium.webdriver import Chrome
 from selenium.webdriver.common.action_chains import ActionChains
+import selenium.common.exceptions as EXC 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
@@ -451,17 +452,61 @@ def test_logout(driver, action_chain, web_driver_wait):
     assert driver.title == "Home - Google Drive"
     
 def test_upload_file(driver,web_driver_wait,action_chain):
+    FILE_TO_UPLOAD = "Screenshot (177).png" # this file is present in User folder
+    
+    # clicks on new button
     web_driver_wait.until(EC.element_to_be_clickable(locators.new_button_selector))
     btn = driver.find_element(*locators.new_button_selector)
     btn.click()
     sleep(2)
+    
+    # clicks on new file
     web_driver_wait.until(EC.element_to_be_clickable(locators.file_upload_button_selector))
     btn = driver.find_element(*locators.file_upload_button_selector)
     btn.click()
-    sleep(2)
+    sleep(3)
+    
+    # types into dialogue box
+    pyautogui.typewrite(FILE_TO_UPLOAD)
+    sleep(1)
+    pyautogui.press("enter")
+    sleep(5)
+    
+    # try block to deal with situation of file being there already
+    try:
+        # to see if the warning of file being alreay present shows up
+        driver.find_element(*locators.file_already_present_text)
+    except EXC.NoSuchElementException:
+        
+        print("file not already in google drive, uploading as new file")
+    else:
+        # to deal with file already exisiting
+        pyautogui.press("tab")
+        pyautogui.press("tab")
+        
+        sleep(0.5)
+        pyautogui.press("space")
+        sleep(1)
+    finally:
+        # wait till upload completes, max 10 seconds for now 
+        web_driver_wait.until(EC.presence_of_element_located(locators.upload_complete_text))
+        sleep(2)
+        # a refresh to make sure file shows up
+        driver.refresh()
+        
+        # a small wait to ensure page is stable after refresh
+        web_driver_wait.until(EC.presence_of_element_located(locators.file_name_containerdiv))
+        sleep(5)
+        
+        # looks for the uploade file in drive 
+        file_name_divs = driver.find_elements(*locators.file_name_containerdiv)
+        file_names= list(map(lambda a:a.text, file_name_divs))
+        assert FILE_TO_UPLOAD in file_names
+    
+    
     
 def test_download_file(driver,web_driver_wait,action_chain):
-    # download's first file
+    # download's first file in drive
     web_driver_wait.until(EC.element_to_be_clickable(locators.file_selector))
     sleep(2)
     btn = driver.find_element(*locators.file_selector)
@@ -470,5 +515,5 @@ def test_download_file(driver,web_driver_wait,action_chain):
     sleep(2)
     btn = driver.find_element(*locators.download_file_selector)
     btn.click()
-    sleep(10)
+    sleep(3)
     
