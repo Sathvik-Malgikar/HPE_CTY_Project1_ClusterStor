@@ -189,34 +189,15 @@ Usage:
 test_rename_file(driver, action_chain, web_driver_wait)
 """
 
-
 def test_rename_file(driver, action_chain, web_driver_wait):
-    file_name = "cty_ppt.pdf" # TODO rename to be parameterized
-    new_file_name = "renamed_cty"
-# TODO modularize
-    web_driver_wait.until(
-        EC.presence_of_element_located(
-            (By.XPATH, '//button[@class="UywwFc-d UywwFc-d-Qu-dgl2Hf"]')
-        ),
-    )
-
+    # TODO : file names to be parameterised. 
     try:
-        web_driver_wait.until(
-            EC.presence_of_element_located(
-                (
-                    By.XPATH,
-                    f'//div[@class="uXB7xe" and contains(@aria-label,"{file_name}" )]',
-                )
-            ),
-        )
+        web_driver_wait.until(EC.presence_of_element_located(locators.file_name_selector))
     except:
         assert False, "File Not Found"
     else:
-        file_element = driver.find_element(
-            By.XPATH, f'//div[@class="uXB7xe" and contains(@aria-label, "{file_name}")]'
-        )
-        action_chain.move_to_element(file_element).click()
-        action_chain.perform()
+        file_element = driver.find_element(*locators.file_name_selector)
+        action_chain.move_to_element(file_element).click().perform()
         sleep(3)
 
         action_chain.reset_actions()
@@ -224,29 +205,30 @@ def test_rename_file(driver, action_chain, web_driver_wait):
             device.clear_actions()
 
         sleep(1)
-        action_chain.move_to_element(file_element).click()
-        action_chain.send_keys("n")
-        action_chain.perform()
+        action_chain.move_to_element(file_element).click().send_keys("n").perform()
         action_chain.reset_actions()
         for device in action_chain.w3c_actions.devices:
             device.clear_actions()
 
         sleep(3)
 
-        action_chain.send_keys(new_file_name).perform()
+        action_chain.send_keys(files.renamed_file_name).perform()
 
         # Locate and click the OK button
-        ok_button_locator = (
-            By.XPATH,
-            '//button[@name="ok" and contains(@class, "h-De-Vb h-De-Y")]',
-        )
-        ok_button = web_driver_wait.until(EC.element_to_be_clickable(ok_button_locator))
-        ok_button = driver.find_element(
-            By.XPATH, '//button[@name="ok" and contains(@class, "h-De-Vb h-De-Y")]'
-        )
+        ok_button = web_driver_wait.until(EC.element_to_be_clickable(locators.ok_button_locator))
         ok_button.click()
-
         sleep(10)
+
+        try:
+            file_element = driver.find_element(*locators.file_name_selector)
+            assert False, "Original File Found after Rename"
+        except NoSuchElementException:
+            pass  # Original file not found, continue
+        
+        try:
+            renamed_file_element = driver.find_element(*locators.renamed_file_name_selector)
+        except NoSuchElementException:
+            assert False, f"New File '{files.renamed_file_name}' Not Found after Rename"
 
 
 """
@@ -341,6 +323,34 @@ def test_remove_file(driver, action_chain, web_driver_wait):
         delete_button.click()
         sleep(3)
         assert True
+
+# undo delete action 
+def test_undo_delete_action(driver, action_chain, web_driver_wait):
+    trash_button = web_driver_wait.until(EC.element_to_be_clickable(locators.trash_button_locator))
+    trash_button.click()
+
+    try:
+        web_driver_wait.until(EC.presence_of_element_located(locators.trashed_file_locator))
+    except:
+        assert False, "File Not Found in Trash"
+    else:
+        # Click on the trashed file
+        trashed_file_element = driver.find_element(*locators.trashed_file_locator)
+        action_chain.move_to_element(trashed_file_element).click().perform()
+        sleep(1)
+
+        # Press 'a' and then press Enter
+        restore_from_trash_button = web_driver_wait.until(EC.element_to_be_clickable(locators.restore_from_trash_button_locator))
+        restore_from_trash_button.click()
+        sleep(3)
+    # check whether the file has actually been restored or not
+    try:
+        home_button = web_driver_wait.until(EC.element_to_be_clickable(locators.home_button_locator))
+        home_button.click()
+        sleep(3)
+        web_driver_wait.until(EC.presence_of_element_located(locators.restored_file_locator))
+    except:
+        assert False, "File Not Restored"
 
 
 """
