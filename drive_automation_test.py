@@ -10,7 +10,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
+from selenium.common.exceptions import NoSuchElementException
 import locators
+import files
 import utilities
 
 """
@@ -191,63 +193,7 @@ test_rename_file(driver, action_chain, web_driver_wait)
 """
 
 
-def test_rename_file(driver, action_chain, web_driver_wait):
-    file_name = "cty_ppt.pdf" # TODO rename to be parameterized
-    new_file_name = "renamed_cty"
-# TODO modularize
-    web_driver_wait.until(
-        EC.presence_of_element_located(
-            (By.XPATH, '//button[@class="UywwFc-d UywwFc-d-Qu-dgl2Hf"]')
-        ),
-    )
 
-    try:
-        web_driver_wait.until(
-            EC.presence_of_element_located(
-                (
-                    By.XPATH,
-                    f'//div[@class="uXB7xe" and contains(@aria-label,"{file_name}" )]',
-                )
-            ),
-        )
-    except:
-        assert False, "File Not Found"
-    else:
-        file_element = driver.find_element(
-            By.XPATH, f'//div[@class="uXB7xe" and contains(@aria-label, "{file_name}")]'
-        )
-        action_chain.move_to_element(file_element).click()
-        action_chain.perform()
-        sleep(3)
-
-        action_chain.reset_actions()
-        for device in action_chain.w3c_actions.devices:
-            device.clear_actions()
-
-        sleep(1)
-        action_chain.move_to_element(file_element).click()
-        action_chain.send_keys("n")
-        action_chain.perform()
-        action_chain.reset_actions()
-        for device in action_chain.w3c_actions.devices:
-            device.clear_actions()
-
-        sleep(3)
-
-        action_chain.send_keys(new_file_name).perform()
-
-        # Locate and click the OK button
-        ok_button_locator = (
-            By.XPATH,
-            '//button[@name="ok" and contains(@class, "h-De-Vb h-De-Y")]',
-        )
-        ok_button = web_driver_wait.until(EC.element_to_be_clickable(ok_button_locator))
-        ok_button = driver.find_element(
-            By.XPATH, '//button[@name="ok" and contains(@class, "h-De-Vb h-De-Y")]'
-        )
-        ok_button.click()
-
-        sleep(10)
 
 
 """
@@ -295,9 +241,21 @@ test_remove_file(driver, action_chain, web_driver_wait)
 
 
 def test_remove_file(driver, action_chain, web_driver_wait):
-    file_name = 'test.txt'
+    file_name = files.trashed_file_name
     utilities.remove_file(driver, action_chain, web_driver_wait,file_name)
-    
+    driver.refresh()
+
+def test_rename_file(driver, action_chain, web_driver_wait):
+    # TODO : file names to be parameterised. 
+    old_file_name = files.file_name
+    new_file_name = files.renamed_file_name
+
+    utilities.rename_file(driver, action_chain, web_driver_wait, old_file_name, new_file_name)
+
+# undo delete action 
+def test_undo_delete_action(driver, action_chain, web_driver_wait):
+    file_name_to_retrieve = files.trashed_file_name
+    utilities.undo_delete_action(driver, action_chain, web_driver_wait, file_name_to_retrieve)
 
 
 """
@@ -365,48 +323,7 @@ def test_create_folder(driver, action_chain, web_driver_wait):
     assert folder_element.is_displayed(), "Folder element is not visible"
 
 
-"""
-Test function to logout from the Google Drive web GUI.
 
-Parameters:
-- driver (WebDriver): The Selenium WebDriver instance.
-- action_chain (ActionChains): The Selenium ActionChains instance for performing user actions.
-- web_driver_wait (WebDriverWait): The Selenium WebDriverWait instance for waiting on elements.
-
-Returns:
-None
-
-Raises:
-AssertionError: If logout fails or the login screen is not visible after logout.
-
-Usage:
-test_logout(driver, action_chain, web_driver_wait)
-"""
-def test_logout(driver, action_chain, web_driver_wait):
-
-    # Click on the user profile button to open the menu
-    
-    user_profile_button_locator = (By.XPATH, '//*[@id="gb"]/div[2]/div[3]/div[1]/div[2]/div') 
-    web_driver_wait.until(EC.presence_of_element_located(user_profile_button_locator))
-    user_profile_button = driver.find_element(*user_profile_button_locator)
-    action_chain.move_to_element(user_profile_button).click().perform()
-    sleep(2)
-
-    # Click on the "Sign out" button in the menu
-    try:
-        sign_out_button_locator = (By.XPATH, '//*[@id="yDmH0d"]/c-wiz/div/div/div/div/div[2]/div/div[2]/div[2]/span/span[2]')
-    
-        web_driver_wait.until(EC.presence_of_element_located(sign_out_button_locator))
-        sign_out_button = driver.find_element(*sign_out_button_locator)
-        action_chain.move_to_element(sign_out_button).click().perform()
-
-        # Wait for the logout to complete
-        web_driver_wait.until(EC.visibility_of_element_located((By.PARTIAL_LINK_TEXT, "Sign out")))
-    except Exception as e:
-        print("error occured ",e)
-        
-    # Assert that the login screen is visible after logging out
-    assert driver.title == "Home - Google Drive"
     
 def test_upload_file(driver,web_driver_wait,action_chain):
     FILE_TO_UPLOAD = "Screenshot (177).png" # this file is present in User folder
@@ -463,10 +380,9 @@ def test_upload_file(driver,web_driver_wait,action_chain):
     
     
 def test_download_file(driver,web_driver_wait,action_chain):
-    # download's first file in drive
-    web_driver_wait.until(EC.element_to_be_clickable(locators.file_selector))
+    web_driver_wait.until(EC.element_to_be_clickable(locators.file_selector(files.renamed_file_name)))
     sleep(2)
-    btn = driver.find_element(*locators.file_selector)
+    btn = driver.find_element(*locators.file_selector(files.renamed_file_name))
     btn.click()
     web_driver_wait.until(EC.element_to_be_clickable(locators.download_file_selector))
     sleep(2)
@@ -488,3 +404,93 @@ def test_remove_multiple_files(driver, action_chain, web_driver_wait):
                 device.clear_actions()
             driver.refresh()
 
+
+
+# def test_rename_folder(driver, action_chain, web_driver_wait, folder_name, new_folder_name):
+#     # TODO: folder names to be parameterized.
+#     try:
+#         folders_button = web_driver_wait.until(EC.element_to_be_clickable(locators.folders_button_locator))
+#         folders_button.click()
+
+#         folder_locator = (By.XPATH, f'//div[@class="folder" and contains(@aria-label,"{folder_name}" )]')
+#         web_driver_wait.until(EC.presence_of_element_located(folder_locator))
+#     except:
+#         assert False, f"Folder '{folder_name}' Not Found"
+#     else:
+#         folder_element = driver.find_element(*folder_locator)
+#         action_chain.move_to_element(folder_element).click().perform()
+#         sleep(3)
+
+#         action_chain.reset_actions()
+#         for device in action_chain.w3c_actions.devices:
+#             device.clear_actions()
+
+#         sleep(1)
+#         action_chain.move_to_element(folder_element).click().send_keys("n").perform()
+#         action_chain.reset_actions()
+#         for device in action_chain.w3c_actions.devices:
+#             device.clear_actions()
+
+#         sleep(3)
+
+#         action_chain.send_keys(new_folder_name).perform()
+#         ok_button = web_driver_wait.until(EC.element_to_be_clickable(locators.ok_button_locator))  # Locate and click the OK button
+#         ok_button.click()
+#         sleep(10)
+
+#         try:
+#             folder_element = driver.find_element(By.XPATH, f'//div[@class="folder" and contains(@aria-label,"{folder_name}" )]')
+#             assert False, f"Original Folder '{folder_name}' Found after Rename"
+#         except NoSuchElementException:
+#             pass  # Original folder not found, continue
+#         try:
+#             renamed_folder_element = driver.find_element(By.XPATH, f'//div[@class="folder" and contains(@aria-label,"{new_folder_name}" )]')
+#         except NoSuchElementException:
+#             assert False, f"New Folder '{new_folder_name}' Not Found after Rename"
+
+
+
+
+
+"""
+Test function to logout from the Google Drive web GUI.
+
+Parameters:
+- driver (WebDriver): The Selenium WebDriver instance.
+- action_chain (ActionChains): The Selenium ActionChains instance for performing user actions.
+- web_driver_wait (WebDriverWait): The Selenium WebDriverWait instance for waiting on elements.
+
+Returns:
+None
+
+Raises:
+AssertionError: If logout fails or the login screen is not visible after logout.
+
+Usage:
+test_logout(driver, action_chain, web_driver_wait)
+"""
+def test_logout(driver, action_chain, web_driver_wait):
+
+    # Click on the user profile button to open the menu
+    
+    user_profile_button_locator = (By.XPATH, '//*[@id="gb"]/div[2]/div[3]/div[1]/div[2]/div') 
+    web_driver_wait.until(EC.presence_of_element_located(user_profile_button_locator))
+    user_profile_button = driver.find_element(*user_profile_button_locator)
+    action_chain.move_to_element(user_profile_button).click().perform()
+    sleep(2)
+
+    # Click on the "Sign out" button in the menu
+    try:
+        sign_out_button_locator = (By.XPATH, '//*[@id="yDmH0d"]/c-wiz/div/div/div/div/div[2]/div/div[2]/div[2]/span/span[2]')
+    
+        web_driver_wait.until(EC.presence_of_element_located(sign_out_button_locator))
+        sign_out_button = driver.find_element(*sign_out_button_locator)
+        action_chain.move_to_element(sign_out_button).click().perform()
+
+        # Wait for the logout to complete
+        web_driver_wait.until(EC.visibility_of_element_located((By.PARTIAL_LINK_TEXT, "Sign out")))
+    except Exception as e:
+        print("error occured ",e)
+        
+    # Assert that the login screen is visible after logging out
+    assert driver.title == "Home - Google Drive"
