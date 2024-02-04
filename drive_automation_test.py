@@ -11,6 +11,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 import locators
+import utilities
 
 """
     Pytest fixture for providing a Selenium WebDriver instance with Chrome.
@@ -294,53 +295,9 @@ test_remove_file(driver, action_chain, web_driver_wait)
 
 
 def test_remove_file(driver, action_chain, web_driver_wait):
-    file_name = "test.txt"
-    # Click on Show more results to view all files
-    web_driver_wait.until(
-        EC.presence_of_element_located(
-            (By.XPATH, '//button[@class="UywwFc-d UywwFc-d-Qu-dgl2Hf"]')
-        ),
-    )
-    show_more_button = driver.find_element(
-        By.XPATH, '//button[@class="UywwFc-d UywwFc-d-Qu-dgl2Hf"]'
-    )
-    show_more_button.click()
-    sleep(3)
-    # Find file
-    try:
-        web_driver_wait.until(
-            EC.presence_of_element_located(
-                (
-                    By.XPATH,
-                    f'//div[@class="uXB7xe" and contains(@aria-label,"{file_name}" )]',
-                )
-            ),
-        )
-    except:
-        assert False, "File Not Found"
-    else:
-        file_element = driver.find_element(
-            By.XPATH, f'//div[@class="uXB7xe" and contains(@aria-label, "{file_name}")]'
-        )
-        action_chain.move_to_element(file_element).click()
-        action_chain.perform()
-        sleep(3)
-        # click on delete button
-        web_driver_wait.until(
-            EC.presence_of_element_located(
-                (
-                    By.XPATH,
-                    "//div[@role='button' and @aria-label='Move to trash' and @aria-hidden='false' and @aria-disabled='false']",
-                )
-            ),
-        )
-        delete_button = driver.find_element(
-            By.XPATH,
-            "//div[@role='button' and @aria-label='Move to trash' and @aria-hidden='false' and @aria-disabled='false']",
-        )
-        delete_button.click()
-        sleep(3)
-        assert True
+    file_name = 'test.txt'
+    utilities.remove_file(driver, action_chain, web_driver_wait,file_name)
+    
 
 
 """
@@ -516,4 +473,18 @@ def test_download_file(driver,web_driver_wait,action_chain):
     btn = driver.find_element(*locators.download_file_selector)
     btn.click()
     sleep(3)
-    
+
+
+def test_remove_multiple_files(driver, action_chain, web_driver_wait):
+    files = ['test.txt','test1.txt']
+    for file in files:
+        try:
+            utilities.remove_file(driver, action_chain, web_driver_wait,file)
+        except FileNotFoundError as e:
+            assert False,repr(e)
+        finally:
+            action_chain.reset_actions()
+            for device in action_chain.w3c_actions.devices:
+                device.clear_actions()
+            driver.refresh()
+
