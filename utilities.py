@@ -31,21 +31,26 @@ Usage:
 select_file(driver, action_chain, web_driver_wait, file_name)
 """
 
-def select_file(driver, action_chain, web_driver_wait,file_name):
+def select_file(driver, action_chain, web_driver_wait,file_name,show_more_needed=True): # show_more_needed is to ensure backwards compatibility
 
-    web_driver_wait.until(
-        EC.presence_of_element_located(
-            locators.show_more_files
-        ),
-    )
+    if(show_more_needed): # old testcases do not have show_more param, so by default True, 
+       # newer testcases can explicitly mention if show more button is to be clicked or not before looking for file
+            
 
+        web_driver_wait.until(
+            EC.presence_of_element_located(
+                locators.show_more_files
+            ),
+        )
+
+        
+        show_more_button = driver.find_element(
+        *locators.show_more_files
+        )
+        show_more_button.click()
     
-    show_more_button = driver.find_element(
-    *locators.show_more_files
-    )
-    show_more_button.click()
-    sleep(3)
-    # Find file
+    sleep(5)
+        # Find file
     try:
         file_selector = locators.file_selector(file_name)
         web_driver_wait.until(
@@ -136,6 +141,11 @@ def is_file_found(driver, web_driver_wait, file_name):
         condition = EC.presence_of_element_located(file_locator)
         web_driver_wait.until(condition)
         return True
-    except TimeoutException as e:
+    except EXC.TimeoutException as e:
         print(f"TimeoutException: {e}")
         return False
+    
+def clear_action_chain(chain):
+    chain.reset_actions()
+    for device in chain.w3c_actions.devices:
+        device.clear_actions()
