@@ -123,3 +123,19 @@ def remove_file(driver, action_chain, web_driver_wait,file_name):
         raise e
     else:
         delete_file(driver, action_chain, web_driver_wait)
+
+
+
+
+def is_file_found(driver, web_driver_wait, file_name):
+
+    
+    try:
+        # Use a CSS selector to find the file by its name
+        file_locator = (By.CSS_SELECTOR, f'div.uXB7xe[aria-label*="{file_name}"]')
+        condition = EC.presence_of_element_located(file_locator)
+        web_driver_wait.until(condition)
+        return True
+    except TimeoutException as e:
+        print(f"TimeoutException: {e}")
+        return False
