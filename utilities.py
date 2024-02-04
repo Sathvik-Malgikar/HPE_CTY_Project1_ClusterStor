@@ -1,6 +1,5 @@
 import configparser
 from time import sleep
-
 import pyautogui
 import pytest
 from selenium.webdriver import Chrome
@@ -12,26 +11,11 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.common.exceptions import NoSuchElementException
 import locators
+import files
 
 """
-Utility function to select a file/folder in Google Drive GUI
-
-Parameters:
-- driver (WebDriver): The Selenium WebDriver instance.
-- action_chain (ActionChains): The Selenium ActionChains instance for performing user actions.
-- web_driver_wait (WebDriverWait): The Selenium WebDriverWait instance for waiting on elements.
--file_name: Name of file/folder to be selected
-
-Returns:
-None
-
-Raises:
-FileNotFoundError: If the file/folder does not exist on Google Drive.
-
-Usage:
-select_file(driver, action_chain, web_driver_wait, file_name)
+Utility function to select a file in Google Drive GUI
 """
-
 def select_file(driver, action_chain, web_driver_wait,file_name):
 
     web_driver_wait.until(
@@ -40,7 +24,6 @@ def select_file(driver, action_chain, web_driver_wait,file_name):
         ),
     )
 
-    
     show_more_button = driver.find_element(
     *locators.show_more_files
     )
@@ -63,25 +46,41 @@ def select_file(driver, action_chain, web_driver_wait,file_name):
         action_chain.move_to_element(file_element).click()
         action_chain.perform()
 
+"""
+Utility function to select a folder in Google Drive GUI
+"""
+def select_folder(driver, action_chain, web_driver_wait,folder_name):
+
+    web_driver_wait.until(
+        EC.presence_of_element_located(
+            locators.show_more_files
+        ),
+    )
+
+    show_more_button = driver.find_element(
+    *locators.show_more_files
+    )
+    show_more_button.click()
+    sleep(3)
+    # Find folder
+    try:
+        web_driver_wait.until(EC.presence_of_element_located(locators.folder_locator))
+    except:
+        assert False, f"Folder '{files.folder_name}' Not Found"
+    else:
+        folder_element = driver.find_element(*locators.folder_locator)
+        action_chain.move_to_element(folder_element).click().perform()
+        sleep(3)
+
+        action_chain.reset_actions()
+        for device in action_chain.w3c_actions.devices:
+            device.clear_actions()
+        sleep(1)
+
 
 """
 Utility function to click delete button on a selected file/folder in the Google Drive web GUI.
-
-Parameters:
-- driver (WebDriver): The Selenium WebDriver instance.
-- action_chain (ActionChains): The Selenium ActionChains instance for performing user actions.
-- web_driver_wait (WebDriverWait): The Selenium WebDriverWait instance for waiting on elements.
-
-Returns:
-None
-
-Raises:
--
-
-Usage:
-delete_file(driver, action_chain, web_driver_wait)
 """
-
 def delete_file(driver,action_chain,web_driver_wait):
     # click on delete button
     web_driver_wait.until(
@@ -99,23 +98,11 @@ def delete_file(driver,action_chain,web_driver_wait):
     delete_button.click()
     sleep(3)
 
+
+
+
 """
 Utility function to perform delete action on the file/folder in the Google Drive web GUI.
-
-Parameters:
-- driver (WebDriver): The Selenium WebDriver instance.
-- action_chain (ActionChains): The Selenium ActionChains instance for performing user actions.
-- web_driver_wait (WebDriverWait): The Selenium WebDriverWait instance for waiting on elements.
-- file_name: Name of file/folder to be deleted.
-
-Returns:
-None
-
-Raises:
--
-
-Usage:
-remove_file(driver, action_chain, web_driver_wait,file_name)
 """
 def remove_file(driver, action_chain, web_driver_wait,file_name):
     try:
@@ -126,14 +113,40 @@ def remove_file(driver, action_chain, web_driver_wait,file_name):
         delete_file(driver, action_chain, web_driver_wait)
 
 
+"""
+Utility function to rename a folder in the Google Drive web GUI.
+"""
+def rename_folder(driver, action_chain, web_driver_wait, old_folder_name, new_folder_name):
+    try:
+        select_folder(driver, action_chain, web_driver_wait, old_folder_name)
+    except FileNotFoundError as e:
+        raise e
+    else:
+        folder_element = driver.find_element(*locators.folder_locator)
+        action_chain.move_to_element(folder_element).perform()
+        sleep(3)
+        action_chain.reset_actions()
+        for device in action_chain.w3c_actions.devices:
+            device.clear_actions()
+        sleep(1)
+        action_chain.move_to_element(folder_element).send_keys("n").perform()
+        action_chain.reset_actions()
+        for device in action_chain.w3c_actions.devices:
+            device.clear_actions()
+
+        sleep(3)
+
+        action_chain.send_keys(new_folder_name).perform()
+
+        # Locate and click the OK button
+        ok_button = web_driver_wait.until(EC.element_to_be_clickable(locators.ok_button_locator))
+        ok_button.click()
+        sleep(10)
 
 
-
-
-
-
-
-# FUNCTION TO RENAME A FILE. THIS IS CALLED LATER IN THE MAIN FILE.
+"""
+Utility function to rename a file in the Google Drive web GUI.
+"""
 def rename_file(driver, action_chain, web_driver_wait, old_file_name, new_file_name):
     try:
         select_file(driver, action_chain, web_driver_wait, old_file_name)
@@ -147,7 +160,6 @@ def rename_file(driver, action_chain, web_driver_wait, old_file_name, new_file_n
         action_chain.reset_actions()
         for device in action_chain.w3c_actions.devices:
             device.clear_actions()
-
         sleep(1)
         action_chain.move_to_element(file_element).send_keys("n").perform()
         action_chain.reset_actions()
@@ -176,7 +188,9 @@ def rename_file(driver, action_chain, web_driver_wait, old_file_name, new_file_n
 
 
 
-# FUNCTION TO UNDO DELETE ACTION. THIS IS CALLED LATER IN THE MAIN FILE.
+"""
+Utility function to undo delete action in the Google Drive web GUI.
+"""
 def undo_delete_action(driver, action_chain, web_driver_wait, file_to_be_retrieved):
     trash_button = web_driver_wait.until(EC.element_to_be_clickable(locators.trash_button_locator))
     trash_button.click()
@@ -189,9 +203,7 @@ def undo_delete_action(driver, action_chain, web_driver_wait, file_to_be_retriev
         # Click on the trashed file
         trashed_file_element = driver.find_element(*locators.trashed_file_locator)
         action_chain.move_to_element(trashed_file_element).click().perform()
-        sleep(1)
-
-        # Press 'a' and then press Enter
+        sleep(5)
         restore_from_trash_button = web_driver_wait.until(EC.element_to_be_clickable(locators.restore_from_trash_button_locator))
         restore_from_trash_button.click()
         sleep(3)

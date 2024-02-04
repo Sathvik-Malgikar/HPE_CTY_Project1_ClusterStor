@@ -30,4 +30,4 @@ file_selector = lambda file_name: (By.XPATH,f'//div[@class="uXB7xe" and contains
 
 
 folders_button_locator = (By.CSS_SELECTOR, 'button[name="T5ycX"]')
-folder_locator = (By.XPATH, '//div[@class="uXB7xe" and contains(@aria-label,"{files.renamed_file_name}" )]',)
+folder_locator = (By.XPATH, f'//div[@class="uXB7xe" and contains(@aria-label,"{files.folder_name}" )]',)

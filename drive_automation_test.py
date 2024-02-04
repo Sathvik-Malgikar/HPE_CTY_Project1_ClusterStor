@@ -1,6 +1,5 @@
 import configparser
 from time import sleep
-
 import pyautogui
 import pytest
 from selenium.webdriver import Chrome
@@ -17,24 +16,7 @@ import utilities
 
 """
     Pytest fixture for providing a Selenium WebDriver instance with Chrome.
-
-    Yields:
-    WebDriver: A Selenium WebDriver instance.
-
-    Cleanup:
-    Quits the WebDriver instance after the test session.
-
-    Usage:
-    This fixture can be used in test functions by including it as a parameter.
-
-    Example:
-    def test_example(driver):
-        # Use driver in your test
-        driver.get("https://example.com")
-        # Rest of the test logic
 """
-
-
 @pytest.fixture(scope="session")
 def driver():
     # svc = Service(executable_path="./chromedriver.exe")
@@ -45,27 +27,7 @@ def driver():
 
 """
     Pytest fixture for providing an ActionChains instance for Selenium WebDriver.
-
-    Args:
-    - driver (WebDriver): The Selenium WebDriver instance.
-
-    Yields:
-    ActionChains: An ActionChains instance.
-
-    Cleanup:
-    Resets and clears actions from the ActionChains instance after it has been used in a test.
-
-    Usage:
-    This fixture can be used in test functions by including it as a parameter.
-
-    Example:
-    def test_example(action_chain):
-        # Use action_chain in your test
-        action_chain.move_to_element(element).click().perform()
-        # Rest of the test logic
 """
-
-
 @pytest.fixture
 def action_chain(driver):
     chain = ActionChains(driver)
@@ -77,26 +39,7 @@ def action_chain(driver):
 
 """
     Pytest fixture for providing a WebDriverWait instance for Selenium WebDriver.
-
-    Args:
-    - driver (WebDriver): The Selenium WebDriver instance.
-
-    Yields:
-    WebDriverWait: A WebDriverWait instance with a timeout of 10 seconds.
-
-    Usage:
-    This fixture can be used in test functions by including it as a parameter.
-
-    Example:
-    def test_example(web_driver_wait):
-        # Use web_driver_wait in your test
-        element = web_driver_wait.until(
-            EC.presence_of_element_located((By.ID, "example_element"))
-        )
-        # Rest of the test logic
 """
-
-
 @pytest.fixture
 def web_driver_wait(driver):
     w_wait = WebDriverWait(driver, 10)
@@ -105,23 +48,7 @@ def web_driver_wait(driver):
 
 """
     Test function for signing into Google Drive using Selenium WebDriver.
-
-    Parameters:
-    - driver (WebDriver): The Selenium WebDriver instance.
-    - action_chain (ActionChains): The Selenium ActionChains instance for performing user actions.
-    - web_driver_wait (WebDriverWait): The Selenium WebDriverWait instance for waiting on elements.
-
-    Returns:
-    None
-
-    Raises:
-    AssertionError: If the title of the page after signing in is not "Home - Google Drive".
-
-    Usage:
-    test_signin(driver, action_chain, web_driver_wait)
 """
-
-
 def test_signin(driver, action_chain, web_driver_wait):
     driver.get("https://www.google.com/intl/en-US/drive/")
     driver.maximize_window()
@@ -172,48 +99,9 @@ def test_signin(driver, action_chain, web_driver_wait):
         
 
 
-
-
-"""
-Test function to rename a file in the Google Drive web GUI.
-
-Parameters:
-- driver (WebDriver): The Selenium WebDriver instance.
-- action_chain (ActionChains): The Selenium ActionChains instance for performing user actions.
-- web_driver_wait (WebDriverWait): The Selenium WebDriverWait instance for waiting on elements.
-
-Returns:
-None
-
-Raises:
-AssertionError: If the file is not found or cannot be renamed.
-
-Usage:
-test_rename_file(driver, action_chain, web_driver_wait)
-"""
-
-
-
-
-
 """
     Test function to retrieve filenames from the Google Drive web GUI.
-
-    Parameters:
-    - driver (WebDriver): The Selenium WebDriver instance.
-    - action_chain (ActionChains): The Selenium ActionChains instance for performing user actions.
-    - web_driver_wait (WebDriverWait): The Selenium WebDriverWait instance for waiting on elements.
-
-    Returns:
-    None
-
-    Raises:
-    AssertionError: If no filenames are found.
-
-    Usage:
-    test_get_filenames(driver, action_chain, web_driver_wait)
 """
-
 def test_get_filenames(driver, action_chain, web_driver_wait):
     file_name_divs = driver.find_elements_by_css_selector("div.KL4NAf")
 
@@ -223,60 +111,45 @@ def test_get_filenames(driver, action_chain, web_driver_wait):
 
 """
 Test function to remove a file from the Google Drive web GUI.
-
-Parameters:
-- driver (WebDriver): The Selenium WebDriver instance.
-- action_chain (ActionChains): The Selenium ActionChains instance for performing user actions.
-- web_driver_wait (WebDriverWait): The Selenium WebDriverWait instance for waiting on elements.
-
-Returns:
-None
-
-Raises:
-AssertionError: If the file is not found or cannot be deleted.
-
-Usage:
-test_remove_file(driver, action_chain, web_driver_wait)
 """
-
-
 def test_remove_file(driver, action_chain, web_driver_wait):
     file_name = files.trashed_file_name
     utilities.remove_file(driver, action_chain, web_driver_wait,file_name)
     driver.refresh()
 
+
+"""
+Test function to rename a file in the Google Drive web GUI.
+"""
 def test_rename_file(driver, action_chain, web_driver_wait):
-    # TODO : file names to be parameterised. 
     old_file_name = files.file_name
     new_file_name = files.renamed_file_name
-
     utilities.rename_file(driver, action_chain, web_driver_wait, old_file_name, new_file_name)
+    driver.refresh()
 
-# undo delete action 
+
+"""
+Test function to rename a folder in the Google Drive web GUI.
+"""
+def test_rename_folder(driver, action_chain, web_driver_wait):
+    old_folder_name = files.folder_name
+    new_folder_name = files.renamed_folder_name
+    utilities.rename_folder(driver, action_chain, web_driver_wait, old_folder_name, new_folder_name)
+    driver.refresh()
+    assert True
+
+"""
+Test function to undo delete action in the Google Drive web GUI.
+"""
 def test_undo_delete_action(driver, action_chain, web_driver_wait):
     file_name_to_retrieve = files.trashed_file_name
     utilities.undo_delete_action(driver, action_chain, web_driver_wait, file_name_to_retrieve)
+    driver.refresh()
 
 
 """
-Test function to create a new folder in the Google Drive web GUI.
-
-Parameters:
-- driver (WebDriver): The Selenium WebDriver instance.
-- action_chain (ActionChains): The Selenium ActionChains instance for performing user actions.
-- web_driver_wait (WebDriverWait): The Selenium WebDriverWait instance for waiting on elements.
-
-Returns:
-None
-
-Raises:
-AssertionError: If the folder is not created successfully.
-
-Usage:
-test_create_folder(driver, action_chain, web_driver_wait)
+## Test function to create a new folder in the Google Drive web GUI.
 """
-
-
 def test_create_folder(driver, action_chain, web_driver_wait):
     # wait until the New button is clickable
     new_btn = web_driver_wait.until(
@@ -323,8 +196,9 @@ def test_create_folder(driver, action_chain, web_driver_wait):
     assert folder_element.is_displayed(), "Folder element is not visible"
 
 
-
-    
+"""
+## Test function to upload new file in the Google Drive web GUI.
+"""
 def test_upload_file(driver,web_driver_wait,action_chain):
     FILE_TO_UPLOAD = "Screenshot (177).png" # this file is present in User folder
     
@@ -377,8 +251,9 @@ def test_upload_file(driver,web_driver_wait,action_chain):
         file_names= list(map(lambda a:a.text, file_name_divs))
         assert FILE_TO_UPLOAD in file_names
     
-    
-    
+"""
+## Test function to download a file in the Google Drive web GUI.
+"""  
 def test_download_file(driver,web_driver_wait,action_chain):
     web_driver_wait.until(EC.element_to_be_clickable(locators.file_selector(files.renamed_file_name)))
     sleep(2)
@@ -390,7 +265,9 @@ def test_download_file(driver,web_driver_wait,action_chain):
     btn.click()
     sleep(3)
 
-
+"""
+## Test function to remove multiple files in the Google Drive web GUI.
+"""
 def test_remove_multiple_files(driver, action_chain, web_driver_wait):
     files = ['test.txt','test1.txt']
     for file in files:
@@ -406,68 +283,8 @@ def test_remove_multiple_files(driver, action_chain, web_driver_wait):
 
 
 
-# def test_rename_folder(driver, action_chain, web_driver_wait, folder_name, new_folder_name):
-#     # TODO: folder names to be parameterized.
-#     try:
-#         folders_button = web_driver_wait.until(EC.element_to_be_clickable(locators.folders_button_locator))
-#         folders_button.click()
-
-#         folder_locator = (By.XPATH, f'//div[@class="folder" and contains(@aria-label,"{folder_name}" )]')
-#         web_driver_wait.until(EC.presence_of_element_located(folder_locator))
-#     except:
-#         assert False, f"Folder '{folder_name}' Not Found"
-#     else:
-#         folder_element = driver.find_element(*folder_locator)
-#         action_chain.move_to_element(folder_element).click().perform()
-#         sleep(3)
-
-#         action_chain.reset_actions()
-#         for device in action_chain.w3c_actions.devices:
-#             device.clear_actions()
-
-#         sleep(1)
-#         action_chain.move_to_element(folder_element).click().send_keys("n").perform()
-#         action_chain.reset_actions()
-#         for device in action_chain.w3c_actions.devices:
-#             device.clear_actions()
-
-#         sleep(3)
-
-#         action_chain.send_keys(new_folder_name).perform()
-#         ok_button = web_driver_wait.until(EC.element_to_be_clickable(locators.ok_button_locator))  # Locate and click the OK button
-#         ok_button.click()
-#         sleep(10)
-
-#         try:
-#             folder_element = driver.find_element(By.XPATH, f'//div[@class="folder" and contains(@aria-label,"{folder_name}" )]')
-#             assert False, f"Original Folder '{folder_name}' Found after Rename"
-#         except NoSuchElementException:
-#             pass  # Original folder not found, continue
-#         try:
-#             renamed_folder_element = driver.find_element(By.XPATH, f'//div[@class="folder" and contains(@aria-label,"{new_folder_name}" )]')
-#         except NoSuchElementException:
-#             assert False, f"New Folder '{new_folder_name}' Not Found after Rename"
-
-
-
-
-
 """
-Test function to logout from the Google Drive web GUI.
-
-Parameters:
-- driver (WebDriver): The Selenium WebDriver instance.
-- action_chain (ActionChains): The Selenium ActionChains instance for performing user actions.
-- web_driver_wait (WebDriverWait): The Selenium WebDriverWait instance for waiting on elements.
-
-Returns:
-None
-
-Raises:
-AssertionError: If logout fails or the login screen is not visible after logout.
-
-Usage:
-test_logout(driver, action_chain, web_driver_wait)
+## Test function to logout from the Google Drive web GUI.
 """
 def test_logout(driver, action_chain, web_driver_wait):
 
