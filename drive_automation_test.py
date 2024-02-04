@@ -311,3 +311,40 @@ def test_logout(driver, action_chain, web_driver_wait):
         
     # Assert that the login screen is visible after logging out
     assert driver.title == "Home - Google Drive"
+def test_copy_file(driver, action_chain, web_driver_wait):
+    file_name = 'test.txt'
+   
+    utilities.select_file(driver, action_chain, web_driver_wait, file_name)
+    action_chain.context_click().perform()
+
+    sleep(2)
+
+    make_a_copy_element = driver.find_element(By.CSS_SELECTOR, 'div[aria-label="Make a copy"]')
+    make_a_copy_element.click()
+ 
+    sleep(2)
+    
+    expected_copied_file_name = f'Copy of {file_name}'
+
+    copied_file_element = utilities.is_file_found(driver, web_driver_wait, expected_copied_file_name)
+
+        
+    assert copied_file_element is not None
+
+ 
+
+def test_move_file(driver, action_chain, web_driver_wait):
+   
+    file_name = "test2.txt"
+    destination_folder_name = "After_rename"
+
+  
+    file_element = driver.find_element(By.CSS_SELECTOR, f'div.uXB7xe[aria-label*="{file_name}"]')
+    destination_folder_element = driver.find_element(By.XPATH, f'//div[contains(@aria-label, "{destination_folder_name}")]')
+
+   
+    action_chain = ActionChains(driver)
+    action_chain.drag_and_drop(file_element, destination_folder_element).perform()
+
+    
+    sleep(5)
