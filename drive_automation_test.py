@@ -488,3 +488,43 @@ def test_remove_multiple_files(driver, action_chain, web_driver_wait):
                 device.clear_actions()
             driver.refresh()
 
+
+def test_copy_file(driver, action_chain, web_driver_wait):
+    file_name = 'test.txt'
+    copied_file_name = 'test_copy.txt'  # Choose a unique name for the copied file
+
+    try:
+        # Select the file to be copied
+        utilities.select_file(driver, action_chain, web_driver_wait, file_name)
+
+        # Trigger the copy action (Ctrl+C)
+        action_chain.key_down(Keys.CONTROL).send_keys('c').key_up(Keys.CONTROL).perform()
+
+        # Wait for a moment to ensure the copying process is initiated
+        sleep(2)
+
+        # Trigger the paste action (Ctrl+V)
+        action_chain.key_down(Keys.CONTROL).send_keys('v').key_up(Keys.CONTROL).perform()
+
+        # Wait for a moment to ensure the pasting process is initiated
+        sleep(2)
+
+        # Assert that the copied file is present in the file list
+        web_driver_wait.until(
+            EC.presence_of_element_located(
+                (By.XPATH, f'//div[@class="uXB7xe" and contains(@aria-label, "{copied_file_name}")]')
+            )
+        )
+
+        # If the above line doesn't throw an exception, the file is present
+        assert True
+
+    except Exception as e:
+        print(f"Error copying file: {e}")
+        assert False
+
+    finally:
+        # Reset actions and clear any remaining actions
+        action_chain.reset_actions()
+        for device in action_chain.w3c_actions.devices:
+            device.clear_actions()
