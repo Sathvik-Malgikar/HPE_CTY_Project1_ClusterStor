@@ -338,13 +338,86 @@ def test_move_file(driver, action_chain, web_driver_wait):
     file_name = "test2.txt"
     destination_folder_name = "After_rename"
 
-  
+    utilities.select_file(driver,action_chain,web_driver_wait,file_name,show_more_needed=True)
+    utilities.clear_action_chain(action_chain)
+    sleep(2)
+    
     file_element = driver.find_element(By.CSS_SELECTOR, f'div.uXB7xe[aria-label*="{file_name}"]')
     destination_folder_element = driver.find_element(By.XPATH, f'//div[contains(@aria-label, "{destination_folder_name}")]')
 
-   
-    action_chain = ActionChains(driver)
     action_chain.drag_and_drop(file_element, destination_folder_element).perform()
+    sleep(5)
+    
+    
+    
+    
+
+def test_view_file_info(driver, action_chain, web_driver_wait):
+    file_name = 'test.txt'  # Replace with the file you want to view info for
+    utilities.select_file(driver, action_chain, web_driver_wait, file_name)
+    
+
+    action_chain.send_keys("gd").perform()
+    
+    # Wait for the file info dialog to appear
+    web_driver_wait.until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, "div.wbg7nb"))
+    )
+    
+    # Assert that the file info dialog is visible
+    try:
+        file_info_dialog_locator = (
+            By.CSS_SELECTOR,
+            "div.wbg7nb",
+        )
+        web_driver_wait.until(
+            EC.presence_of_element_located(file_info_dialog_locator)
+        )
+    except:
+        assert False, f"File info dialog for {file_name} is not visible"
+
+        
+def test_delete_file_permanently(driver, action_chain, web_driver_wait):
+    driver.refresh()
+    sleep(5)
+    file_name = 'test.txt'  # Replace with the file you want to delete permanently
+    utilities.remove_file(driver, action_chain, web_driver_wait, file_name)
+
+    # Empty the trash
+    web_driver_wait.until(
+        EC.element_to_be_clickable((By.XPATH, "//span[text()='Trash']"))
+    ).click()
+    
+    # Wait for the deleted file to appear in the trash
+    deleted_file_locator = locators.file_selector(file_name)
+    web_driver_wait.until(
+        EC.presence_of_element_located(deleted_file_locator)
+    )
+    
+    utilities.clear_action_chain(action_chain)
+    # Select the file in the trash
+    utilities.select_file(driver, action_chain, web_driver_wait, file_name, show_more_needed=False)
+    
+    # Click on the "Delete forever" button
+    delete_forever_button_locator = (By.XPATH, "//div[@aria-label='Delete forever']")
+    web_driver_wait.until(
+        EC.element_to_be_clickable(delete_forever_button_locator)
+    ).click()
+    
+    # Add a sleep for 2 seconds to even it out
+    sleep(2)
 
     
-    sleep(5)
+    web_driver_wait.until(
+        EC.element_to_be_clickable(locators.delete_confirm_button_locator)
+    )
+    
+    # Assert that the file is permanently deleted
+    try:
+        confirm_btn_element = driver.find_element(*locators.delete_confirm_button_locator)
+        confirm_btn_element.click()
+        sleep(3)
+    except:
+        assert False, "Error occured"
+    else:
+        assert True, f"{file_name} is permanently deleted"
