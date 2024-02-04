@@ -510,24 +510,20 @@ def test_copy_file(driver, action_chain, web_driver_wait):
         
     assert copied_file_element is not None
 
-
-
+ 
 
 def test_move_file(driver, action_chain, web_driver_wait):
-    file_name="test.txt"
    
-    #destination_folder = "after_rename"
-    web_driver_wait.until(lambda driver: utilities.is_file_found(driver, web_driver_wait, file_name))
-    file_element=driver.find_element(By.CSS_SELECTOR,f'div.uXB7xe[aria-label*="{file_name}"]')
+    file_name = "test2.txt"
+    destination_folder_name = "After_rename"
 
-    action_chain.move_to_element(file_element).click().perform()
-    sleep(3)
+  
+    file_element = driver.find_element(By.CSS_SELECTOR, f'div.uXB7xe[aria-label*="{file_name}"]')
+    destination_folder_element = driver.find_element(By.XPATH, f'//div[contains(@aria-label, "{destination_folder_name}")]')
 
-    action_chain.reset_actions()
-    for device in action_chain.w3c_actions.devices:
-        device.clear_actions()
+   
+    action_chain = ActionChains(driver)
+    action_chain.drag_and_drop(file_element, destination_folder_element).perform()
 
-    action_chain.send_keys("z").perform()
-
+    
     sleep(5)
-    folder_locator = driver.find_element(By.CSS_SELECTOR, 'span[data-tooltip="block"]')
