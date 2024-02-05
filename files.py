@@ -6,3 +6,13 @@ trashed_file_name = "test.txt"
 
 folder_name = "Applied crypto"
 renamed_folder_name = "After_rename"
+
+
+file_move_name="test2.txt"
+destination_folder_name = "After_rename"
+
+
+file_name_for_copy = 'test.txt'
+expected_copied_file_name='Copy of ' + file_name_for_copy
+
+create_folder_name="Applied crypto"

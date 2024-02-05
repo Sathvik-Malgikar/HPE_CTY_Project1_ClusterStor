@@ -10,6 +10,8 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import StaleElementReferenceException
+
 import locators
 import files
 import utilities
@@ -151,47 +153,35 @@ def test_undo_delete_action(driver, action_chain, web_driver_wait):
 ## Test function to create a new folder in the Google Drive web GUI.
 """
 def test_create_folder(driver, action_chain, web_driver_wait):
-    # wait until the New button is clickable
-    new_btn = web_driver_wait.until(
-        EC.element_to_be_clickable(
-            (
-                By.XPATH,
-                '//*[@id="drive_main_page"]/div/div[3]/div/button[1]/span[1]/span',
-            )
-        )
-    )
+   
+    new_btn = web_driver_wait.until(EC.element_to_be_clickable(locators.new_btn_locator))
     new_btn.click()
     sleep(4)
 
-    # wait for the list of options to appear
+    
     new_folder_option = web_driver_wait.until(
-        EC.element_to_be_clickable(
-            (By.XPATH, '//*[@id="drive_main_page"]/div/div[3]/div/button[1]')
-        )
-    )
+        EC.element_to_be_clickable(locators.new_folder_option_locator))
 
-    # move to the list and click on the New folder option
+    
     action_chain.move_to_element(new_folder_option).click().perform()
 
-    # Wait for the new folder dialog to appear
-    # new_folder_dialog = web_driver_wait.until(
-    #     EC.presence_of_element_located((By.CLASS_NAME,"FidVJb"))
-    # )
+   
 
-    web_driver_wait.until(EC.presence_of_element_located((By.CLASS_NAME, "LUNIy")))
+    web_driver_wait.until(EC.presence_of_element_located(locators.input_field_locator))
 
-    # Find the input field and clear any existing text
-    input_field = driver.find_element(By.CSS_SELECTOR, ".LUNIy")
+   
+    input_field = driver.find_element(*locators.input_field_locator)
     input_field.clear()
     # sleep(5)
 
-    input_field.send_keys("Applied crypto")
+    input_field.send_keys(files.create_folder_name)
     input_field.send_keys(Keys.ENTER)
 
     sleep(10)
-    # #Wait for the folder element to appear in the list
+    xpath_expression = f"//*[text()='{files.create_folder_name}']"
+   
     folder_element = web_driver_wait.until(
-        EC.presence_of_element_located((By.XPATH, "//*[text()='Applied crypto']"))
+        EC.presence_of_element_located((By.XPATH,xpath_expression))
     )
     assert folder_element.is_displayed(), "Folder element is not visible"
 
@@ -311,46 +301,77 @@ def test_logout(driver, action_chain, web_driver_wait):
         
     # Assert that the login screen is visible after logging out
     assert driver.title == "Home - Google Drive"
+
 def test_copy_file(driver, action_chain, web_driver_wait):
-    file_name = 'test.txt'
+    
    
-    utilities.select_file(driver, action_chain, web_driver_wait, file_name)
+    utilities.select_file(driver, action_chain, web_driver_wait, files.file_name_for_copy)
     action_chain.context_click().perform()
 
-    sleep(2)
-
-    make_a_copy_element = driver.find_element(By.CSS_SELECTOR, 'div[aria-label="Make a copy"]')
+    sleep(5)
+    #make_copy_button=driver.find_element(*locators.make_a_copy_elemenent_locator)
+    make_a_copy_element = web_driver_wait.until(EC.element_to_be_clickable(locators.make_a_copy_elemenent_locator))
     make_a_copy_element.click()
  
-    sleep(2)
+    sleep(5)
     
-    expected_copied_file_name = f'Copy of {file_name}'
+    driver.refresh()
+    sleep(7)
+    
 
-    copied_file_element = utilities.is_file_found(driver, web_driver_wait, expected_copied_file_name)
-
-        
+    copied_file_element = driver.find_element(*locators.copied_file_locator)
     assert copied_file_element is not None
 
  
 
 def test_move_file(driver, action_chain, web_driver_wait):
-   
-    file_name = "test2.txt"
-    destination_folder_name = "After_rename"
 
-    utilities.select_file(driver,action_chain,web_driver_wait,file_name,show_more_needed=True)
+    utilities.select_file(driver,action_chain,web_driver_wait,files.file_move_name,show_more_needed=True)
     utilities.clear_action_chain(action_chain)
     sleep(2)
     
-    file_element = driver.find_element(By.CSS_SELECTOR, f'div.uXB7xe[aria-label*="{file_name}"]')
-    destination_folder_element = driver.find_element(By.XPATH, f'//div[contains(@aria-label, "{destination_folder_name}")]')
+    file_element = driver.find_element(*locators.file_move_locator)
+    destination_folder_element = driver.find_element(*locators.destination_folder_element_locator)
 
     action_chain.drag_and_drop(file_element, destination_folder_element).perform()
     sleep(5)
     
+    try:
+        
+        destination_folder_element = driver.find_element(*locators.destination_folder_element_locator)
+
+        # Double click on the destination_folder_element
+        action_chain.double_click(destination_folder_element).perform()
+        sleep(4)
+    except StaleElementReferenceException:
+        print("StaleElementReferenceException occurred. Retrying...")
+
+    sleep(2)
+
+    try:
+        file_in_destination = driver.find_element(*locators.file_move_locator)
+    except NoSuchElementException:
+    # Set moved_file_element to None if the element is not found
+        file_in_destination = None
+
+    assert file_in_destination is not None, "File has not been moved successfully to the destination folder"
+
+
+    my_drive_button = driver.find_element(*locators.my_drive_button_locator)
+    my_drive_button.click()
+    sleep(3)
     
+    try:
+        moved_file_element = driver.find_element(*locators.file_move_locator)
+    except NoSuchElementException:
+    # Set moved_file_element to None if the element is not found
+        moved_file_element = None
+   
+    assert not moved_file_element, "File is still present in the old folder"
+
     
-    
+
+
 
 def test_view_file_info(driver, action_chain, web_driver_wait):
     file_name = 'test.txt'  # Replace with the file you want to view info for
