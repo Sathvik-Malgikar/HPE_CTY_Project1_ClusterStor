@@ -201,6 +201,7 @@ Utility function to undo delete action in the Google Drive web GUI.
 def undo_delete_action(driver, action_chain, web_driver_wait, file_to_be_retrieved):
     trash_button = web_driver_wait.until(EC.element_to_be_clickable(locators.trash_button_locator))
     trash_button.click()
+    sleep(5)
 
     try:
         web_driver_wait.until(EC.presence_of_element_located(locators.trashed_file_locator))
@@ -210,7 +211,7 @@ def undo_delete_action(driver, action_chain, web_driver_wait, file_to_be_retriev
         # Click on the trashed file
         trashed_file_element = driver.find_element(*locators.trashed_file_locator)
         action_chain.move_to_element(trashed_file_element).click().perform()
-        sleep(5)
+        sleep(6)
         restore_from_trash_button = web_driver_wait.until(EC.element_to_be_clickable(locators.restore_from_trash_button_locator))
         restore_from_trash_button.click()
         sleep(3)

@@ -22,7 +22,9 @@ trash_button_locator = (By.XPATH, '//div[@aria-label="Trash"]')
 trashed_file_locator = (By.XPATH, f'//div[@class="uXB7xe" and contains(@aria-label,"{files.trashed_file_name}" )]',)
 home_button_locator = (By.XPATH, '//div[@aria-label="Home"]')
 restored_file_locator = (By.XPATH, f'//div[@class="uXB7xe" and contains(@aria-label,"{files.trashed_file_name}" )]',)
-restore_from_trash_button_locator = (By.XPATH, '//div[@aria-label="Restore from trash"]')
+# restore_from_trash_button_locator = (By.XPATH, '//div[@aria-label="Restore from trash"]')
+restore_from_trash_button_locator = (By.CSS_SELECTOR, 'div.h-sb-Ic.h-R-d.a-c-d.a-s-Ba-d-Mr-Be-nAm6yf[aria-label="Restore from trash"]')
+
 
 
 show_more_files = (By.CSS_SELECTOR,'button.UywwFc-d.UywwFc-d-Qu-dgl2Hf')
