@@ -63,9 +63,9 @@ def test_signin(driver, action_chain, web_driver_wait):
     sign_in_tab = driver.window_handles[-1]
     driver.switch_to.window(sign_in_tab)
     sleep(1.3)
-    cfp = configparser.ConfigParser()
-    cfp.read("config.ini")
-    account_email_id = cfp.get("Account Credentials", "email")
+    parser = configparser.ConfigParser()
+    parser.read("config.ini")
+    account_email_id = parser.get("Account Credentials", "email")
     print("Sending email")
     action_chain.send_keys(account_email_id)
     action_chain.send_keys(Keys.ENTER)
@@ -76,10 +76,8 @@ def test_signin(driver, action_chain, web_driver_wait):
         ),
     )
     sleep(1.5)  # to deal with input animation
-    action_chain.reset_actions()
-    for device in action_chain.w3c_actions.devices:
-        device.clear_actions()
-    account_pwd = cfp.get("Account Credentials", "password")
+    utilities.clear_action_chain(action_chain)
+    account_pwd = parser.get("Account Credentials", "password")
     action_chain.send_keys(account_pwd)
     action_chain.send_keys(Keys.ENTER)
     action_chain.perform()
