@@ -35,3 +35,15 @@ delete_confirm_button_locator = (
     By.XPATH,
     "//button[contains(@jsname, 'moQGCc') and contains(@jsaction, 'click:cOuCgd')]/span[text()='Delete forever']"
     )
+
+file_move_locator=(By.CSS_SELECTOR, f'div.uXB7xe[aria-label*="{files.file_move_name}"]')                                    
+destination_folder_element_locator=(By.XPATH, f'//div[contains(@aria-label, "{files.destination_folder_name}")]')
+my_drive_button_locator=By.CSS_SELECTOR, 'span.a-s-T[aria-label="My Drive"][jsname="KSzLFd"]'
+
+copied_file_locator=(By.CSS_SELECTOR, f'div.uXB7xe[aria-label*="{files.expected_copied_file_name}"]')    
+make_a_copy_elemenent_locator=(By.CSS_SELECTOR, 'div[aria-label="Make a copy"]')
+
+    
+new_btn_locator=(By.CLASS_NAME,'jYPt8c',)
+new_folder_option_locator=(By.CSS_SELECTOR, "div.a-v-T[data-tooltip='New folder']")
+input_field_locator=(By.CLASS_NAME, "LUNIy")

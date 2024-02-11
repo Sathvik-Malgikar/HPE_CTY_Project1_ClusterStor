@@ -56,18 +56,18 @@ def select_file(driver, action_chain, web_driver_wait,file_name,show_more_needed
 """
 Utility function to select a folder in Google Drive GUI
 """
-def select_folder(driver, action_chain, web_driver_wait,folder_name):
+def select_folder(driver, action_chain, web_driver_wait,folder_name,show_more_needed=True):
+    if(show_more_needed):
+        web_driver_wait.until(
+            EC.presence_of_element_located(
+                locators.show_more_files
+            ),
+        )
 
-    web_driver_wait.until(
-        EC.presence_of_element_located(
-            locators.show_more_files
-        ),
-    )
-
-    show_more_button = driver.find_element(
-    *locators.show_more_files
-    )
-    show_more_button.click()
+        show_more_button = driver.find_element(
+        *locators.show_more_files
+        )
+        show_more_button.click()
     sleep(3)
     # Find folder
     try:
@@ -237,7 +237,7 @@ def is_file_found(driver, web_driver_wait, file_name):
     except EXC.TimeoutException as e:
         print(f"TimeoutException: {e}")
         return False
-    
+   
 def clear_action_chain(chain):
     chain.reset_actions()
     for device in chain.w3c_actions.devices:
