@@ -194,39 +194,75 @@ def rename_file(driver, action_chain, web_driver_wait, old_file_name, new_file_n
             assert False, f"New File '{new_file_name}' Not Found after Rename"
 
 
-
-"""
-Utility function to undo delete action in the Google Drive web GUI.
-"""
-def undo_delete_action(driver, action_chain, web_driver_wait, file_to_be_retrieved):
+def click_trash_button(web_driver_wait) : 
     trash_button = web_driver_wait.until(EC.element_to_be_clickable(locators.trash_button_locator))
     trash_button.click()
     sleep(5)
 
+def select_file_to_be_restored(driver, action_chain, web_driver_wait, file_to_be_restored):
     try:
-        web_driver_wait.until(EC.presence_of_element_located(locators.trashed_file_locator))
+        file_selector = locators.file_selector(file_to_be_restored)
+        web_driver_wait.until(EC.presence_of_element_located(file_selector),)
     except:
-        assert False, "File Not Found in Trash"
+        raise FileNotFoundError("File Not found")
     else:
-        # Click on the trashed file
-        trashed_file_element = driver.find_element(*locators.trashed_file_locator)
-        action_chain.move_to_element(trashed_file_element).click().perform()
-        sleep(6)
-        restore_from_trash_button = web_driver_wait.until(EC.element_to_be_clickable(locators.restore_from_trash_button_locator))
-        restore_from_trash_button.click()
-        sleep(3)
+        file_element = driver.find_element(*file_selector)
+        action_chain.move_to_element(file_element).click()
+        action_chain.perform()
 
-    # Check whether the file has actually been restored or not
-    try:
-        home_button = web_driver_wait.until(EC.element_to_be_clickable(locators.home_button_locator))
-        home_button.click()
-        sleep(3)
-        web_driver_wait.until(EC.presence_of_element_located(locators.restored_file_locator))
-    except:
-        assert False, f"File '{file_to_be_retrieved}' Not Restored"
+def clcik_on_restore_from_trash_button(web_driver_wait):
+    restore_from_trash_button = web_driver_wait.until(EC.element_to_be_clickable(locators.restore_from_trash_button_locator))
+    restore_from_trash_button.click()
+    sleep(3)
+
+def clcik_on_home_button(web_driver_wait):
+    home_button = web_driver_wait.until(EC.element_to_be_clickable(locators.home_button_locator))
+    home_button.click()
+    sleep(3)
 
 
-def is_file_found(driver, web_driver_wait, file_name):
+def verify_restoration(web_driver_wait, file_name):
+    clcik_on_home_button(web_driver_wait)
+    if(is_file_found(web_driver_wait, file_name)):
+        return True
+    else:
+        assert False, f"File '{file_name}' Not Restored"
+
+    
+
+
+"""
+Utility function to undo delete action in the Google Drive web GUI.
+"""
+# def undo_delete_action(driver, action_chain, web_driver_wait, file_to_be_retrieved):
+#     trash_button = web_driver_wait.until(EC.element_to_be_clickable(locators.trash_button_locator))
+#     trash_button.click()
+#     sleep(5)
+
+#     try:
+#         web_driver_wait.until(EC.presence_of_element_located(locators.trashed_file_locator))
+#     except:
+#         assert False, "File Not Found in Trash"
+#     else:
+#         # Click on the trashed file
+#         trashed_file_element = driver.find_element(*locators.trashed_file_locator)
+#         action_chain.move_to_element(trashed_file_element).click().perform()
+#         sleep(6)
+#         restore_from_trash_button = web_driver_wait.until(EC.element_to_be_clickable(locators.restore_from_trash_button_locator))
+#         restore_from_trash_button.click()
+#         sleep(3)
+
+#     # Check whether the file has actually been restored or not
+#     try:
+#         home_button = web_driver_wait.until(EC.element_to_be_clickable(locators.home_button_locator))
+#         home_button.click()
+#         sleep(3)
+#         web_driver_wait.until(EC.presence_of_element_located(locators.restored_file_locator))
+#     except:
+#         assert False, f"File '{file_to_be_retrieved}' Not Restored"
+
+
+def is_file_found(web_driver_wait, file_name):
 
     
     try:

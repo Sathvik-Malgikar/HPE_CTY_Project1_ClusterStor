@@ -16,7 +16,7 @@ import utilities
 
 
 class DriveUtils:
-    def __init__(self, driver, action_chain, web_driver_wait):
+    def __init__(self, driver : Chrome, action_chain : ActionChains, web_driver_wait : WebDriverWait):
         self.driver = driver
         self.action_chain = action_chain
         self.web_driver_wait = web_driver_wait
@@ -35,6 +35,21 @@ class DriveUtils:
 
     def select_file(self, file_name, show_more_needed=False):
         utilities.select_file(self.driver, self.action_chain, self.web_driver_wait, file_name, show_more_needed)
+
+    def click_trash_button(self):
+        utilities.click_trash_button(self.web_driver_wait)
+    
+    def select_file_to_be_restored(self, file_to_be_restored):
+        utilities.select_file_to_be_restored(self.driver, self.action_chain, self.web_driver_wait, file_to_be_restored)
+    
+    def clcik_on_restore_from_trash_button(self):
+        utilities.clcik_on_restore_from_trash_button(self.web_driver_wait)
+    
+    def clcik_on_home_button(self):
+        utilities.clcik_on_home_button(self.web_driver_wait)
+    
+    def verify_restoration(self, file_name):
+        utilities.verify_restoration(self.web_driver_wait, file_name)
 
 
 """
@@ -168,10 +183,12 @@ def test_rename_folder(driver, action_chain, web_driver_wait):
 """
 Test function to undo delete action in the Google Drive web GUI.
 """
-def test_undo_delete_action(driver, action_chain, web_driver_wait):
-    file_name_to_retrieve = files.trashed_file_name
-    utilities.undo_delete_action(driver, action_chain, web_driver_wait, file_name_to_retrieve)
-    driver.refresh()
+def test_undo_delete_action(drive_utils):
+    file_name_to_retrieve = files.file_to_be_restored
+    drive_utils.click_trash_button()
+    drive_utils.select_file_to_be_restored(file_name_to_retrieve)
+    drive_utils.clcik_on_restore_from_trash_button()
+    drive_utils.verify_restoration(file_name_to_retrieve)
 
 
 """
