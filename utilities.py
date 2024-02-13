@@ -10,6 +10,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import TimeoutException
 import locators
 import files
 
@@ -237,8 +238,83 @@ def is_file_found(driver, web_driver_wait, file_name):
     except EXC.TimeoutException as e:
         print(f"TimeoutException: {e}")
         return False
-   
+
+
+
+
+def send_keys_to_element(driver, element_locator, text):
+    try:
+        element = driver.find_element(*element_locator)
+        element.send_keys(text)
+    except Exception as e:
+        print(f"Error sending keys to element: {e}")
+
+def find_element(driver, locator):
+    try:
+        element = driver.find_element(*locator)
+        return element
+    except NoSuchElementException:
+        print(f"Element not found with locator {locator}")
+        return None
+
+
+def verify_file_presence(driver, file_name, timeout=10):
+    
+    file_locator = (By.CSS_SELECTOR, f'div.uXB7xe[aria-label*="{file_name}"]')
+    try:
+        WebDriverWait(driver, timeout).until(EC.presence_of_element_located(file_locator))
+        return True
+
+    except TimeoutException:
+        print(f"File element with name '{file_name}' not found within {timeout} seconds.")
+        return False
+
+def verify_folder_presence(driver, folder_name, timeout=10):
+    folder_locator = (By.XPATH, f'//div[@class="uXB7xe" and contains(@aria-label,"{folder_name}" )]')
+    try:
+        WebDriverWait(driver, timeout).until(EC.presence_of_element_located(folder_locator))
+        return True
+    except TimeoutException:
+        print(f"Folder element with name '{folder_name}' not found within {timeout} seconds.")
+        return False
+    
 def clear_action_chain(chain):
     chain.reset_actions()
     for device in chain.w3c_actions.devices:
         device.clear_actions()
+
+def wait_for_element(web_driver_wait, locator):
+    try:
+        element = web_driver_wait.until(EC.presence_of_element_located(locator))
+        return element
+    except TimeoutException:
+        print(f"Timeout waiting for element with locator {locator}")
+        return None
+    
+def wait_to_click(web_driver_wait,locator):
+    try:
+        element = web_driver_wait.until(EC.element_to_be_clickable(locator))
+        return element
+    except TimeoutException:
+        print(f"Timeout waiting for element with locator {locator}")
+        return None
+
+def click_element(action_chain, element):
+    try:
+        action_chain.click(element).perform()
+    except Exception as e:
+        print(f"Error clicking on element: {e}")
+
+
+def double_click_element(action_chain, element):
+    try:
+        action_chain.double_click(element).perform()
+    except Exception as e:
+        print(f"Error double clicking on element: {e}")
+
+
+def drag_and_drop_element(action_chain, source_element, destination_element):
+    try:
+        action_chain.drag_and_drop(source_element, destination_element).perform()
+    except Exception as e:
+        print(f"Error dragging and dropping element: {e}")
