@@ -38,46 +38,46 @@ def initialize_action_chain(ac ):
 Utility function to select a file in Google Drive GUI
 """
 
-# def select_file(driver, action_chain, web_driver_wait,file_name,show_more_needed=True): # show_more_needed is to ensure backwards compatibility
+def select_file(file_name,show_more_needed=True): # show_more_needed is to ensure backwards compatibility
 
-#     if(show_more_needed): # old testcases do not have show_more param, so by default True, 
-#        # newer testcases can explicitly mention if show more button is to be clicked or not before looking for file
+    if(show_more_needed): # old testcases do not have show_more param, so by default True, 
+       # newer testcases can explicitly mention if show more button is to be clicked or not before looking for file
             
 
-#         web_driver_wait.until(
-#             EC.presence_of_element_located(
-#                 locators.show_more_files
-#             ),
-#         )
+        web_driver_wait.until(
+            EC.presence_of_element_located(
+                locators.show_more_files
+            ),
+        )
 
         
-#         show_more_button = driver.find_element(
-#         *locators.show_more_files
-#         )
-#         show_more_button.click()
+        show_more_button = driver.find_element(
+        *locators.show_more_files
+        )
+        show_more_button.click()
     
-#     sleep(5)
-#         # Find file
-#     try:
-#         file_selector = locators.file_selector(file_name)
-#         web_driver_wait.until(
-#             EC.presence_of_element_located(
-#                 file_selector
-#             ),
-#         )
-#     except:
-#         raise FileNotFoundError("File Not found")
-#     else:
-#         file_element = driver.find_element(
-#             *file_selector
-#         )
-#         action_chain.move_to_element(file_element).click()
-#         action_chain.perform()
+    sleep(5)
+        # Find file
+    try:
+        file_selector = locators.file_selector(file_name)
+        web_driver_wait.until(
+            EC.presence_of_element_located(
+                file_selector
+            ),
+        )
+    except:
+        raise FileNotFoundError("File Not found")
+    else:
+        file_element = driver.find_element(
+            *file_selector
+        )
+        action_chain.move_to_element(file_element).click()
+        action_chain.perform()
 
 """
 Utility function to select a folder in Google Drive GUI
 """
-def select_folder(driver, action_chain, web_driver_wait,folder_name,show_more_needed=True):
+def select_folder(folder_name,show_more_needed=True):
     if(show_more_needed):
         web_driver_wait.until(
             EC.presence_of_element_located(
@@ -109,7 +109,7 @@ def select_folder(driver, action_chain, web_driver_wait,folder_name,show_more_ne
 """
 Utility function to click delete button on a selected file/folder in the Google Drive web GUI.
 """
-def delete_file(driver,action_chain,web_driver_wait):
+def delete_file( ):
     # click on delete button
     web_driver_wait.until(
         EC.presence_of_element_located(
@@ -132,21 +132,21 @@ def delete_file(driver,action_chain,web_driver_wait):
 """
 Utility function to perform delete action on the file/folder in the Google Drive web GUI.
 """
-def remove_file(driver, action_chain, web_driver_wait,file_name):
+def remove_file(file_name):
     try:
-        select_file(driver, action_chain, web_driver_wait,file_name)
+        select_file( file_name)
     except FileNotFoundError as e:
         raise e
     else:
-        delete_file(driver, action_chain, web_driver_wait)
+        delete_file( )
 
 
 """
 Utility function to rename a folder in the Google Drive web GUI.
 """
-def rename_folder(driver, action_chain, web_driver_wait, old_folder_name, new_folder_name):
+def rename_folder( old_folder_name, new_folder_name):
     try:
-        select_folder(driver, action_chain, web_driver_wait, old_folder_name)
+        select_folder(old_folder_name)
     except FileNotFoundError as e:
         raise e
     else:
@@ -171,19 +171,19 @@ def rename_folder(driver, action_chain, web_driver_wait, old_folder_name, new_fo
         ok_button.click()
         sleep(10)
 
-def select_file(driver, action_chain, web_driver_wait, file_name):
-    try:
-        file_selector = locators.file_selector(file_name)
-        web_driver_wait.until(EC.presence_of_element_located(file_selector),)
-    except:
-        raise FileNotFoundError("File Not found")
-    else:
-        file_element = driver.find_element(*file_selector)
-        action_chain.move_to_element(file_element).click()
-        action_chain.perform()
+# def select_file(file_name):
+#     try:
+#         file_selector = locators.file_selector(file_name)
+#         web_driver_wait.until(EC.presence_of_element_located(file_selector),)
+#     except:
+#         raise FileNotFoundError("File Not found")
+#     else:
+#         file_element = driver.find_element(*file_selector)
+#         action_chain.move_to_element(file_element).click()
+#         action_chain.perform()
 
 
-def rename_action(web_driver_wait, new_file_name):
+def rename_action(new_file_name):
     rename_button = web_driver_wait.until(EC.element_to_be_clickable(locators.rename_button_locator))
     rename_button.click()
     sleep(1)
@@ -191,13 +191,13 @@ def rename_action(web_driver_wait, new_file_name):
     pyautogui.write(new_file_name)
 
 
-def click_on_ok_button(web_driver_wait):
+def click_on_ok_button():
     ok_button = web_driver_wait.until(EC.element_to_be_clickable(locators.ok_button_locator))
     ok_button.click()
     sleep(10)
 
     
-def rename_verification(driver, old_file_name, new_file_name):
+def rename_verification( old_file_name, new_file_name):
     try:
         file_element = driver.find_element(*locators.file_name_selector)
         assert False, f"Original File '{old_file_name}' Found after Rename"
@@ -211,12 +211,12 @@ def rename_verification(driver, old_file_name, new_file_name):
     
 
 
-def click_trash_button(web_driver_wait) : 
+def click_trash_button() : 
     trash_button = web_driver_wait.until(EC.element_to_be_clickable(locators.trash_button_locator))
     trash_button.click()
     sleep(5)
 
-def select_file_from_trash(driver, action_chain, web_driver_wait):
+def select_file_from_trash():
     try:
         web_driver_wait.until(EC.presence_of_element_located(locators.trashed_file_locator))
     except:
@@ -228,20 +228,20 @@ def select_file_from_trash(driver, action_chain, web_driver_wait):
         sleep(6)
 
 
-def clcik_on_restore_from_trash_button(web_driver_wait):
+def click_on_restore_from_trash_button():
     restore_from_trash_button = web_driver_wait.until(EC.element_to_be_clickable(locators.restore_from_trash_button_locator))
     restore_from_trash_button.click()
     sleep(3)
 
-def clcik_on_home_button(web_driver_wait):
+def click_on_home_button():
     home_button = web_driver_wait.until(EC.element_to_be_clickable(locators.home_button_locator))
     home_button.click()
     sleep(3)
 
 
-def verify_restoration(web_driver_wait, file_name):
-    clcik_on_home_button(web_driver_wait)
-    if(verify_folder_presence(driver, file_name,10)):
+def verify_restoration( file_name):
+    click_on_home_button()
+    if(verify_folder_presence(file_name)):
         return True
     else:
         assert False, f"File '{file_name}' Not Restored"
@@ -295,14 +295,14 @@ def open_folder(open_folder):
         return False
 
 
-def send_keys_to_element(driver, element_locator, text):
+def send_keys_to_element(element_locator, text):
     try:
         element = driver.find_element(*element_locator)
         element.send_keys(text)
     except Exception as e:
         print(f"Error sending keys to element: {e}")
 
-def find_element(driver, locator):
+def find_element( locator):
     try:
         element = driver.find_element(*locator)
         return element
@@ -310,7 +310,7 @@ def find_element(driver, locator):
         print(f"Element not found with locator {locator}")
         return None
 
-def verify_folder_presence(driver, folder_name, timeout=10):
+def verify_folder_presence( folder_name, timeout=10):
     folder_locator = (By.XPATH, f'//div[@class="uXB7xe" and contains(@aria-label,"{folder_name}" )]')
     try:
         WebDriverWait(driver, timeout).until(EC.presence_of_element_located(folder_locator))
@@ -319,12 +319,12 @@ def verify_folder_presence(driver, folder_name, timeout=10):
         print(f"Folder element with name '{folder_name}' not found within {timeout} seconds.")
         return False
     
-def clear_action_chain(chain):
-    chain.reset_actions()
-    for device in chain.w3c_actions.devices:
+def clear_action_chain():
+    action_chain.reset_actions()
+    for device in action_chain.w3c_actions.devices:
         device.clear_actions()
 
-def wait_for_element(web_driver_wait, locator):
+def wait_for_element(locator):
     try:
         element = web_driver_wait.until(EC.presence_of_element_located(locator))
         return element
@@ -332,7 +332,7 @@ def wait_for_element(web_driver_wait, locator):
         print(f"Timeout waiting for element with locator {locator}")
         return None
     
-def wait_to_click(web_driver_wait,locator):
+def wait_to_click(locator):
     try:
         element = web_driver_wait.until(EC.element_to_be_clickable(locator))
         return element
@@ -340,21 +340,21 @@ def wait_to_click(web_driver_wait,locator):
         print(f"Timeout waiting for element with locator {locator}")
         return None
 
-def click_element(action_chain, element):
+def click_element( element):
     try:
         action_chain.click(element).perform()
     except Exception as e:
         print(f"Error clicking on element: {e}")
 
 
-def double_click_element(action_chain, element):
+def double_click_element( element):
     try:
         action_chain.double_click(element).perform()
     except Exception as e:
         print(f"Error double clicking on element: {e}")
 
 
-def drag_and_drop_element(action_chain, source_element, destination_element):
+def drag_and_drop_element( source_element, destination_element):
     try:
         action_chain.drag_and_drop(source_element, destination_element).perform()
     except Exception as e:

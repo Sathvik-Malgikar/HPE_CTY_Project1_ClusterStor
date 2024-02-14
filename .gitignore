@@ -1,4 +1,4 @@
-*.pyc
+*.pyc -f
 /__pycache__
 *.ini
 /.pytest_cache

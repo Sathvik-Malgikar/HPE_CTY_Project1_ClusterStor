@@ -25,38 +25,38 @@ class DriveUtils:
         self.web_driver_wait = web_driver_wait
     
     def remove_file(self, file_name):
-        utilities.remove_file(self.driver, self.action_chain, self.web_driver_wait, file_name)
+        utilities.remove_file( file_name)
 
 
     def rename_folder(self, old_folder_name, new_folder_name):
-        utilities.rename_folder(self.driver, self.action_chain, self.web_driver_wait, old_folder_name, new_folder_name)
+        utilities.rename_folder( old_folder_name, new_folder_name)
 
     def click_trash_button(self):
-        utilities.click_trash_button(self.web_driver_wait)
+        utilities.click_trash_button()
     
-    def select_file(self, file_name):
-        utilities.select_file(self.driver, self.action_chain, self.web_driver_wait, file_name)
+    def select_file(self, file_name,mode):
+        utilities.select_file(file_name,show_more_needed=mode)
     
-    def clcik_on_restore_from_trash_button(self):
-        utilities.clcik_on_restore_from_trash_button(self.web_driver_wait)
+    def click_on_restore_from_trash_button(self):
+        utilities.click_on_restore_from_trash_button()
     
-    def clcik_on_home_button(self):
-        utilities.clcik_on_home_button(self.web_driver_wait)
+    def click_on_home_button(self):
+        utilities.click_on_home_button()
     
     def verify_restoration(self, file_name):
-        utilities.verify_restoration(self.web_driver_wait, file_name)
+        utilities.verify_restoration( file_name)
 
     def rename_action(self, new_file_name):
-        utilities.rename_action(self.web_driver_wait, new_file_name)
+        utilities.rename_action( new_file_name)
     
     def click_on_ok_button(self):
-        utilities.click_on_ok_button(self.web_driver_wait)
+        utilities.click_on_ok_button()
     
     def rename_verification(self, old_file_name, new_file_name):
-        utilities.rename_verification(self.driver, old_file_name, new_file_name)
+        utilities.rename_verification( old_file_name, new_file_name)
 
     def select_file_from_trash(self):
-        utilities.select_file_from_trash(self.driver, self.action_chain, self.web_driver_wait)
+        utilities.select_file_from_trash()
 
 """
     Pytest fixture for providing a Selenium WebDriver instance with Chrome.
@@ -149,6 +149,10 @@ def test_signin(drive_utils):
         pyautogui.press("-")
         pyautogui.keyUp("ctrl")
         
+    sleep(5)
+    utilities.clear_action_chain()
+    utilities.navigateTo("F1/Camera Roll/desktop.ini")
+        
 def test_dummy_test_prerequisite(driver):
     file_list_to_upload = ["test.txt","cty_ppt.pdf","test2.txt"]
 
@@ -186,7 +190,7 @@ Test function to rename a file in the Google Drive web GUI.
 def test_rename_file(drive_utils):
     old_file_name = files.file_name
     new_file_name = files.renamed_file_name
-    drive_utils.select_file(old_file_name)
+    drive_utils.select_file(old_file_name,False)
     drive_utils.rename_action(new_file_name)
     drive_utils.click_on_ok_button()
     drive_utils.rename_verification(old_file_name, new_file_name)
@@ -198,13 +202,13 @@ def test_undo_delete_action(drive_utils):
     file_name_to_retrieve = files.file_to_be_restored
     drive_utils.click_trash_button()
     drive_utils.select_file_from_trash()
-    drive_utils.clcik_on_restore_from_trash_button()
+    drive_utils.click_on_restore_from_trash_button()
     drive_utils.verify_restoration(file_name_to_retrieve)
 
 """
 Test function to rename a folder in the Google Drive web GUI.
 """
-def test_rename_folder(driver, action_chain, web_driver_wait):
+def test_rename_folder():
     old_folder_name = files.folder_name
     new_folder_name = files.renamed_folder_name
     drive_utils.select_file_from_trash(old_folder_name)
@@ -224,23 +228,23 @@ def folder_name():
     return files.create_folder_name
 
 
-def test_create_folder(driver,action_chain,web_driver_wait,folder_name):
-    new_btn_element=utilities.wait_for_element(web_driver_wait,locators.new_btn_locator)
-    utilities.click_element(action_chain,new_btn_element)
-    utilities.click_element(action_chain,new_btn_element)
+def test_create_folder(driver,folder_name):
+    new_btn_element=utilities.wait_for_element(locators.new_btn_locator)
+    utilities.click_element(new_btn_element)
+    utilities.click_element(new_btn_element)
 
-    input_field=utilities.wait_for_element(web_driver_wait,locators.input_field_locator)
+    input_field=utilities.wait_for_element(locators.input_field_locator)
     
     input_field.clear()
-    utilities.send_keys_to_element(driver,locators.input_field_locator, folder_name)
-    utilities.send_keys_to_element(driver,locators.input_field_locator, Keys.ENTER)
-    assert utilities.verify_folder_presence(driver,folder_name)
+    utilities.send_keys_to_element(locators.input_field_locator, folder_name)
+    utilities.send_keys_to_element(locators.input_field_locator, Keys.ENTER)
+    assert utilities.verify_folder_presence(folder_name)
     sleep(3)
 
 """
 ## Test function to upload new file in the Google Drive web GUI.
 """
-def test_upload_file(driver,web_driver_wait,action_chain):
+def test_upload_file(driver):
     FILE_TO_UPLOAD = "Screenshot (177).png" # this file is present in User folder
     
     utilities.click_on_new_button()
@@ -255,7 +259,7 @@ def test_upload_file(driver,web_driver_wait,action_chain):
 """
 ## Test function to download a file in the Google Drive web GUI.
 """  
-def test_download_file(driver,web_driver_wait,action_chain):
+def test_download_file(driver,web_driver_wait):
     web_driver_wait.until(EC.element_to_be_clickable(locators.file_selector(files.renamed_file_name)))
     sleep(2)
     file_div = driver.find_element(*locators.file_selector(files.renamed_file_name))
@@ -277,29 +281,22 @@ def test_remove_multiple_files(driver, action_chain, web_driver_wait):
         except FileNotFoundError as e:
             assert False,repr(e)
         finally:
-            action_chain.reset_actions()
-            for device in action_chain.w3c_actions.devices:
-                device.clear_actions()
+            utilities.clear_action_chain()
             driver.refresh()
 
 
 
-
-def test_copy_file(driver, action_chain, web_driver_wait):
-    file_name = 'test.txt'
-   
-    utilities.select_file(driver, action_chain, web_driver_wait, file_name)
+def test_copy_file(driver, action_chain):
+    utilities.select_file( files.file_name_for_copy,show_more_needed=True)
     action_chain.context_click().perform()
     sleep(5)
-    #make_copy_button=driver.find_element(*locators.make_a_copy_elemenent_locator)
-    make_a_copy_element = web_driver_wait.until(EC.element_to_be_clickable(locators.make_a_copy_elemenent_locator))
+    make_a_copy_element = utilities.wait_to_click(locators.make_a_copy_element_locator)
     make_a_copy_element.click()
 
     sleep(5)
-    
     driver.refresh()
     sleep(7)
-    copied_file_element = driver.find_element(*locators.copied_file_locator)
+    copied_file_element = utilities.find_element(locators.copied_file_locator)
     assert copied_file_element is not None
 
  
@@ -308,37 +305,37 @@ def test_copy_file(driver, action_chain, web_driver_wait):
 def move_file():
     return files.file_move_name
 
-def test_move_file(driver, action_chain, web_driver_wait,move_file):
+def test_move_file( move_file):
 
-    utilities.select_file(driver,action_chain,web_driver_wait,move_file,show_more_needed=True)
-    utilities.clear_action_chain(action_chain)
+    utilities.select_file(move_file,show_more_needed=True)
+    utilities.clear_action_chain()
     sleep(2)
-    file_element =utilities.find_element(driver,locators.file_move_locator)
-    destination_folder_element = utilities.find_element(driver,locators.destination_folder_element_locator)
-    utilities.drag_and_drop_element(action_chain, file_element, destination_folder_element)
+    file_element =utilities.find_element(locators.file_move_locator)
+    destination_folder_element = utilities.find_element(locators.destination_folder_element_locator)
+    utilities.drag_and_drop_element(file_element, destination_folder_element)
     sleep(5)
     
     try: 
-        destination_folder_element = utilities.find_element(driver,locators.destination_folder_element_locator)
-        utilities.double_click_element(action_chain,destination_folder_element)
+        destination_folder_element = utilities.find_element(locators.destination_folder_element_locator)
+        utilities.double_click_element(destination_folder_element)
         sleep(4)
     except StaleElementReferenceException:
         print("StaleElementReferenceException occurred. Retrying...")
 
-    file_in_destination = utilities.find_element(driver,locators.file_move_locator)
+    file_in_destination = utilities.find_element(locators.file_move_locator)
     assert file_in_destination is not None, "File has not been moved successfully to the destination folder"
-    my_drive_button = utilities.find_element(driver,locators.my_drive_button_locator)
+    my_drive_button = utilities.find_element(locators.my_drive_button_locator)
     my_drive_button.click()
     sleep(3)
-    moved_file_element = utilities.find_element(driver,locators.file_move_locator)
+    moved_file_element = utilities.find_element(locators.file_move_locator)
     assert not moved_file_element, "File is still present in the old folder"
     
     
 
-
+#TODO
 def test_view_file_info(driver, action_chain, web_driver_wait):
     file_name = 'test.txt'  # Replace with the file you want to view info for
-    utilities.select_file(driver, action_chain, web_driver_wait, file_name)
+    utilities.select_file( file_name)
     
 
     action_chain.send_keys("gd").perform()
@@ -361,11 +358,11 @@ def test_view_file_info(driver, action_chain, web_driver_wait):
         assert False, f"File info dialog for {file_name} is not visible"
 
         
-def test_delete_file_permanently(driver, action_chain, web_driver_wait):
+def test_delete_file_permanently(driver,   web_driver_wait):
     driver.refresh()
     sleep(5)
     file_name = 'test.txt'  # Replace with the file you want to delete permanently
-    utilities.remove_file(driver, action_chain, web_driver_wait, file_name)
+    utilities.remove_file( file_name)
 
     # Empty the trash
     web_driver_wait.until(
@@ -378,9 +375,9 @@ def test_delete_file_permanently(driver, action_chain, web_driver_wait):
         EC.presence_of_element_located(deleted_file_locator)
     )
     
-    utilities.clear_action_chain(action_chain)
+    utilities.clear_action_chain()
     # Select the file in the trash
-    utilities.select_file(driver, action_chain, web_driver_wait, file_name, show_more_needed=False)
+    utilities.select_file( file_name, show_more_needed=False)
     
     # Click on the "Delete forever" button
     delete_forever_button_locator = (By.XPATH, "//div[@aria-label='Delete forever']")
