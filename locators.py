@@ -37,3 +37,5 @@ delete_confirm_button_locator = (
     By.XPATH,
     "//button[contains(@jsname, 'moQGCc') and contains(@jsaction, 'click:cOuCgd')]/span[text()='Delete forever']"
     )
+
+rename_button_locator = (By.CSS_SELECTOR, 'div[aria-label="Rename"]')
