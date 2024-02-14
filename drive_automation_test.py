@@ -291,26 +291,13 @@ def test_remove_multiple_files(driver, action_chain, web_driver_wait):
 """
 ## Test function to logout from the Google Drive web GUI.
 """
-def test_logout(driver, action_chain, web_driver_wait):
-
-    # Click on the user profile button to open the menu
-    
-    user_profile_button_locator = (By.XPATH, '//*[@id="gb"]/div[2]/div[3]/div[1]/div[2]/div') 
-    web_driver_wait.until(EC.presence_of_element_located(user_profile_button_locator))
-    user_profile_button = driver.find_element(*user_profile_button_locator)
-    action_chain.move_to_element(user_profile_button).click().perform()
+def test_logout(driver, action_chain, web_driver_wait):     
+    user_profile_button_element = driver.find_element(*locators.user_profile_button_locator)
+    utilities.click_element(action_chain,user_profile_button_element)
     sleep(2)
-
-    # Click on the "Sign out" button in the menu
     try:
-        sign_out_button_locator = (By.XPATH, '//*[@id="yDmH0d"]/c-wiz/div/div/div/div/div[2]/div/div[2]/div[2]/span/span[2]')
-    
-        web_driver_wait.until(EC.presence_of_element_located(sign_out_button_locator))
-        sign_out_button = driver.find_element(*sign_out_button_locator)
-        action_chain.move_to_element(sign_out_button).click().perform()
-
-        # Wait for the logout to complete
-        web_driver_wait.until(EC.visibility_of_element_located((By.PARTIAL_LINK_TEXT, "Sign out")))
+        sign_out_button_element = driver.find_element(*locators.sign_out_button_locator)
+        utilities.click_element(action_chain,sign_out_button_element)
     except Exception as e:
         print("error occured ",e)
         
@@ -322,7 +309,7 @@ def test_copy_file(driver, action_chain, web_driver_wait,file_name_to_copy="test
     action_chain.context_click().perform()
     sleep(5)
     #make_copy_button=driver.find_element(*locators.make_a_copy_elemenent_locator)
-    make_a_copy_element = web_driver_wait.until(EC.element_to_be_clickable(locators.make_a_copy_elemenent_locator))
+    make_a_copy_element = web_driver_wait.until(EC.element_to_be_clickable(locators.make_a_copy_element_locator))
     make_a_copy_element.click()
 
     sleep(5)
@@ -406,75 +393,34 @@ def test_move_file(driver, action_chain, web_driver_wait,move_file):
     my_drive_button.click()
     sleep(3)
     moved_file_element = utilities.find_element(driver,locators.file_move_locator)
-    assert not moved_file_element, "File is still present in the old folder"
-
-    
+    assert not moved_file_element, "File is still present in the old folder"   
 
 
-def test_view_file_info(driver, action_chain, web_driver_wait):
-    file_name = 'test.txt'  # Replace with the file you want to view info for
-    utilities.select_file(driver, action_chain, web_driver_wait, file_name)
-    
-
-    action_chain.send_keys("gd").perform()
-    
-    # Wait for the file info dialog to appear
-    web_driver_wait.until(
-        EC.presence_of_element_located((By.CSS_SELECTOR, "div.wbg7nb"))
-    )
-    
-    # Assert that the file info dialog is visible
-    try:
-        file_info_dialog_locator = (
-            By.CSS_SELECTOR,
-            "div.wbg7nb",
-        )
-        web_driver_wait.until(
-            EC.presence_of_element_located(file_info_dialog_locator)
-        )
+def test_view_file_info(driver, action_chain, web_driver_wait):    
+    utilities.select_file(driver, action_chain, web_driver_wait, files.view_info_file_name)
+    action_chain.send_keys("gd").perform()   
+    try:        
+        web_driver_wait.until(EC.presence_of_element_located(locators.file_info_dialog_locator))
     except:
-        assert False, f"File info dialog for {file_name} is not visible"
+        assert False, f"File info dialog for {files.view_info_file_name} is not visible"
 
         
 def test_delete_file_permanently(driver, action_chain, web_driver_wait):
     driver.refresh()
-    sleep(5)
-    file_name = 'test.txt'  # Replace with the file you want to delete permanently
-    utilities.remove_file(driver, action_chain, web_driver_wait, file_name)
-
-    # Empty the trash
-    web_driver_wait.until(
-        EC.element_to_be_clickable((By.XPATH, "//span[text()='Trash']"))
-    ).click()
-    
-    # Wait for the deleted file to appear in the trash
-    deleted_file_locator = locators.file_selector(file_name)
-    web_driver_wait.until(
-        EC.presence_of_element_located(deleted_file_locator)
-    )
-    
-    utilities.clear_action_chain(action_chain)
-    # Select the file in the trash
-    utilities.select_file(driver, action_chain, web_driver_wait, file_name, show_more_needed=False)
-    
-    # Click on the "Delete forever" button
-    delete_forever_button_locator = (By.XPATH, "//div[@aria-label='Delete forever']")
-    web_driver_wait.until(
-        EC.element_to_be_clickable(delete_forever_button_locator)
-    ).click()
-    
-    # Add a sleep for 2 seconds to even it out
-    sleep(2)
-
-    
-    web_driver_wait.until(
-        EC.element_to_be_clickable(locators.delete_confirm_button_locator)
-    )
-    
-    # Assert that the file is permanently deleted
+    sleep(5)    
+    utilities.remove_file(driver, action_chain, web_driver_wait, files.delete_forever_file_name)    
+    trash_btn_element=utilities.wait_for_element(web_driver_wait,locators.trash_button_locator)
+    utilities.click_element(action_chain,trash_btn_element)    
+    deleted_file_locator = locators.file_selector(files.delete_forever_file_name)
+    web_driver_wait.until(EC.presence_of_element_located(deleted_file_locator))    
+    utilities.clear_action_chain(action_chain)    
+    utilities.select_file(driver, action_chain, web_driver_wait, files.delete_forever_file_name, show_more_needed=False)    
+    delete_forever_btn_element=utilities.wait_for_element(web_driver_wait,locators.delete_forever_button_locator) 
+    utilities.click_element(action_chain,delete_forever_btn_element)      
+    sleep(2)    
     try:
-        confirm_btn_element = driver.find_element(*locators.delete_confirm_button_locator)
-        confirm_btn_element.click()
+        delete_confirm_btn_element = utilities.wait_for_element(web_driver_wait,locators.delete_confirm_button_locator) 
+        utilities.click_element(action_chain,delete_confirm_btn_element) 
         sleep(3)
     except:
         assert False, "Error occured"
