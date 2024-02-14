@@ -150,8 +150,7 @@ def test_signin(drive_utils):
         pyautogui.keyUp("ctrl")
         
     sleep(5)
-    utilities.clear_action_chain()
-    utilities.navigateTo("F1/Camera Roll/desktop.ini")
+
         
 def test_dummy_test_prerequisite(driver):
     file_list_to_upload = ["test.txt","cty_ppt.pdf","test2.txt"]

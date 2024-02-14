@@ -39,18 +39,14 @@ Utility function to select a file in Google Drive GUI
 """
 
 def select_file(file_name,show_more_needed=True): # show_more_needed is to ensure backwards compatibility
-
     if(show_more_needed): # old testcases do not have show_more param, so by default True, 
-       # newer testcases can explicitly mention if show more button is to be clicked or not before looking for file
-            
+       # newer testcases can explicitly mention if show more button is to be clicked or not before looking for file         
 
         web_driver_wait.until(
             EC.presence_of_element_located(
                 locators.show_more_files
             ),
-        )
-
-        
+        )      
         show_more_button = driver.find_element(
         *locators.show_more_files
         )
@@ -73,6 +69,8 @@ def select_file(file_name,show_more_needed=True): # show_more_needed is to ensur
         )
         action_chain.move_to_element(file_element).click()
         action_chain.perform()
+        
+    clear_action_chain()
 
 """
 Utility function to select a folder in Google Drive GUI
@@ -153,14 +151,10 @@ def rename_folder( old_folder_name, new_folder_name):
         folder_element = driver.find_element(*locators.folder_locator)
         action_chain.move_to_element(folder_element).perform()
         sleep(3)
-        action_chain.reset_actions()
-        for device in action_chain.w3c_actions.devices:
-            device.clear_actions()
+        clear_action_chain()
         sleep(1)
         action_chain.move_to_element(folder_element).send_keys("n").perform()
-        action_chain.reset_actions()
-        for device in action_chain.w3c_actions.devices:
-            device.clear_actions()
+        clear_action_chain()
 
         sleep(3)
 
@@ -405,7 +399,8 @@ def navigateTo(path):
     for foldername in path.split("/"): #A/B/eruier.mp3
         if verify_folder_presence(foldername):
             open_folder(foldername)
-            sleep(3)
+            sleep(4)
+            clear_action_chain()
         else:
             print(f"navigateTo {path} failed, {foldername} not found!")
             return -1
