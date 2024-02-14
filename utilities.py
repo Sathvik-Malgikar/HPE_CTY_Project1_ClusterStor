@@ -76,7 +76,7 @@ def select_file(file_name, show_more_needed=True):
         action_chain.move_to_element(file_element).click()
         action_chain.perform()
 
-    clear_action_chain()
+        clear_action_chain()
 
 
 """
@@ -108,9 +108,7 @@ def select_folder(folder_name, show_more_needed=True):
         action_chain.move_to_element(folder_element).click().perform()
         sleep(3)
 
-        action_chain.reset_actions()
-        for device in action_chain.w3c_actions.devices:
-            device.clear_actions()
+        clear_action_chain()
         sleep(1)
 
 
@@ -193,18 +191,19 @@ def rename_folder(old_folder_name, new_folder_name):
 
 
 def rename_action(new_file_name):
-    rename_button = web_driver_wait.until(
-        EC.element_to_be_clickable(locators.rename_button_locator))
-    rename_button.click()
-    sleep(1)
+    pyautogui.press('n')
     # Send keys for the new file name
     pyautogui.write(new_file_name)
+    clear_action_chain()
 
 
 def click_on_ok_button():
+    # WARNING : assumes empty action chain !
+    clear_action_chain()
     ok_button = web_driver_wait.until(
         EC.element_to_be_clickable(locators.ok_button_locator))
     ok_button.click()
+    clear_action_chain()
     sleep(10)
 
 
