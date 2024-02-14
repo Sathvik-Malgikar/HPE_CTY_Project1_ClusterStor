@@ -16,3 +16,6 @@ file_name_for_copy = 'test.txt'
 expected_copied_file_name='Copy of ' + file_name_for_copy
 
 create_folder_name="Applied crypto"
+
+delete_forever_file_name="abc.txt"
+view_info_file_name="def.txt"
