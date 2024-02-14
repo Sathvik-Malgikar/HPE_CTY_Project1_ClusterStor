@@ -51,7 +51,7 @@ def web_driver_wait(driver):
 """
     Test function for signing into Google Drive using Selenium WebDriver.
 """
-def test_signin(driver, action_chain, web_driver_wait):
+def test_signin(driver,web_driver_wait,action_chain):
     driver.get("https://www.google.com/intl/en-US/drive/")
     driver.maximize_window()
     sleep(0.8)
@@ -150,39 +150,56 @@ def test_undo_delete_action(driver, action_chain, web_driver_wait):
 """
 ## Test function to create a new folder in the Google Drive web GUI.
 """
-def test_create_folder(driver, action_chain, web_driver_wait):
+# def test_create_folder(driver, action_chain, web_driver_wait):
    
-    new_btn = web_driver_wait.until(EC.element_to_be_clickable(locators.new_btn_locator))
-    new_btn.click()
-    sleep(4)
+#     new_btn = web_driver_wait.until(EC.element_to_be_clickable(locators.new_btn_locator))
+#     new_btn.click()
+#     sleep(4)
 
     
-    new_folder_option = web_driver_wait.until(
-        EC.element_to_be_clickable(locators.new_folder_option_locator))
+#     new_folder_option = web_driver_wait.until(
+#         EC.element_to_be_clickable(locators.new_folder_option_locator))
 
     
-    action_chain.move_to_element(new_folder_option).click().perform()
+#     action_chain.move_to_element(new_folder_option).click().perform()
 
    
 
-    web_driver_wait.until(EC.presence_of_element_located(locators.input_field_locator))
+#     web_driver_wait.until(EC.presence_of_element_located(locators.input_field_locator))
 
    
-    input_field = driver.find_element(*locators.input_field_locator)
+#     input_field = driver.find_element(*locators.input_field_locator)
+#     input_field.clear()
+#     # sleep(5)
+
+#     input_field.send_keys(files.create_folder_name)
+#     input_field.send_keys(Keys.ENTER)
+
+#     sleep(10)
+#     xpath_expression = f"//*[text()='{files.create_folder_name}']"
+   
+#     folder_element = web_driver_wait.until(
+#         EC.presence_of_element_located((By.XPATH,xpath_expression))
+#     )
+#     assert folder_element.is_displayed(), "Folder element is not visible"
+
+@pytest.fixture
+def folder_name():
+    return files.create_folder_name
+
+
+def test_create_folder(driver,action_chain,web_driver_wait,folder_name):
+    new_btn_element=utilities.wait_for_element(web_driver_wait,locators.new_btn_locator)
+    utilities.click_element(action_chain,new_btn_element)
+    utilities.click_element(action_chain,new_btn_element)
+
+    input_field=utilities.wait_for_element(web_driver_wait,locators.input_field_locator)
+    
     input_field.clear()
-    # sleep(5)
-
-    input_field.send_keys(files.create_folder_name)
-    input_field.send_keys(Keys.ENTER)
-
-    sleep(10)
-    xpath_expression = f"//*[text()='{files.create_folder_name}']"
-   
-    folder_element = web_driver_wait.until(
-        EC.presence_of_element_located((By.XPATH,xpath_expression))
-    )
-    assert folder_element.is_displayed(), "Folder element is not visible"
-
+    utilities.send_keys_to_element(driver,locators.input_field_locator, folder_name)
+    utilities.send_keys_to_element(driver,locators.input_field_locator, Keys.ENTER)
+    assert utilities.verify_folder_presence(driver,folder_name)
+    sleep(3)
 
 """
 ## Test function to upload new file in the Google Drive web GUI.
@@ -300,75 +317,98 @@ def test_logout(driver, action_chain, web_driver_wait):
     # Assert that the login screen is visible after logging out
     assert driver.title == "Home - Google Drive"
 
-def test_copy_file(driver, action_chain, web_driver_wait):
-    
-   
-    utilities.select_file(driver, action_chain, web_driver_wait, files.file_name_for_copy)
+def test_copy_file(driver, action_chain, web_driver_wait,file_name_to_copy="test.txt"):
+    utilities.select_file(driver, action_chain, web_driver_wait, files.file_name_for_copy,show_more_needed=True)
     action_chain.context_click().perform()
-
     sleep(5)
     #make_copy_button=driver.find_element(*locators.make_a_copy_elemenent_locator)
     make_a_copy_element = web_driver_wait.until(EC.element_to_be_clickable(locators.make_a_copy_elemenent_locator))
     make_a_copy_element.click()
- 
+
     sleep(5)
     
     driver.refresh()
     sleep(7)
-    
-
     copied_file_element = driver.find_element(*locators.copied_file_locator)
     assert copied_file_element is not None
 
  
 
-def test_move_file(driver, action_chain, web_driver_wait):
+# def test_move_file(driver, action_chain, web_driver_wait):
+#     utilities.select_file(driver,action_chain,web_driver_wait,files.file_move_name)
+#     utilities.clear_action_chain(action_chain)
+#     sleep(2)
+    
+#     file_element = driver.find_element(*locators.file_move_locator)
+#     destination_folder_element = driver.find_element(*locators.destination_folder_element_locator)
 
-    utilities.select_file(driver,action_chain,web_driver_wait,files.file_move_name,show_more_needed=True)
+#     action_chain.drag_and_drop(file_element, destination_folder_element).perform()
+#     sleep(5)
+    
+#     try:
+        
+#         destination_folder_element = driver.find_element(*locators.destination_folder_element_locator)
+
+#         # Double click on the destination_folder_element
+#         action_chain.double_click(destination_folder_element).perform()
+#         sleep(4)
+#     except StaleElementReferenceException:
+#         print("StaleElementReferenceException occurred. Retrying...")
+
+#     sleep(2)
+
+#     try:
+#         file_in_destination = driver.find_element(*locators.file_move_locator)
+#     except NoSuchElementException:
+#     # Set moved_file_element to None if the element is not found
+#         file_in_destination = None
+
+#     assert file_in_destination is not None, "File has not been moved successfully to the destination folder"
+
+
+#     my_drive_button = driver.find_element(*locators.my_drive_button_locator)
+#     my_drive_button.click()
+#     sleep(3)
+    
+#     try:
+#         moved_file_element = driver.find_element(*locators.file_move_locator)
+#     except NoSuchElementException:
+#     # Set moved_file_element to None if the element is not found
+#         moved_file_element = None
+   
+#     assert not moved_file_element, "File is still present in the old folder"
+
+    
+@pytest.fixture
+def move_file():
+    return files.file_move_name
+
+def test_move_file(driver, action_chain, web_driver_wait,move_file):
+
+    utilities.select_file(driver,action_chain,web_driver_wait,move_file,show_more_needed=True)
     utilities.clear_action_chain(action_chain)
     sleep(2)
-    
-    file_element = driver.find_element(*locators.file_move_locator)
-    destination_folder_element = driver.find_element(*locators.destination_folder_element_locator)
-
-    action_chain.drag_and_drop(file_element, destination_folder_element).perform()
+    file_element =utilities.find_element(driver,locators.file_move_locator)
+    destination_folder_element = utilities.find_element(driver,locators.destination_folder_element_locator)
+    utilities.drag_and_drop_element(action_chain, file_element, destination_folder_element)
     sleep(5)
     
-    try:
-        
-        destination_folder_element = driver.find_element(*locators.destination_folder_element_locator)
-
-        # Double click on the destination_folder_element
-        action_chain.double_click(destination_folder_element).perform()
+    try: 
+        destination_folder_element = utilities.find_element(driver,locators.destination_folder_element_locator)
+        utilities.double_click_element(action_chain,destination_folder_element)
         sleep(4)
     except StaleElementReferenceException:
         print("StaleElementReferenceException occurred. Retrying...")
 
-    sleep(2)
-
-    try:
-        file_in_destination = driver.find_element(*locators.file_move_locator)
-    except NoSuchElementException:
-    # Set moved_file_element to None if the element is not found
-        file_in_destination = None
-
+    file_in_destination = utilities.find_element(driver,locators.file_move_locator)
     assert file_in_destination is not None, "File has not been moved successfully to the destination folder"
-
-
-    my_drive_button = driver.find_element(*locators.my_drive_button_locator)
+    my_drive_button = utilities.find_element(driver,locators.my_drive_button_locator)
     my_drive_button.click()
     sleep(3)
-    
-    try:
-        moved_file_element = driver.find_element(*locators.file_move_locator)
-    except NoSuchElementException:
-    # Set moved_file_element to None if the element is not found
-        moved_file_element = None
-   
+    moved_file_element = utilities.find_element(driver,locators.file_move_locator)
     assert not moved_file_element, "File is still present in the old folder"
 
     
-
 
 
 def test_view_file_info(driver, action_chain, web_driver_wait):
