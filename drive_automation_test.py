@@ -425,4 +425,4 @@ def test_delete_file_permanently(driver, action_chain, web_driver_wait):
     except:
         assert False, "Error occured"
     else:
-        assert True, f"{file_name} is permanently deleted"
+        assert True, f"{files.delete_forever_file_name} is permanently deleted"
