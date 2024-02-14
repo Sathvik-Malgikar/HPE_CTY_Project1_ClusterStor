@@ -192,14 +192,14 @@ def test_upload_file(driver,web_driver_wait,action_chain):
     
     # clicks on new button
     web_driver_wait.until(EC.element_to_be_clickable(locators.new_button_selector))
-    btn = driver.find_element(*locators.new_button_selector)
-    btn.click()
+    new_button = driver.find_element(*locators.new_button_selector)
+    new_button.click()
     sleep(2)
     
     # clicks on new file
     web_driver_wait.until(EC.element_to_be_clickable(locators.file_upload_button_selector))
-    btn = driver.find_element(*locators.file_upload_button_selector)
-    btn.click()
+    upload_button = driver.find_element(*locators.file_upload_button_selector)
+    upload_button.click()
     sleep(3)
     
     # types into dialogue box
@@ -245,12 +245,12 @@ def test_upload_file(driver,web_driver_wait,action_chain):
 def test_download_file(driver,web_driver_wait,action_chain):
     web_driver_wait.until(EC.element_to_be_clickable(locators.file_selector(files.renamed_file_name)))
     sleep(2)
-    btn = driver.find_element(*locators.file_selector(files.renamed_file_name))
-    btn.click()
+    file_div = driver.find_element(*locators.file_selector(files.renamed_file_name))
+    file_div.click()
     web_driver_wait.until(EC.element_to_be_clickable(locators.download_file_selector))
     sleep(2)
-    btn = driver.find_element(*locators.download_file_selector)
-    btn.click()
+    download_button = driver.find_element(*locators.download_file_selector)
+    download_button.click()
     sleep(3)
 
 """
