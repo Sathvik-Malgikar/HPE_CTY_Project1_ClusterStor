@@ -23,6 +23,7 @@ import utilities
 def driver():
     # svc = Service(executable_path="./chromedriver.exe")
     webdriver = Chrome(executable_path="./chromedriver.exe")
+    utilities.initialize_driver(webdriver)
     yield webdriver
     webdriver.quit()
 
@@ -30,9 +31,10 @@ def driver():
 """
     Pytest fixture for providing an ActionChains instance for Selenium WebDriver.
 """
-@pytest.fixture
+@pytest.fixture(scope="session")
 def action_chain(driver):
     chain = ActionChains(driver)
+    utilities.initialize_action_chain(chain)
     yield chain
     chain.reset_actions()
     for device in chain.w3c_actions.devices:
@@ -42,9 +44,10 @@ def action_chain(driver):
 """
     Pytest fixture for providing a WebDriverWait instance for Selenium WebDriver.
 """
-@pytest.fixture
+@pytest.fixture(scope="session")
 def web_driver_wait(driver):
     w_wait = WebDriverWait(driver, 10)
+    utilities.initialize_web_driver_wait(w_wait)
     yield w_wait
 
 
@@ -97,14 +100,25 @@ def test_signin(driver,web_driver_wait,action_chain):
         pyautogui.press("-")
         pyautogui.keyUp("ctrl")
         
+def test_dummy_test_prerequisite(driver):
+    file_list_to_upload = ["test.txt","cty_ppt.pdf","test2.txt"]
 
+    for file in file_list_to_upload:
+    
+        utilities.click_on_new_button()
+        
+        utilities.type_into_dialogue_box(file)
+        
+        utilities.wait_till_upload() 
+        driver.refresh()
+        sleep(5)
 
 """
     Test function to retrieve filenames from the Google Drive web GUI.
 """
-def test_get_filenames(driver, action_chain, web_driver_wait):
+def test_get_filenames(driver):
     file_name_divs = driver.find_elements_by_css_selector("div.KL4NAf")
-
+    
     sleep(4)
     assert len(file_name_divs) > 0
 
@@ -207,54 +221,14 @@ def test_create_folder(driver,action_chain,web_driver_wait,folder_name):
 def test_upload_file(driver,web_driver_wait,action_chain):
     FILE_TO_UPLOAD = "Screenshot (177).png" # this file is present in User folder
     
-    # clicks on new button
-    web_driver_wait.until(EC.element_to_be_clickable(locators.new_button_selector))
-    new_button = driver.find_element(*locators.new_button_selector)
-    new_button.click()
-    sleep(2)
+    utilities.click_on_new_button()
     
-    # clicks on new file
-    web_driver_wait.until(EC.element_to_be_clickable(locators.file_upload_button_selector))
-    upload_button = driver.find_element(*locators.file_upload_button_selector)
-    upload_button.click()
-    sleep(3)
+    utilities.type_into_dialogue_box(FILE_TO_UPLOAD)
     
-    # types into dialogue box
-    pyautogui.typewrite(FILE_TO_UPLOAD)
-    sleep(1)
-    pyautogui.press("enter")
-    sleep(5)
+    utilities.wait_till_upload() # this is utility solely because prerequisites aso reuses this function
     
-    # try block to deal with situation of file being there already
-    try:
-        # to see if the warning of file being alreay present shows up
-        driver.find_element(*locators.file_already_present_text)
-    except EXC.NoSuchElementException:
-        
-        print("file not already in google drive, uploading as new file")
-    else:
-        # to deal with file already exisiting
-        pyautogui.press("tab")
-        pyautogui.press("tab")
-        
-        sleep(0.5)
-        pyautogui.press("space")
-        sleep(1)
-    finally:
-        # wait till upload completes, max 10 seconds for now 
-        web_driver_wait.until(EC.presence_of_element_located(locators.upload_complete_text))
-        sleep(2)
-        # a refresh to make sure file shows up
-        driver.refresh()
-        
-        # a small wait to ensure page is stable after refresh
-        web_driver_wait.until(EC.presence_of_element_located(locators.file_name_containerdiv))
-        sleep(5)
-        
-        # looks for the uploade file in drive 
-        file_name_divs = driver.find_elements(*locators.file_name_containerdiv)
-        file_names= list(map(lambda a:a.text, file_name_divs))
-        assert FILE_TO_UPLOAD in file_names
+    assert utilities.verify_file_presence(driver,FILE_TO_UPLOAD,10)
+    
     
 """
 ## Test function to download a file in the Google Drive web GUI.

@@ -14,6 +14,26 @@ from selenium.common.exceptions import TimeoutException
 import locators
 import files
 
+
+web_driver_wait : WebDriverWait
+action_chain: ActionChains
+driver: Chrome
+
+def initialize_driver(drv ):
+    global driver
+
+    driver  = drv
+def initialize_web_driver_wait(wdw ):
+    global web_driver_wait
+
+    web_driver_wait  = wdw
+def initialize_action_chain(ac ):
+    global action_chain
+
+    action_chain  = ac
+
+    
+
 """
 Utility function to select a file in Google Drive GUI
 """
@@ -226,20 +246,20 @@ def undo_delete_action(driver, action_chain, web_driver_wait, file_to_be_retriev
         assert False, f"File '{file_to_be_retrieved}' Not Restored"
 
 
-def is_file_found(driver, web_driver_wait, file_name):
+def open_folder( folder_name):
 
+    # assumes folder already verified
     
     try:
         # Use a CSS selector to find the file by its name
-        file_locator = (By.CSS_SELECTOR, f'div.uXB7xe[aria-label*="{file_name}"]')
-        condition = EC.presence_of_element_located(file_locator)
-        web_driver_wait.until(condition)
+        file_locator = (By.CSS_SELECTOR, f'div.uXB7xe[aria-label*="{folder_name}"]')
+        folder_element = driver.find_element(*file_locator)
+        double_click_element(folder_element)
+        
         return True
     except EXC.TimeoutException as e:
         print(f"TimeoutException: {e}")
         return False
-
-
 
 
 def send_keys_to_element(driver, element_locator, text):
@@ -256,18 +276,6 @@ def find_element(driver, locator):
     except NoSuchElementException:
         print(f"Element not found with locator {locator}")
         return None
-
-
-def verify_file_presence(driver, file_name, timeout=10):
-    
-    file_locator = (By.CSS_SELECTOR, f'div.uXB7xe[aria-label*="{file_name}"]')
-    try:
-        WebDriverWait(driver, timeout).until(EC.presence_of_element_located(file_locator))
-        return True
-
-    except TimeoutException:
-        print(f"File element with name '{file_name}' not found within {timeout} seconds.")
-        return False
 
 def verify_folder_presence(driver, folder_name, timeout=10):
     folder_locator = (By.XPATH, f'//div[@class="uXB7xe" and contains(@aria-label,"{folder_name}" )]')
@@ -318,3 +326,57 @@ def drag_and_drop_element(action_chain, source_element, destination_element):
         action_chain.drag_and_drop(source_element, destination_element).perform()
     except Exception as e:
         print(f"Error dragging and dropping element: {e}")
+        
+def click_on_new_button():
+    # clicks on new button
+    web_driver_wait.until(EC.element_to_be_clickable(locators.new_button_selector))
+    new_button = driver.find_element(*locators.new_button_selector)
+    new_button.click()
+    sleep(2)
+    
+    # clicks on new file
+    web_driver_wait.until(EC.element_to_be_clickable(locators.file_upload_button_selector))
+    upload_button = driver.find_element(*locators.file_upload_button_selector)
+    upload_button.click()
+    sleep(3)
+    
+def type_into_dialogue_box(FILE_TO_UPLOAD):
+    # types into dialogue box
+    pyautogui.typewrite(FILE_TO_UPLOAD)
+    sleep(1)
+    pyautogui.press("enter")
+    sleep(5)
+    
+def wait_till_upload():
+    # try block to deal with situation of file being there already
+    try:
+        # to see if the warning of file being alreay present shows up
+        driver.find_element(*locators.file_already_present_text)
+    except EXC.NoSuchElementException:
+        
+        print("file not already in google drive, uploading as new file")
+    else:
+        # to deal with file already exisiting
+        pyautogui.press("tab")
+        pyautogui.press("tab")
+        
+        sleep(0.5)
+        pyautogui.press("space")
+        sleep(1)
+    finally:
+        # wait till upload completes, max 10 seconds for now 
+        web_driver_wait.until(EC.presence_of_element_located(locators.upload_complete_text))
+        sleep(2)
+        
+def navigateTo(path):
+    for foldername in path.split("/"): #A/B/eruier.mp3
+        if verify_folder_presence(foldername):
+            open_folder(foldername)
+            sleep(3)
+        else:
+            print(f"navigateTo {path} failed, {foldername} not found!")
+            return -1
+        
+        
+        
+    
