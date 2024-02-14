@@ -19,10 +19,12 @@ file_name_selector = (By.XPATH, f'//div[@class="uXB7xe" and contains(@aria-label
 renamed_file_name_selector = (By.XPATH, f'//div[@class="uXB7xe" and contains(@aria-label,"{files.renamed_file_name}" )]',)
 
 trash_button_locator = (By.XPATH, '//div[@aria-label="Trash"]')
-trashed_file_locator = (By.XPATH, f'//div[@class="uXB7xe" and contains(@aria-label,"{files.trashed_file_name}" )]',)
+trashed_file_locator = (By.XPATH, f'//div[@class="uXB7xe" and contains(@aria-label,"{files.file_to_be_restored}" )]',)
 home_button_locator = (By.XPATH, '//div[@aria-label="Home"]')
-restored_file_locator = (By.XPATH, f'//div[@class="uXB7xe" and contains(@aria-label,"{files.trashed_file_name}" )]',)
-restore_from_trash_button_locator = (By.XPATH, '//div[@aria-label="Restore from trash"]')
+restored_file_locator = (By.XPATH, f'//div[@class="uXB7xe" and contains(@aria-label,"{files.file_to_be_restored}" )]',)
+# restore_from_trash_button_locator = (By.XPATH, '//div[@aria-label="Restore from trash"]')
+restore_from_trash_button_locator = (By.CSS_SELECTOR, 'div.h-sb-Ic.h-R-d.a-c-d.a-s-Ba-d-Mr-Be-nAm6yf[aria-label="Restore from trash"]')
+
 
 
 show_more_files = (By.CSS_SELECTOR,'button.UywwFc-d.UywwFc-d-Qu-dgl2Hf')
@@ -47,3 +49,4 @@ make_a_copy_element_locator=(By.CSS_SELECTOR, 'div[aria-label="Make a copy"]')
 new_btn_locator=(By.CLASS_NAME,'jYPt8c',)
 new_folder_option_locator=(By.CSS_SELECTOR, "div.a-v-T[data-tooltip='New folder']")
 input_field_locator=(By.CLASS_NAME, "LUNIy")
+rename_button_locator = (By.CSS_SELECTOR, 'div[aria-label="Rename"]')

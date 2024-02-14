@@ -14,12 +14,54 @@ from selenium.common.exceptions import StaleElementReferenceException
 
 import locators
 import files
+from selenium.common.exceptions import StaleElementReferenceException
 import utilities
+
+
+class DriveUtils:
+    def __init__(self, driver : Chrome, action_chain : ActionChains, web_driver_wait : WebDriverWait):
+        self.driver = driver
+        self.action_chain = action_chain
+        self.web_driver_wait = web_driver_wait
+    
+    def remove_file(self, file_name):
+        utilities.remove_file(self.driver, self.action_chain, self.web_driver_wait, file_name)
+
+
+    def rename_folder(self, old_folder_name, new_folder_name):
+        utilities.rename_folder(self.driver, self.action_chain, self.web_driver_wait, old_folder_name, new_folder_name)
+
+    def click_trash_button(self):
+        utilities.click_trash_button(self.web_driver_wait)
+    
+    def select_file(self, file_name):
+        utilities.select_file(self.driver, self.action_chain, self.web_driver_wait, file_name)
+    
+    def clcik_on_restore_from_trash_button(self):
+        utilities.clcik_on_restore_from_trash_button(self.web_driver_wait)
+    
+    def clcik_on_home_button(self):
+        utilities.clcik_on_home_button(self.web_driver_wait)
+    
+    def verify_restoration(self, file_name):
+        utilities.verify_restoration(self.web_driver_wait, file_name)
+
+    def rename_action(self, new_file_name):
+        utilities.rename_action(self.web_driver_wait, new_file_name)
+    
+    def click_on_ok_button(self):
+        utilities.click_on_ok_button(self.web_driver_wait)
+    
+    def rename_verification(self, old_file_name, new_file_name):
+        utilities.rename_verification(self.driver, old_file_name, new_file_name)
+
+    def select_file_from_trash(self):
+        utilities.select_file_from_trash(self.driver, self.action_chain, self.web_driver_wait)
 
 """
     Pytest fixture for providing a Selenium WebDriver instance with Chrome.
 """
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="session", autouse=True)
 def driver():
     # svc = Service(executable_path="./chromedriver.exe")
     webdriver = Chrome(executable_path="./chromedriver.exe")
@@ -31,7 +73,7 @@ def driver():
 """
     Pytest fixture for providing an ActionChains instance for Selenium WebDriver.
 """
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="session", autouse=True)
 def action_chain(driver):
     chain = ActionChains(driver)
     utilities.initialize_action_chain(chain)
@@ -44,52 +86,59 @@ def action_chain(driver):
 """
     Pytest fixture for providing a WebDriverWait instance for Selenium WebDriver.
 """
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="session", autouse=True)
 def web_driver_wait(driver):
     w_wait = WebDriverWait(driver, 10)
     utilities.initialize_web_driver_wait(w_wait)
     yield w_wait
 
+@pytest.fixture(scope="session", autouse=True)
+def drive_utils(driver, action_chain, web_driver_wait):
+    return DriveUtils(driver, action_chain, web_driver_wait)
+
+
 
 """
     Test function for signing into Google Drive using Selenium WebDriver.
 """
-def test_signin(driver,web_driver_wait,action_chain):
-    driver.get("https://www.google.com/intl/en-US/drive/")
-    driver.maximize_window()
+def test_signin(drive_utils):
+    drive_utils.driver.get("https://www.google.com/intl/en-US/drive/")
+    drive_utils.driver.maximize_window()
     sleep(0.8)
 
-    web_driver_wait.until(EC.presence_of_element_located((By.LINK_TEXT, "Sign in")))
+    drive_utils.web_driver_wait.until(EC.presence_of_element_located((By.LINK_TEXT, "Sign in")))
 
-    signin_ele = driver.find_element(By.LINK_TEXT, "Sign in")
+    signin_ele = drive_utils.driver.find_element(By.LINK_TEXT, "Sign in")
     signin_ele.click()
     sleep(1.3)
     # opened by clicking sign-in anchor tag
-    sign_in_tab = driver.window_handles[-1]
-    driver.switch_to.window(sign_in_tab)
+    sign_in_tab = drive_utils.driver.window_handles[-1]
+    drive_utils.driver.switch_to.window(sign_in_tab)
     sleep(1.3)
     parser = configparser.ConfigParser()
     parser.read("config.ini")
     account_email_id = parser.get("Account Credentials", "email")
     print("Sending email")
-    action_chain.send_keys(account_email_id)
-    action_chain.send_keys(Keys.ENTER)
-    action_chain.perform()
-    web_driver_wait.until(
+    drive_utils.action_chain.send_keys(account_email_id)
+    drive_utils.action_chain.send_keys(Keys.ENTER)
+    drive_utils.action_chain.perform()
+    drive_utils.web_driver_wait.until(
         EC.presence_of_element_located(
             (By.XPATH, "//span[contains(text(), 'Welcome')]")
         ),
     )
     sleep(1.5)  # to deal with input animation
-    utilities.clear_action_chain(action_chain)
+    drive_utils.action_chain.reset_actions()
+    for device in drive_utils.action_chain.w3c_actions.devices:
+        device.clear_actions()
     account_pwd = parser.get("Account Credentials", "password")
-    action_chain.send_keys(account_pwd)
-    action_chain.send_keys(Keys.ENTER)
-    action_chain.perform()
+    drive_utils.action_chain.send_keys(account_pwd)
+    drive_utils.action_chain.send_keys(Keys.ENTER)
+    drive_utils.action_chain.perform()
     sleep(5)
   
     try:
-        web_driver_wait.until(EC.title_is("Home - Google Drive"))
+        drive_utils.web_driver_wait.until(EC.title_is("Home - Google Drive"))
         assert True
        
     except TimeoutError:
@@ -116,9 +165,8 @@ def test_dummy_test_prerequisite(driver):
 """
     Test function to retrieve filenames from the Google Drive web GUI.
 """
-def test_get_filenames(driver):
-    file_name_divs = driver.find_elements_by_css_selector("div.KL4NAf")
-    
+def test_get_filenames(drive_utils):
+    file_name_divs = drive_utils.driver.find_elements_by_css_selector("div.KL4NAf")
     sleep(4)
     assert len(file_name_divs) > 0
 
@@ -126,21 +174,32 @@ def test_get_filenames(driver):
 """
 Test function to remove a file from the Google Drive web GUI.
 """
-def test_remove_file(driver, action_chain, web_driver_wait):
+def test_remove_file(drive_utils):
     file_name = files.trashed_file_name
-    utilities.remove_file(driver, action_chain, web_driver_wait,file_name)
-    driver.refresh()
+    drive_utils.remove_file(file_name)
+    drive_utils.driver.refresh()
 
 
 """
 Test function to rename a file in the Google Drive web GUI.
 """
-def test_rename_file(driver, action_chain, web_driver_wait):
+def test_rename_file(drive_utils):
     old_file_name = files.file_name
     new_file_name = files.renamed_file_name
-    utilities.rename_file(driver, action_chain, web_driver_wait, old_file_name, new_file_name)
-    driver.refresh()
+    drive_utils.select_file(old_file_name)
+    drive_utils.rename_action(new_file_name)
+    drive_utils.click_on_ok_button()
+    drive_utils.rename_verification(old_file_name, new_file_name)
 
+"""
+Test function to undo delete action in the Google Drive web GUI.
+"""
+def test_undo_delete_action(drive_utils):
+    file_name_to_retrieve = files.file_to_be_restored
+    drive_utils.click_trash_button()
+    drive_utils.select_file_from_trash()
+    drive_utils.clcik_on_restore_from_trash_button()
+    drive_utils.verify_restoration(file_name_to_retrieve)
 
 """
 Test function to rename a folder in the Google Drive web GUI.
@@ -148,54 +207,17 @@ Test function to rename a folder in the Google Drive web GUI.
 def test_rename_folder(driver, action_chain, web_driver_wait):
     old_folder_name = files.folder_name
     new_folder_name = files.renamed_folder_name
-    utilities.rename_folder(driver, action_chain, web_driver_wait, old_folder_name, new_folder_name)
-    driver.refresh()
-    assert True
+    drive_utils.select_file_from_trash(old_folder_name)
+    drive_utils.rename(new_folder_name)
+    drive_utils.click_on_ok_button()
+    
 
-"""
-Test function to undo delete action in the Google Drive web GUI.
-"""
-def test_undo_delete_action(driver, action_chain, web_driver_wait):
-    file_name_to_retrieve = files.trashed_file_name
-    utilities.undo_delete_action(driver, action_chain, web_driver_wait, file_name_to_retrieve)
-    driver.refresh()
+
 
 
 """
 ## Test function to create a new folder in the Google Drive web GUI.
 """
-# def test_create_folder(driver, action_chain, web_driver_wait):
-   
-#     new_btn = web_driver_wait.until(EC.element_to_be_clickable(locators.new_btn_locator))
-#     new_btn.click()
-#     sleep(4)
-
-    
-#     new_folder_option = web_driver_wait.until(
-#         EC.element_to_be_clickable(locators.new_folder_option_locator))
-
-    
-#     action_chain.move_to_element(new_folder_option).click().perform()
-
-   
-
-#     web_driver_wait.until(EC.presence_of_element_located(locators.input_field_locator))
-
-   
-#     input_field = driver.find_element(*locators.input_field_locator)
-#     input_field.clear()
-#     # sleep(5)
-
-#     input_field.send_keys(files.create_folder_name)
-#     input_field.send_keys(Keys.ENTER)
-
-#     sleep(10)
-#     xpath_expression = f"//*[text()='{files.create_folder_name}']"
-   
-#     folder_element = web_driver_wait.until(
-#         EC.presence_of_element_located((By.XPATH,xpath_expression))
-#     )
-#     assert folder_element.is_displayed(), "Folder element is not visible"
 
 @pytest.fixture
 def folder_name():
@@ -262,37 +284,11 @@ def test_remove_multiple_files(driver, action_chain, web_driver_wait):
 
 
 
-"""
-## Test function to logout from the Google Drive web GUI.
-"""
-def test_logout(driver, action_chain, web_driver_wait):
 
-    # Click on the user profile button to open the menu
-    
-    user_profile_button_locator = (By.XPATH, '//*[@id="gb"]/div[2]/div[3]/div[1]/div[2]/div') 
-    web_driver_wait.until(EC.presence_of_element_located(user_profile_button_locator))
-    user_profile_button = driver.find_element(*user_profile_button_locator)
-    action_chain.move_to_element(user_profile_button).click().perform()
-    sleep(2)
-
-    # Click on the "Sign out" button in the menu
-    try:
-        sign_out_button_locator = (By.XPATH, '//*[@id="yDmH0d"]/c-wiz/div/div/div/div/div[2]/div/div[2]/div[2]/span/span[2]')
-    
-        web_driver_wait.until(EC.presence_of_element_located(sign_out_button_locator))
-        sign_out_button = driver.find_element(*sign_out_button_locator)
-        action_chain.move_to_element(sign_out_button).click().perform()
-
-        # Wait for the logout to complete
-        web_driver_wait.until(EC.visibility_of_element_located((By.PARTIAL_LINK_TEXT, "Sign out")))
-    except Exception as e:
-        print("error occured ",e)
-        
-    # Assert that the login screen is visible after logging out
-    assert driver.title == "Home - Google Drive"
-
-def test_copy_file(driver, action_chain, web_driver_wait,file_name_to_copy="test.txt"):
-    utilities.select_file(driver, action_chain, web_driver_wait, files.file_name_for_copy,show_more_needed=True)
+def test_copy_file(driver, action_chain, web_driver_wait):
+    file_name = 'test.txt'
+   
+    utilities.select_file(driver, action_chain, web_driver_wait, file_name)
     action_chain.context_click().perform()
     sleep(5)
     #make_copy_button=driver.find_element(*locators.make_a_copy_elemenent_locator)
@@ -308,51 +304,6 @@ def test_copy_file(driver, action_chain, web_driver_wait,file_name_to_copy="test
 
  
 
-# def test_move_file(driver, action_chain, web_driver_wait):
-#     utilities.select_file(driver,action_chain,web_driver_wait,files.file_move_name)
-#     utilities.clear_action_chain(action_chain)
-#     sleep(2)
-    
-#     file_element = driver.find_element(*locators.file_move_locator)
-#     destination_folder_element = driver.find_element(*locators.destination_folder_element_locator)
-
-#     action_chain.drag_and_drop(file_element, destination_folder_element).perform()
-#     sleep(5)
-    
-#     try:
-        
-#         destination_folder_element = driver.find_element(*locators.destination_folder_element_locator)
-
-#         # Double click on the destination_folder_element
-#         action_chain.double_click(destination_folder_element).perform()
-#         sleep(4)
-#     except StaleElementReferenceException:
-#         print("StaleElementReferenceException occurred. Retrying...")
-
-#     sleep(2)
-
-#     try:
-#         file_in_destination = driver.find_element(*locators.file_move_locator)
-#     except NoSuchElementException:
-#     # Set moved_file_element to None if the element is not found
-#         file_in_destination = None
-
-#     assert file_in_destination is not None, "File has not been moved successfully to the destination folder"
-
-
-#     my_drive_button = driver.find_element(*locators.my_drive_button_locator)
-#     my_drive_button.click()
-#     sleep(3)
-    
-#     try:
-#         moved_file_element = driver.find_element(*locators.file_move_locator)
-#     except NoSuchElementException:
-#     # Set moved_file_element to None if the element is not found
-#         moved_file_element = None
-   
-#     assert not moved_file_element, "File is still present in the old folder"
-
-    
 @pytest.fixture
 def move_file():
     return files.file_move_name
@@ -381,7 +332,7 @@ def test_move_file(driver, action_chain, web_driver_wait,move_file):
     sleep(3)
     moved_file_element = utilities.find_element(driver,locators.file_move_locator)
     assert not moved_file_element, "File is still present in the old folder"
-
+    
     
 
 
@@ -454,3 +405,33 @@ def test_delete_file_permanently(driver, action_chain, web_driver_wait):
         assert False, "Error occured"
     else:
         assert True, f"{file_name} is permanently deleted"
+
+
+"""
+## Test function to logout from the Google Drive web GUI.
+"""
+def test_logout(driver, action_chain, web_driver_wait):
+
+    # Click on the user profile button to open the menu
+    
+    user_profile_button_locator = (By.XPATH, '//*[@id="gb"]/div[2]/div[3]/div[1]/div[2]/div') 
+    web_driver_wait.until(EC.presence_of_element_located(user_profile_button_locator))
+    user_profile_button = driver.find_element(*user_profile_button_locator)
+    action_chain.move_to_element(user_profile_button).click().perform()
+    sleep(2)
+
+    # Click on the "Sign out" button in the menu
+    try:
+        sign_out_button_locator = (By.XPATH, '//*[@id="yDmH0d"]/c-wiz/div/div/div/div/div[2]/div/div[2]/div[2]/span/span[2]')
+    
+        web_driver_wait.until(EC.presence_of_element_located(sign_out_button_locator))
+        sign_out_button = driver.find_element(*sign_out_button_locator)
+        action_chain.move_to_element(sign_out_button).click().perform()
+
+        # Wait for the logout to complete
+        web_driver_wait.until(EC.visibility_of_element_located((By.PARTIAL_LINK_TEXT, "Sign out")))
+    except Exception as e:
+        print("error occured ",e)
+        
+    # Assert that the login screen is visible after logging out
+    assert driver.title == "Home - Google Drive"
