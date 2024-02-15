@@ -25,7 +25,7 @@ class DriveUtils:
         self.web_driver_wait = web_driver_wait
 
     def remove_file(self, file_name):
-        utilities.remove_file(file_name)
+        utilities.remove_file(file_name)# TODO shift code here
 
     def rename_folder(self, old_folder_name, new_folder_name):
         utilities.rename_folder(old_folder_name, new_folder_name)

@@ -446,7 +446,7 @@ def wait_till_upload():
 
 
 def navigateTo(path):
-    for foldername in path.split("/"):  # A/B/eruier.mp3
+    for foldername in path.split("/"):  # A/B/example.mp3
         if verify_folder_presence(foldername):
             open_folder(foldername)
             sleep(4)
