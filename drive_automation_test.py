@@ -304,11 +304,11 @@ def test_download_file(driver, web_driver_wait):
 """
 
 
-def test_remove_multiple_files(driver, action_chain, web_driver_wait):
+def test_remove_multiple_files():
     files = ['test.txt', 'test1.txt']
     for file in files:
         try:
-            utilities.remove_file(driver, action_chain, web_driver_wait, file)
+            utilities.remove_file( file)
         except FileNotFoundError as e:
             assert False, repr(e)
         finally:
@@ -319,16 +319,16 @@ def test_remove_multiple_files(driver, action_chain, web_driver_wait):
 
 
 
-def test_copy_file(driver, action_chain, web_driver_wait,file_name_to_copy="test.txt"):
+def test_copy_file(drive_utils):
     utilities.select_file( files.file_name_for_copy,show_more_needed=True)
-    action_chain.context_click().perform()
+    drive_utils.action_chain.context_click().perform()
     sleep(5)
-    #make_copy_button=driver.find_element(*locators.make_a_copy_elemenent_locator)
+
     make_a_copy_element = web_driver_wait.until(EC.element_to_be_clickable(locators.make_a_copy_element_locator))
     make_a_copy_element.click()
 
     sleep(5)
-    driver.refresh()
+    drive_utils.driver.refresh()
     sleep(7)
     copied_file_element = utilities.find_element(locators.copied_file_locator)
     assert copied_file_element is not None
@@ -367,7 +367,7 @@ def test_move_file(move_file):
     assert not moved_file_element, "File is still present in the old folder"   
 
 
-def test_view_file_info(driver, action_chain, web_driver_wait):    
+def test_view_file_info():    
     utilities.select_file( files.view_info_file_name)
     action_chain.send_keys("gd").perform()   
     try:        
@@ -376,22 +376,22 @@ def test_view_file_info(driver, action_chain, web_driver_wait):
         assert False, f"File info dialog for {files.view_info_file_name} is not visible"
 
 
-def test_delete_file_permanently(driver,   web_driver_wait):
-    driver.refresh()
+def test_delete_file_permanently(drive_utils):
+    drive_utils.driver.refresh()
     sleep(5)    
-    utilities.remove_file(driver, action_chain, web_driver_wait, files.delete_forever_file_name)    
-    trash_btn_element=utilities.wait_for_element(web_driver_wait,locators.trash_button_locator)
-    utilities.click_element(action_chain,trash_btn_element)    
+    utilities.remove_file( files.delete_forever_file_name)    
+    trash_btn_element=utilities.wait_for_element(locators.trash_button_locator)
+    utilities.click_element(trash_btn_element)    
     deleted_file_locator = locators.file_selector(files.delete_forever_file_name)
     web_driver_wait.until(EC.presence_of_element_located(deleted_file_locator))    
-    utilities.clear_action_chain(action_chain)    
-    utilities.select_file(driver, action_chain, web_driver_wait, files.delete_forever_file_name, show_more_needed=False)    
-    delete_forever_btn_element=utilities.wait_for_element(web_driver_wait,locators.delete_forever_button_locator) 
-    utilities.click_element(action_chain,delete_forever_btn_element)      
+    utilities.clear_action_chain()    
+    utilities.select_file( files.delete_forever_file_name, show_more_needed=False)    
+    delete_forever_btn_element=utilities.wait_for_element(locators.delete_forever_button_locator) 
+    utilities.click_element(delete_forever_btn_element)      
     sleep(2)    
     try:
-        delete_confirm_btn_element = utilities.wait_for_element(web_driver_wait,locators.delete_confirm_button_locator) 
-        utilities.click_element(action_chain,delete_confirm_btn_element) 
+        delete_confirm_btn_element = utilities.wait_for_element(locators.delete_confirm_button_locator) 
+        utilities.click_element(delete_confirm_btn_element) 
         sleep(3)
     except:
         assert False, "Error occured"
@@ -401,12 +401,12 @@ def test_delete_file_permanently(driver,   web_driver_wait):
 """
 ## Test function to logout from the Google Drive web GUI.
 """
-def test_logout(driver, action_chain, web_driver_wait):     
-    user_profile_button_element = driver.find_element(*locators.user_profile_button_locator)
+def test_logout(drive_utils):     
+    user_profile_button_element = drive_utils.driver.find_element(*locators.user_profile_button_locator)
     utilities.click_element(user_profile_button_element)
     sleep(2)
     try:
-        sign_out_button_element = driver.find_element(*locators.sign_out_button_locator)
+        sign_out_button_element = drive_utils.driver.find_element(*locators.sign_out_button_locator)
         utilities.click_element(sign_out_button_element)
     except Exception as e:
         print("error occured ",e)
