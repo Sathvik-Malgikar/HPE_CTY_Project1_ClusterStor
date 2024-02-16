@@ -59,9 +59,12 @@ copied_file_locator = (
 make_a_copy_element_locator = (
     By.CSS_SELECTOR, 'div[aria-label="Make a copy"]')
 
-
-new_btn_locator = (By.CLASS_NAME, 'jYPt8c',)
-new_folder_option_locator = (
-    By.CSS_SELECTOR, "div.a-v-T[data-tooltip='New folder']")
-input_field_locator = (By.CLASS_NAME, "LUNIy")
-rename_button_locator = (By.CSS_SELECTOR, 'div[aria-label="Rename"]')
+    
+new_btn_locator=(By.CLASS_NAME,'jYPt8c',)
+new_folder_option_locator=(By.CSS_SELECTOR, "div.a-v-T[data-tooltip='New folder']")
+input_field_locator=(By.CLASS_NAME, "LUNIy")
+delete_forever_button_locator = (By.XPATH, "//div[@aria-label='Delete forever']")
+file_info_dialog_locator = (By.CSS_SELECTOR,"div.wbg7nb")
+trash_button_locator=(By.XPATH, "//span[text()='Trash']")
+user_profile_button_locator = (By.CSS_SELECTOR, 'a.gb_d[aria-label*="Google Account"]')
+sign_out_button_locator = (By.XPATH, '//*[@id="yDmH0d"]/c-wiz/div/div/div/div/div[2]/div/div[2]/div[2]/span/span[2]') 
