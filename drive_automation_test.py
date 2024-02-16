@@ -317,21 +317,7 @@ def test_remove_multiple_files(driver, action_chain, web_driver_wait):
 
 
 
-"""
-## Test function to logout from the Google Drive web GUI.
-"""
-def test_logout(driver, action_chain, web_driver_wait):     
-    user_profile_button_element = driver.find_element(*locators.user_profile_button_locator)
-    utilities.click_element(user_profile_button_element)
-    sleep(2)
-    try:
-        sign_out_button_element = driver.find_element(*locators.sign_out_button_locator)
-        utilities.click_element(sign_out_button_element)
-    except Exception as e:
-        print("error occured ",e)
-        
-    # Assert that the login screen is visible after logging out
-    assert driver.title == "Home - Google Drive"
+
 
 def test_copy_file(driver, action_chain, web_driver_wait,file_name_to_copy="test.txt"):
     utilities.select_file( files.file_name_for_copy,show_more_needed=True)
@@ -411,3 +397,19 @@ def test_delete_file_permanently(driver,   web_driver_wait):
         assert False, "Error occured"
     else:
         assert True, f"{files.delete_forever_file_name} is permanently deleted"
+
+"""
+## Test function to logout from the Google Drive web GUI.
+"""
+def test_logout(driver, action_chain, web_driver_wait):     
+    user_profile_button_element = driver.find_element(*locators.user_profile_button_locator)
+    utilities.click_element(user_profile_button_element)
+    sleep(2)
+    try:
+        sign_out_button_element = driver.find_element(*locators.sign_out_button_locator)
+        utilities.click_element(sign_out_button_element)
+    except Exception as e:
+        print("error occured ",e)
+        
+    # Assert that the login screen is visible after logging out
+    assert driver.title == "Home - Google Drive"
