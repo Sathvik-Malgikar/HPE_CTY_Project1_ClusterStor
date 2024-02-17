@@ -19,3 +19,11 @@ create_folder_name="Applied crypto"
 
 delete_forever_file_name="abc.txt"
 view_info_file_name="def.txt"
+
+type = "pdf"
+
+file_to_be_searched = "test.txt"
+
+file_to_be_searched_by_type = "I_PES1UG21CS542_Sathvik Sudhir Malgikar_A1.pdf"
+
+folder_name_to_be_removed = "SVM"

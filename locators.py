@@ -68,3 +68,18 @@ file_info_dialog_locator = (By.CSS_SELECTOR,"div.wbg7nb")
 trash_button_locator=(By.XPATH, "//span[text()='Trash']")
 user_profile_button_locator = (By.CSS_SELECTOR, 'a.gb_d[aria-label*="Google Account"]')
 sign_out_button_locator = (By.XPATH, '//*[@id="yDmH0d"]/c-wiz/div/div/div/div/div[2]/div/div[2]/div[2]/span/span[2]') 
+
+
+search_bar_locator = (By.CSS_SELECTOR, 'input[aria-label="Search in Drive"]')
+type_button_locator = (By.CSS_SELECTOR, 'div[aria-label="Type"]')
+my_drive_button_locator = (By.CSS_SELECTOR, 'div[aria-label="My Drive"]')
+type_of_file_locator = (By.CSS_SELECTOR, f'li[role="menuitemcheckbox"][name="{files.type}"]')
+file_to_be_searched_locator = (By.XPATH, f'//div[@class="uXB7xe" and contains(@aria-label,"{files.file_to_be_searched}" )]')
+file_to_be_searched_by_type_locator = (By.XPATH, f'//div[@class="uXB7xe" and contains(@aria-label,"{files.file_to_be_searched_by_type}" )]')
+
+folders_button_locator = (By.CSS_SELECTOR, 'button[name="T5ycX"]')
+move_to_trash_button_locator = (By.CSS_SELECTOR, 'div[aria-label="Move to trash"]')
+
+def folder_selector(folder_name): return (
+    By.XPATH, f'//div[@class="uXB7xe" and contains(@aria-label,"{files.folder_name_to_be_removed}" )]')
+

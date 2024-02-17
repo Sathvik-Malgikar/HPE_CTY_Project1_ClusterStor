@@ -85,31 +85,37 @@ Utility function to select a folder in Google Drive GUI
 
 
 def select_folder(folder_name, show_more_needed=True):
-    if (show_more_needed):
+    if (show_more_needed):  # old testcases do not have show_more param, so by default True,
+       # newer testcases can explicitly mention if show more button is to be clicked or not before looking for file
         web_driver_wait.until(
             EC.presence_of_element_located(
                 locators.show_more_files
             ),
         )
-
         show_more_button = driver.find_element(
             *locators.show_more_files
         )
         show_more_button.click()
-    sleep(3)
+
+    sleep(5)
     # Find folder
     try:
+        folder_selector = locators.file_selector(folder_name)
         web_driver_wait.until(
-            EC.presence_of_element_located(locators.folder_locator))
+            EC.presence_of_element_located(
+                folder_selector
+            ),
+        )
     except:
-        assert False, f"Folder '{files.folder_name}' Not Found"
+        raise FileNotFoundError("File Not found")
     else:
-        folder_element = driver.find_element(*locators.folder_locator)
-        action_chain.move_to_element(folder_element).click().perform()
-        sleep(3)
-
+        file_element = driver.find_element(
+            *folder_selector
+        )
+        action_chain.move_to_element(file_element).click()
+        action_chain.perform()
+        sleep(4)
         clear_action_chain()
-        sleep(1)
 
 
 """
@@ -177,18 +183,6 @@ def rename_folder(old_folder_name, new_folder_name):
             EC.element_to_be_clickable(locators.ok_button_locator))
         ok_button.click()
         sleep(10)
-
-# def select_file(file_name):
-#     try:
-#         file_selector = locators.file_selector(file_name)
-#         web_driver_wait.until(EC.presence_of_element_located(file_selector),)
-#     except:
-#         raise FileNotFoundError("File Not found")
-#     else:
-#         file_element = driver.find_element(*file_selector)
-#         action_chain.move_to_element(file_element).click()
-#         action_chain.perform()
-
 
 def rename_action(new_file_name):
     pyautogui.press('n')
@@ -266,37 +260,6 @@ def verify_restoration(file_name):
         assert False, f"File '{file_name}' Not Restored"
 
 
-"""
-Utility function to undo delete action in the Google Drive web GUI.
-"""
-# def undo_delete_action(driver, action_chain, web_driver_wait, file_to_be_retrieved):
-#     trash_button = web_driver_wait.until(EC.element_to_be_clickable(locators.trash_button_locator))
-#     trash_button.click()
-#     sleep(5)
-
-#     try:
-#         web_driver_wait.until(EC.presence_of_element_located(locators.trashed_file_locator))
-#     except:
-#         assert False, "File Not Found in Trash"
-#     else:
-#         # Click on the trashed file
-#         trashed_file_element = driver.find_element(*locators.trashed_file_locator)
-#         action_chain.move_to_element(trashed_file_element).click().perform()
-#         sleep(6)
-#         restore_from_trash_button = web_driver_wait.until(EC.element_to_be_clickable(locators.restore_from_trash_button_locator))
-#         restore_from_trash_button.click()
-#         sleep(3)
-
-#     # Check whether the file has actually been restored or not
-#     try:
-#         home_button = web_driver_wait.until(EC.element_to_be_clickable(locators.home_button_locator))
-#         home_button.click()
-#         sleep(3)
-#         web_driver_wait.until(EC.presence_of_element_located(locators.restored_file_locator))
-#     except:
-#         assert False, f"File '{file_to_be_retrieved}' Not Restored"
-
-
 def open_folder(open_folder):
 
     try:
@@ -337,8 +300,7 @@ def verify_folder_presence(folder_name, timeout=10):
             EC.presence_of_element_located(folder_locator))
         return True
     except TimeoutException:
-        print(f"Folder element with name '{
-              folder_name}' not found within {timeout} seconds.")
+        print(f"Folder element with name '{folder_name}' not found within {timeout} seconds.")
         return False
 
 
@@ -454,3 +416,49 @@ def navigateTo(path):
         else:
             print(f"navigateTo {path} failed, {foldername} not found!")
             return -1
+
+
+
+def click_on_search_in_drive():
+    search_bar = web_driver_wait.until(EC.element_to_be_clickable(locators.search_bar_locator))
+    search_bar.click()
+    sleep(5)
+
+def enter_the_file_name_to_be_searched(file_to_be_searched):
+    pyautogui.write(files.file_to_be_searched)
+    pyautogui.press('Enter')
+    sleep(5)
+
+
+def click_on_my_drive_button():
+    my_drive_button = web_driver_wait.until(
+        EC.element_to_be_clickable(locators.my_drive_button_locator))
+    my_drive_button.click()
+    sleep(3)
+
+def click_on_type_button():
+    type_button = web_driver_wait.until(
+        EC.element_to_be_clickable(locators.type_button_locator))
+    type_button.click()
+
+def click_on_the_required_type(type):
+    required_type = web_driver_wait.until(
+        EC.element_to_be_clickable(locators.type_of_file_locator))
+    required_type.click()
+    sleep(6)
+    
+def click_on_folders_button():
+    folders_button = web_driver_wait.until(
+        EC.element_to_be_clickable(locators.folders_button_locator))
+    folders_button.click()
+    sleep(5)
+
+def click_on_move_to_trash_button():
+    move_to_trash_button = web_driver_wait.until(
+        EC.element_to_be_clickable(locators.move_to_trash_button_locator))
+    move_to_trash_button.click()
+    sleep(5)
+
+
+
+

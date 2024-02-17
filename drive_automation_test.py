@@ -56,7 +56,30 @@ class DriveUtils:
 
     def select_file_from_trash(self):
         utilities.select_file_from_trash()
+    
+    def click_on_search_in_drive(self):
+        utilities.click_on_search_in_drive()
+    
+    def enter_the_file_name_to_be_searched(self, file_to_be_searched):
+        utilities.enter_the_file_name_to_be_searched(file_to_be_searched)
+    
+    def click_on_my_drive_button(self):
+        utilities.click_on_my_drive_button()
 
+    def click_on_type_button(self):
+        utilities.click_on_type_button()
+
+    def click_on_the_required_type(self, type):
+        utilities.click_on_the_required_type(type)
+
+    def click_on_folders_button(self):
+        utilities.click_on_folders_button()
+    
+    def click_on_move_to_trash_button(self):
+        utilities.click_on_move_to_trash_button()
+    
+    def select_folder(self, folder_name, mode):
+        utilities.select_folder(folder_name, mode)
 
 """
     Pytest fixture for providing a Selenium WebDriver instance with Chrome.
@@ -397,6 +420,36 @@ def test_delete_file_permanently(drive_utils):
         assert False, "Error occured"
     else:
         assert True, f"{files.delete_forever_file_name} is permanently deleted"
+
+
+def test_search_for_file_by_name(drive_utils):
+    utilities.clear_action_chain()
+    file_to_be_searched = files.file_to_be_searched
+    drive_utils.click_on_search_in_drive()
+    drive_utils.enter_the_file_name_to_be_searched(file_to_be_searched)
+    file_element = utilities.find_element(locators.file_to_be_searched_locator)
+    utilities.double_click_element(file_element)
+    sleep(5)
+
+
+def test_search_file_by_type(drive_utils):
+    utilities.clear_action_chain()
+    type_of_file = files.type
+    drive_utils.click_on_my_drive_button()
+    drive_utils.click_on_type_button()
+    drive_utils.click_on_the_required_type(type_of_file)
+    file_element = utilities.find_element(locators.file_to_be_searched_by_type_locator)
+    utilities.double_click_element(file_element)
+    sleep(5)
+
+
+def test_remove_folder(drive_utils):
+    utilities.clear_action_chain()
+    drive_utils.click_on_home_button()
+    drive_utils.click_on_folders_button()
+    drive_utils.select_folder(files.folder_name_to_be_removed, True)
+    drive_utils.click_on_move_to_trash_button()    
+
 
 """
 ## Test function to logout from the Google Drive web GUI.
