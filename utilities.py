@@ -11,6 +11,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import StaleElementReferenceException
 import locators
 import files
 
@@ -39,7 +40,27 @@ def initialize_action_chain(ac):
 
 
 """
-Utility function to select a file in Google Drive GUI
+## Utility function to select a file in Google Drive GUI
+def select_file(file_name,show_more_needed=True)
+
+Parameters:
+- file_name: Name of file/folder to be selected
+- show_more_needed: If true (default), then click on "Show more results" button
+
+Returns:
+None
+
+Raises:
+FileNotFoundError: If the file/folder does not exist on Google Drive.
+
+Usage:
+select_file(file_name)
+select_file(file_name,show_more_needed=False)
+
+Additional :
+- show_more_needed is to ensure backwards compatibility
+- old testcases do not have show_more param, so by default True
+- newer testcases can explicitly mention if show more button is to be clicked or not before looking for file
 """
 
 
@@ -80,7 +101,24 @@ def select_file(file_name, show_more_needed=True):
 
 
 """
-Utility function to select a folder in Google Drive GUI
+## Utility function to select a folder in Google Drive GUI
+def select_folder(folder_name, show_more_needed=True)
+
+Parameters:
+- folder_name: Name of file/folder to be selected
+- show_more_needed: If true (default), then click on "Show more results" button
+
+Returns:
+None
+
+Raises:
+FileNotFoundError: If the folder does not exist on Google Drive.
+
+Usage:
+select_folder(folder)
+select_folder(folder_name,show_more_needed=False)
+
+
 """
 
 
@@ -112,9 +150,24 @@ def select_folder(folder_name, show_more_needed=True):
         sleep(1)
 
 
+
 """
-Utility function to click delete button on a selected file/folder in the Google Drive web GUI.
+## Utility function to click delete button on a selected file/folder in the Google Drive web GUI.
+def delete_file()
+
+Parameters:
+None
+
+Returns:
+None
+
+Raises:
+-
+
+Usage:
+delete_file()
 """
+
 
 
 def delete_file():
@@ -136,7 +189,21 @@ def delete_file():
 
 
 """
-Utility function to perform delete action on the file/folder in the Google Drive web GUI.
+## Utility function to perform delete action on the file/folder in the Google Drive web GUI.
+
+def remove_file(file_name)
+
+Parameters:
+- file_name: Name of file/folder to be deleted.
+
+Returns:
+None
+
+Raises:
+-
+
+Usage:
+remove_file(file_name)
 """
 
 
@@ -150,8 +217,24 @@ def remove_file(file_name):
 
 
 """
-Utility function to rename a folder in the Google Drive web GUI.
+## Utility function to rename a folder in Google Drive GUI.
+
+def rename_folder(old_folder_name, new_folder_name)
+
+Parameters:
+- old_folder_name (str): The current name of the folder to be renamed.
+- new_folder_name (str): The desired new name for the folder.
+
+Returns:
+None
+
+Raises:
+FileNotFoundError: If the folder with the old name does not exist on Google Drive.
+
+Usage:
+rename_folder(old_folder_name, new_folder_name)
 """
+
 
 
 def rename_folder(old_folder_name, new_folder_name):
@@ -189,12 +272,45 @@ def rename_folder(old_folder_name, new_folder_name):
 #         action_chain.move_to_element(file_element).click()
 #         action_chain.perform()
 
+"""
+Utility function to perform a file rename action in the GUI.
+def rename_action(new_file_name)
+
+Parameters:
+    new_file_name (str): The new name for the file.
+
+Returns:
+    None
+
+Raises:
+    None
+
+Usage:
+    rename_action(new_file_name)
+"""
 
 def rename_action(new_file_name):
     pyautogui.press('n')
     # Send keys for the new file name
     pyautogui.write(new_file_name)
     clear_action_chain()
+
+
+"""
+Utility function to click on the OK button in the GUI.
+
+Parameters:
+    None
+
+Returns:
+    None
+
+Raises:
+    TimeoutException: If the OK button is not clickable within the specified timeout.
+
+Usage:
+    click_on_ok_button()
+"""
 
 
 def click_on_ok_button():
@@ -206,6 +322,22 @@ def click_on_ok_button():
     clear_action_chain()
     sleep(10)
 
+"""
+Utility function to verify if file renaming was successful.
+
+Parameters:
+    old_file_name (str): The original name of the file.
+    new_file_name (str): The new name of the file.
+
+Returns:
+    None
+
+Raises:
+    AssertionError: If the original file is found after renaming, or if the new file is not found after renaming.
+
+Usage:
+    rename_verification(old_file_name, new_file_name)
+"""
 
 def rename_verification(old_file_name, new_file_name):
     try:
@@ -219,12 +351,45 @@ def rename_verification(old_file_name, new_file_name):
     except NoSuchElementException:
         assert False, f"New File '{new_file_name}' Not Found after Rename"
 
+"""
+Utility function to click on the trash button in the GUI.
+
+Parameters:
+    None
+
+Returns:
+    None
+
+Raises:
+    TimeoutException: If the trash button is not clickable within the specified timeout.
+
+Usage:
+    click_trash_button()
+"""
 
 def click_trash_button():
     trash_button = web_driver_wait.until(
         EC.element_to_be_clickable(locators.trash_button_locator))
     trash_button.click()
     sleep(5)
+
+
+
+"""
+Utility function to select a file from the trash in the GUI.
+
+Parameters:
+    None
+
+Returns:
+    None
+
+Raises:
+    AssertionError: If no file is found in the trash.
+
+Usage:
+    select_file_from_trash()
+"""
 
 
 def select_file_from_trash():
@@ -244,11 +409,29 @@ def select_file_from_trash():
         sleep(6)
 
 
+"""
+Utility function to click on the 'Restore from Trash' button in the GUI.
+
+Parameters:
+    None
+
+Returns:
+    None
+
+Raises:
+    TimeoutException: If the 'Restore from Trash' button is not clickable within the specified timeout.
+
+Usage:
+    click_on_restore_from_trash_button()
+"""
+
+   
 def click_on_restore_from_trash_button():
     restore_from_trash_button = web_driver_wait.until(
         EC.element_to_be_clickable(locators.restore_from_trash_button_locator))
     restore_from_trash_button.click()
     sleep(3)
+
 
 
 def click_on_home_button():
@@ -258,17 +441,33 @@ def click_on_home_button():
     sleep(3)
 
 
+
+"""
+Utility function to verify if a file has been restored.
+
+This function clicks on the home button, then checks if the specified file exists in the folder.
+
+Parameters:
+    file_name (str): The name of the file to verify.
+
+Returns:
+    bool: True if the file is restored, False otherwise.
+
+Raises:
+    AssertionError: If the file is not found after restoration.
+
+Usage:
+    verify_restoration(file_name)
+"""
 def verify_restoration(file_name):
     click_on_home_button()
-    if (verify_folder_presence(file_name)):
+    if (verify_presence(file_name)):
         return True
     else:
         assert False, f"File '{file_name}' Not Restored"
 
 
-"""
-Utility function to undo delete action in the Google Drive web GUI.
-"""
+
 # def undo_delete_action(driver, action_chain, web_driver_wait, file_to_be_retrieved):
 #     trash_button = web_driver_wait.until(EC.element_to_be_clickable(locators.trash_button_locator))
 #     trash_button.click()
@@ -296,6 +495,21 @@ Utility function to undo delete action in the Google Drive web GUI.
 #     except:
 #         assert False, f"File '{file_to_be_retrieved}' Not Restored"
 
+"""
+Utility function to open a folder in the Google Drive GUI.
+
+Parameters:
+    folder_name (str): The name of the folder to be opened.
+
+Returns:
+    bool: True if the folder is successfully opened, False otherwise.
+
+Raises:
+    TimeoutException: If the folder cannot be opened within the specified timeout.
+
+Usage:
+    result = open_folder(folder_name)
+"""
 
 def open_folder(open_folder):
 
@@ -311,6 +525,23 @@ def open_folder(open_folder):
         print(f"TimeoutException: {e}")
         return False
 
+"""
+Utility function to send keys to an element on the web page.
+
+Parameters:
+    element_locator (tuple): A tuple representing the locator strategy and value for the element.
+    text (str): The text to be sent to the element.
+
+Returns:
+    None
+
+Raises:
+    Exception: If there is an error sending keys to the element.
+
+Usage:
+    send_keys_to_element(element_locator, text)
+"""
+
 
 def send_keys_to_element(element_locator, text):
     try:
@@ -318,6 +549,7 @@ def send_keys_to_element(element_locator, text):
         element.send_keys(text)
     except Exception as e:
         print(f"Error sending keys to element: {e}")
+
 
 
 def find_element(locator):
@@ -328,8 +560,21 @@ def find_element(locator):
         print(f"Element not found with locator {locator}")
         return None
 
+"""
+Utility function to verify the presence of a folder in the Google Drive GUI.
 
-def verify_folder_presence(folder_name, timeout=10):
+Parameters:
+    folder_name (str): The name of the folder to verify.
+    timeout (int, optional): The maximum time (in seconds) to wait for the folder to be present. Default is 10 seconds.
+
+Returns:
+    bool: True if the folder is found within the timeout period, False otherwise.
+
+Usage:
+    result = verify_presence(folder_name, timeout)
+"""
+
+def verify_presence(folder_name, timeout=10):
     folder_locator = (
         By.XPATH, f'//div[@class="uXB7xe" and contains(@aria-label,"{folder_name}" )]')
     try:
@@ -337,8 +582,7 @@ def verify_folder_presence(folder_name, timeout=10):
             EC.presence_of_element_located(folder_locator))
         return True
     except TimeoutException:
-        print(f"Folder element with name '{
-              folder_name}' not found within {timeout} seconds.")
+        
         return False
 
 
@@ -356,8 +600,8 @@ def wait_for_element(locator):
     except TimeoutException:
         print(f"Timeout waiting for element with locator {locator}")
         return None
-
-
+    
+    
 def wait_to_click(locator):
     try:
         element = web_driver_wait.until(EC.element_to_be_clickable(locator))
@@ -386,6 +630,22 @@ def double_click_element(element):
         print(f"Error double clicking on element: {e}")
     clear_action_chain()
 
+"""
+Utility function to perform a drag-and-drop action in the GUI.
+
+Parameters:
+    source_element (WebElement): The element to be dragged.
+    destination_element (WebElement): The element onto which the source element will be dropped.
+
+Returns:
+    None
+
+Raises:
+    None
+
+Usage:
+    drag_and_drop_element(source_element, destination_element)
+"""
 
 def drag_and_drop_element(source_element, destination_element):
     # WARNING : assumes empty action chain !
@@ -413,6 +673,23 @@ def click_on_new_button():
     upload_button.click()
     sleep(3)
 
+"""
+Utility function to type text into a dialogue box in the GUI.
+
+This function types the specified text into the dialogue box and presses 'Enter'.
+
+Parameters:
+    FILE_TO_UPLOAD (str): The text to be typed into the dialogue box.
+
+Returns:
+    None
+
+Raises:
+    None
+
+Usage:
+    type_into_dialogue_box(FILE_TO_UPLOAD)
+"""
 
 def type_into_dialogue_box(FILE_TO_UPLOAD):
     # types into dialogue box
@@ -421,6 +698,25 @@ def type_into_dialogue_box(FILE_TO_UPLOAD):
     pyautogui.press("enter")
     sleep(5)
 
+"""
+Utility function to wait until file upload is complete in the GUI.
+
+This function checks if a warning indicating that the file is already present shows up.
+If the warning is present, it simulates pressing 'Tab' keys and then 'Space' key to proceed with uploading.
+It then waits until the upload is complete.
+
+Parameters:
+    None
+
+Returns:
+    None
+
+Raises:
+    None
+
+Usage:
+    wait_till_upload()
+"""
 
 def wait_till_upload():
     # try block to deal with situation of file being there already
@@ -445,12 +741,53 @@ def wait_till_upload():
         sleep(2)
 
 
+
 def navigateTo(path):
     for foldername in path.split("/"):  # A/B/example.mp3
-        if verify_folder_presence(foldername):
+        if verify_presence(foldername):
             open_folder(foldername)
             sleep(4)
             clear_action_chain()
         else:
             print(f"navigateTo {path} failed, {foldername} not found!")
             return -1
+
+def find_locator(filename):
+    locator = (By.CSS_SELECTOR, f'div.uXB7xe[aria-label*="{filename}"]')
+    return locator
+
+
+
+def move_action(move_file,destination_folder,show_more):
+    clear_action_chain()
+    select_file(move_file, show_more_needed=show_more)
+    sleep(2)
+    file_element_locator=find_locator(move_file)
+    file_element = find_element(file_element_locator)
+    destination_folder_element_locator=find_locator(destination_folder)
+    destination_folder_element = find_element(destination_folder_element_locator)
+    drag_and_drop_element(file_element, destination_folder_element)
+    sleep(3)
+
+
+def verify_file_in_destination(moved_file_name,destination_folder):
+    try:
+        # Double click the destination folder
+        folder_element_locator = find_locator(destination_folder)
+        folder_element = find_element(folder_element_locator)
+        double_click_element(folder_element)
+        sleep(4)
+    except StaleElementReferenceException:
+        print("StaleElementReferenceException occurred. Retrying...")
+        
+    # Verify file presence in the destination folder
+    assert verify_presence(moved_file_name), "File has not been moved successfully to the destination folder"
+
+def go_to_mydrive():
+    my_drive_button = find_element(locators.my_drive_button_locator)
+    my_drive_button.click()
+    sleep(3)
+
+def verify_file_not_in_old_location(moved_file_name):
+    # Verify absence of the file in the old folder
+    assert not verify_presence(moved_file_name), "File is still present in the old folder"

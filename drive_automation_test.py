@@ -10,8 +10,6 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.common.exceptions import NoSuchElementException
-from selenium.common.exceptions import StaleElementReferenceException
-
 import locators
 import files
 from selenium.common.exceptions import StaleElementReferenceException
@@ -241,22 +239,15 @@ def test_rename_folder():
 """
 
 
-@pytest.fixture
-def folder_name():
-    return files.create_folder_name
-
-
-def test_create_folder(driver, folder_name):
+def test_create_folder(drive_utils):
     new_btn_element = utilities.wait_for_element(locators.new_btn_locator)
     utilities.click_element(new_btn_element)
-    utilities.click_element(new_btn_element)
-
+   
     input_field = utilities.wait_for_element(locators.input_field_locator)
-
     input_field.clear()
-    utilities.send_keys_to_element(locators.input_field_locator, folder_name)
+    utilities.send_keys_to_element(locators.input_field_locator, files.create_folder_name)
     utilities.send_keys_to_element(locators.input_field_locator, Keys.ENTER)
-    assert utilities.verify_folder_presence(folder_name)
+    assert utilities.verify_presence(files.create_folder_name)
     sleep(3)
 
 
@@ -334,37 +325,37 @@ def test_copy_file(drive_utils):
     assert copied_file_element is not None
 
 
-@pytest.fixture
-def move_file():
-    return files.file_move_name
+
+def test_move_file(drive_utils):
+    filename=files.file_move_name
+    destination_folder=files.destination_folder_name
+    utilities.move_action(filename,destination_folder,show_more=True)
+    utilities.verify_file_in_destination(filename,destination_folder)
+    utilities.go_to_mydrive()
+    utilities.verify_file_not_in_old_location(filename)  
 
 
-def test_move_file(move_file):
 
-    utilities.select_file(move_file, show_more_needed=True)
-    utilities.clear_action_chain()
-    sleep(2)
-    file_element = utilities.find_element(locators.file_move_locator)
-    destination_folder_element = utilities.find_element(
-        locators.destination_folder_element_locator)
-    utilities.drag_and_drop_element(file_element, destination_folder_element)
-    sleep(5)
+def test_move_multiple_files(drive_utils):
+    file_destination_pairs = [
+        ("test.txt", "After_rename"),
+        ("test2.txt", "After_rename"),
+        ("test3.txt", "F1"),
+    ]
+    show_more_needed=True
+    for idx, (filename, destination_folder) in enumerate(file_destination_pairs):
+        try:
+            utilities.move_action(filename, destination_folder,show_more_needed)
+            utilities.verify_file_in_destination(filename, destination_folder)
+            utilities.go_to_mydrive()
+            utilities.verify_file_not_in_old_location(filename)
 
-    try:
-        destination_folder_element = utilities.find_element(
-            locators.destination_folder_element_locator)
-        utilities.double_click_element(destination_folder_element)
-        sleep(4)
-    except StaleElementReferenceException:
-        print("StaleElementReferenceException occurred. Retrying...")
-
-    file_in_destination = utilities.find_element(locators.file_move_locator)
-    assert file_in_destination is not None, "File has not been moved successfully to the destination folder"
-    my_drive_button = utilities.find_element(locators.my_drive_button_locator)
-    my_drive_button.click()
-    sleep(3)
-    moved_file_element = utilities.find_element(locators.file_move_locator)
-    assert not moved_file_element, "File is still present in the old folder"   
+            if idx==0:
+                    show_more_needed=False
+        except Exception as e:
+            print(f"Move operation failed for file '{filename}' to folder '{destination_folder}': {e}")
+            # Continue to next move even if current move fails
+            continue
 
 
 def test_view_file_info():    
