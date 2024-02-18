@@ -19,3 +19,5 @@ create_folder_name="Applied crypto"
 
 delete_forever_file_name="abc.txt"
 view_info_file_name="def.txt"
+
+FILE_TO_UPLOAD="Screenshot (177).png"

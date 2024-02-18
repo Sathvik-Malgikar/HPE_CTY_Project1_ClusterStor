@@ -2,6 +2,8 @@ from selenium.webdriver.common.by import By
 
 import files
 
+welcome_span = (By.XPATH, "//span[contains(text(), 'Welcome')]")
+sign_in_link = (By.LINK_TEXT, "Sign in")
 
 new_button_selector = (By.CSS_SELECTOR, "button.brbsPe.Ss7qXc.a-qb-d")
 
