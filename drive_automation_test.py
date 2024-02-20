@@ -336,6 +336,34 @@ def test_share_via_link(utilityInstance):
     sleep(6)
     
     
+def test_search_for_file_by_name(utilityInstance):
+  
+    
+    utilityInstance.click_on_search_in_drive()
+    autoGUIutils.type_into_dialogue_box(files.file_to_be_searched)
+    file_element = utilityInstance.wait_to_click(locators.file_selector(locators.file_to_be_searched))
+    utilityInstance.double_click_element(file_element)
+    sleep(5)
+
+
+def test_search_file_by_type(utilityInstance):
+    
+    
+    utilityInstance.click_on_my_drive_button()
+    utilityInstance.click_on_type_button()
+    utilityInstance.click_on_the_required_type(files.type)
+    file_element = utilityInstance.wait_to_click(locators.file_selector(files.file_to_be_searched_by_type))
+    utilityInstance.double_click_element(file_element)
+    sleep(5)
+
+
+def test_remove_folder(utilityInstance):
+    
+    utilityInstance.click_on_home_button()
+    utilityInstance.click_on_folders_button()
+    utilityInstance.select_item(files.folder_name_to_be_removed, True)
+    utilityInstance.delete_file()    
+
 
 """
 ## Test function to logout from the Google Drive web GUI.

@@ -468,8 +468,25 @@ class Utilities:
             print(f"Error dragging and dropping element: {e}")  
 
 
+    def click_on_type_button(self):
+        type_button = self.wait_to_click(locators.type_button_locator)
+        type_button.click()
 
+    def click_on_the_required_type(self):
+        required_type = self.wait_to_click(locators.type_of_file_locator)
+        required_type.click()
+        sleep(6)
+        
+    def click_on_folders_button(self):
+        folders_button = self.wait_to_click(locators.folders_button_locator)
+        folders_button.click()
+        sleep(5)
 
+    def click_on_search_in_drive(self):
+        search_bar = self.wait_to_click(locators.search_bar_locator)
+        search_bar.click()
+        sleep(5)
+    
     def click_on_new_button(self):
         # clicks on new button
         self.web_driver_wait.until(EC.element_to_be_clickable(

@@ -24,3 +24,10 @@ view_info_file_name="def.txt"
 FILE_TO_UPLOAD="Screenshot (177).png"
 
 share_file = "short_notes.txt"
+type = "pdf"
+
+file_to_be_searched = "test.txt"
+
+file_to_be_searched_by_type = "I_PES1UG21CS542_Sathvik Sudhir Malgikar_A1.pdf"
+
+folder_name_to_be_removed = "SVM"

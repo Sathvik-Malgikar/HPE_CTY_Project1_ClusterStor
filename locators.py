@@ -71,3 +71,14 @@ def span_with_text(text):
     return (By.XPATH, f"//span[contains(text(), {text})]")
 
 
+search_bar_locator = (By.CSS_SELECTOR, 'input[aria-label="Search in Drive"]')
+type_button_locator = (By.CSS_SELECTOR, 'div[aria-label="Type"]')
+my_drive_button_locator = (By.CSS_SELECTOR, 'div[aria-label="My Drive"]')
+type_of_file_locator = (By.CSS_SELECTOR, f'li[role="menuitemcheckbox"][name="{files.type}"]')
+
+folders_button_locator = (By.CSS_SELECTOR, 'button[name="T5ycX"]')
+move_to_trash_button_locator = (By.CSS_SELECTOR, 'div[aria-label="Move to trash"]')
+
+def folder_selector(folder_name): return (
+    By.XPATH, f'//div[@class="uXB7xe" and contains(@aria-label,"{files.folder_name_to_be_removed}" )]')
+
