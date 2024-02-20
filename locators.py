@@ -43,7 +43,6 @@ file_move_locator = (
     By.CSS_SELECTOR, f'div.uXB7xe[aria-label*="{files.file_move_name}"]')
 destination_folder_element_locator = (
     By.XPATH, f'//div[contains(@aria-label, "{files.destination_folder_name}")]')
-my_drive_button_locator = By.CSS_SELECTOR, 'span.a-s-T[aria-label="My Drive"][jsname="KSzLFd"]'
 
 copied_file_locator = (
     By.CSS_SELECTOR, f'div.uXB7xe[aria-label*="{files.expected_copied_file_name}"]')
