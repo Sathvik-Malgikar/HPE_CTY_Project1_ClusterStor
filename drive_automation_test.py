@@ -272,8 +272,8 @@ def test_move_multiple_files(utilityInstance):
         try:
             utilityInstance.move_action(filename, destination_folder,show_more_needed)
             utilityInstance.verify_file_in_destination(filename, destination_folder)
-            utilityInstance.go_to_mydrive()
-            utilityInstance.verify_file_not_in_old_location(filename)
+            utilityInstance.click_on_my_drive_button()
+            assert not utilityInstance.wait_for_element(locators.file_selector(filename))
 
             if idx==0:
                     show_more_needed=False

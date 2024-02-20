@@ -167,6 +167,11 @@ class Utilities:
         home_button.click()
         sleep(5)
 
+    def click_on_my_drive_button(self):
+        my_drive_button = self.wait_to_click(locators.left_menu_page_selector("My Drive"))
+        my_drive_button.click()
+        sleep(5)
+
         
     """
     Utility function to verify if a file has been restored.
