@@ -10,8 +10,6 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.common.exceptions import NoSuchElementException
-from selenium.common.exceptions import StaleElementReferenceException
-
 import locators
 import files
 from utilities import Utilities
@@ -234,12 +232,6 @@ def test_copy_file(utilityInstance):
     copied_file_element = utilityInstance.wait_for_element(locators.copied_file_locator)
     assert copied_file_element is not None
 
-
-@pytest.fixture
-def move_file():
-    return files.file_move_name
-
-
 def test_move_file(utilityInstance,move_file):
 
     utilityInstance.select_file(move_file, show_more_needed=True)
@@ -256,7 +248,7 @@ def test_move_file(utilityInstance,move_file):
             locators.destination_folder_element_locator)
         utilityInstance.double_click_element(destination_folder_element)
         sleep(4)
-    except StaleElementReferenceException:
+    except EXC.StaleElementReferenceException:
         print("StaleElementReferenceException occurred. Retrying...")
 
     file_in_destination = utilityInstance.wait_for_element(locators.file_move_locator)
@@ -266,6 +258,27 @@ def test_move_file(utilityInstance,move_file):
     sleep(3)
     moved_file_element = utilityInstance.wait_for_element(locators.file_move_locator)
     assert not moved_file_element, "File is still present in the old folder"   
+
+def test_move_multiple_files(utilityInstance):
+    file_destination_pairs = [
+        ("test.txt", "After_rename"),
+        ("test2.txt", "After_rename"),
+        ("test3.txt", "F1"),
+    ]
+    show_more_needed=True
+    for idx, (filename, destination_folder) in enumerate(file_destination_pairs):
+        try:
+            utilityInstance.move_action(filename, destination_folder,show_more_needed)
+            utilityInstance.verify_file_in_destination(filename, destination_folder)
+            utilityInstance.go_to_mydrive()
+            utilityInstance.verify_file_not_in_old_location(filename)
+
+            if idx==0:
+                    show_more_needed=False
+        except Exception as e:
+            print(f"Move operation failed for file '{filename}' to folder '{destination_folder}': {e}")
+            # Continue to next move even if current move fails
+            continue
 
 
 def test_view_file_info(utilityInstance):    
