@@ -41,7 +41,7 @@ class Utilities:
         except FileNotFoundError as e:
             raise e
         else:
-            folder_element = self.wait_for_element(*locators.folder_locator)
+            folder_element = self.wait_for_element(locators.folder_locator)
 
             action_chain.move_to_element(folder_element).send_keys("n").perform()
             action_chain = ActionChains(self.driver)# making a new one instead of clearing
@@ -51,16 +51,14 @@ class Utilities:
             action_chain.send_keys(new_folder_name).perform()
 
             # Locate and click the OK button
-            ok_button = self.web_driver_wait.until(
-                EC.element_to_be_clickable(locators.ok_button_locator))
+            ok_button = self.wait_to_click(locators.ok_button_locator)
             ok_button.click()
             sleep(10)
 
 
     
     def click_trash_button(self):
-        trash_button = self.web_driver_wait.until(
-            EC.element_to_be_clickable(locators.trash_button_locator))
+        trash_button = self.wait_to_click(locators.left_menu_page_selector("Trashed items"))
         trash_button.click()
         sleep(5)
 
@@ -69,48 +67,41 @@ class Utilities:
         action_chain = ActionChains(self.driver)
         if (show_more_needed):  # old testcases do not have show_more param, so by default True,
         # newer testcases can explicitly mention if show more button is to be clicked or not before looking for file
-
-            self.web_driver_wait.until(
-                EC.presence_of_element_located(
-                    locators.show_more_files
-                ),
-            )
-            show_more_button = self.wait_for_element(
-                *locators.show_more_files
+        
+            show_more_button = self.wait_to_click(
+                locators.show_more_files
             )
             show_more_button.click()
 
         sleep(5)
-        # Find file
-        try:
-            file_selector = locators.file_selector(item_name)
-            file_element = self.wait_for_element(file_selector)
-        except:
-            raise FileNotFoundError("File Not found")
-        else:
+        
+        file_selector = locators.file_selector(item_name)
+        file_element = self.wait_for_element(file_selector)
+        if file_element:
             
             action_chain.move_to_element(file_element).click()
             action_chain.perform()
+        else:
+            raise FileNotFoundError
+            
 
 
 
     def click_on_restore_from_trash_button(self):
-        restore_from_trash_button = self.web_driver_wait.until(
-            EC.element_to_be_clickable(locators.restore_from_trash_button_locator))
+        restore_from_trash_button = self.wait_to_click(locators.restore_from_trash_button_locator)
         restore_from_trash_button.click()
         sleep(3)
 
 
     def click_on_home_button(self):
-        home_button = self.web_driver_wait.until(
-            EC.element_to_be_clickable(locators.home_button_locator))
+        home_button = self.wait_to_click(locators.left_menu_page_selector("Home"))
         home_button.click()
-        sleep(3)
+        sleep(5)
 
     
     def verify_restoration(self,file_name):
         self.click_on_home_button()
-        if (self.verify_item_presence(file_name)):
+        if (self.wait_for_element( locators.file_selector(file_name))):
             return True
         else:
             assert False, f"File '{file_name}' Not Restored"
@@ -120,15 +111,14 @@ class Utilities:
         pyautogui.write(new_file_name)
 
     def click_on_ok_button(self):
-        ok_button = self.web_driver_wait.until(
-            EC.element_to_be_clickable(locators.ok_button_locator))
+        ok_button = self.wait_to_click(locators.ok_button_locator)
         ok_button.click()
     
         sleep(3)
 
     def rename_verification(self, old_file_name, new_file_name):
         
-        renamed_file_element = self.wait_for_element(locators.renamed_file_name_selector)
+        renamed_file_element = self.wait_for_element(locators.file_selector(new_file_name))
         if renamed_file_element == None:
             assert False, f"New File '{new_file_name}' Not Found after Rename"
         else:
@@ -138,7 +128,7 @@ class Utilities:
     def select_file_from_trash(self):
         action_chain = ActionChains(self.driver)
         
-        file_element = self.wait_for_element(locators.trashed_file_locator)
+        file_element = self.wait_for_element(locators.file_selector(files.file_to_be_restored))
                 
         if not file_element:
             assert False, "File Not Found in Trash"
@@ -150,28 +140,16 @@ class Utilities:
         
     def delete_file(self):
         # click on delete button
-        self.web_driver_wait.until(
-            EC.presence_of_element_located(
-                (
-                    By.XPATH,
-                    "//div[@role='button' and @aria-label='Move to trash' and @aria-hidden='false' and @aria-disabled='false']",
-                )
-            ),
-        )
-        delete_button = self.driver.find_element(
-            By.XPATH,
-            "//div[@role='button' and @aria-label='Move to trash' and @aria-hidden='false' and @aria-disabled='false']",
-        )
+        delete_button = self.wait_to_click.until(locators.action_bar_button_selector("Move to trash"))
+  
         delete_button.click()
         sleep(3)
     
-    def open_folder(self,open_folder):
+    def open_folder(self,folder_name):
 
         try:
-            # Use a CSS selector to find the file by its name
-            file_locator = (By.CSS_SELECTOR,
-                            f'div.uXB7xe[aria-label*="{open_folder}"]')
-            folder_element = self.driver.find_element(*file_locator)
+         
+            folder_element = self.select_item(folder_name)
             self.double_click_element(folder_element)
 
             return True
@@ -202,12 +180,6 @@ class Utilities:
     def context_click(self):
         action_chain = ActionChains(self.driver)
         action_chain.context_click().perform()
-
-    def verify_item_presence(self,item_name, timeout=10):
-        item_locator = (
-            By.XPATH, f'//div[@class="uXB7xe" and contains(@aria-label,"{item_name}" )]')
-        return self.wait_for_element(item_locator)
-  
 
 
     def wait_for_element(self,locator):
@@ -294,36 +266,6 @@ class Utilities:
             self.web_driver_wait.until(EC.presence_of_element_located(
                 locators.upload_complete_text))
             sleep(2)
-"""
-Utility function to undo delete action in the Google Drive web GUI.
-"""
-# def undo_delete_action(driver, action_chain, web_driver_wait, file_to_be_retrieved):
-#     trash_button = web_driver_wait.until(EC.element_to_be_clickable(locators.trash_button_locator))
-#     trash_button.click()
-#     sleep(5)
-
-#     try:
-#         web_driver_wait.until(EC.presence_of_element_located(locators.trashed_file_locator))
-#     except:
-#         assert False, "File Not Found in Trash"
-#     else:
-#         # Click on the trashed file
-#         trashed_file_element = driver.find_element(*locators.trashed_file_locator)
-#         action_chain.move_to_element(trashed_file_element).click().perform()
-#         sleep(6)
-#         restore_from_trash_button = web_driver_wait.until(EC.element_to_be_clickable(locators.restore_from_trash_button_locator))
-#         restore_from_trash_button.click()
-#         sleep(3)
-
-#     # Check whether the file has actually been restored or not
-#     try:
-#         home_button = web_driver_wait.until(EC.element_to_be_clickable(locators.home_button_locator))
-#         home_button.click()
-#         sleep(3)
-#         web_driver_wait.until(EC.presence_of_element_located(locators.restored_file_locator))
-#     except:
-#         assert False, f"File '{file_to_be_retrieved}' Not Restored"
-
 
 
 

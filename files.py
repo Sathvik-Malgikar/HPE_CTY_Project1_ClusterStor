@@ -2,6 +2,7 @@ file_name = "cty_ppt.pdf"
 renamed_file_name = "renamed_cty"
 
 
+file_to_be_deleted = "test.txt"
 file_to_be_restored = "test.txt"
 
 folder_name = "Applied crypto"
@@ -21,3 +22,5 @@ delete_forever_file_name="abc.txt"
 view_info_file_name="def.txt"
 
 FILE_TO_UPLOAD="Screenshot (177).png"
+
+share_file = "short_notes.txt"

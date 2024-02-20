@@ -50,7 +50,7 @@ def test_signin(utilityInstance):
     utilityInstance.send_keys_to_focused(account_email_id)
     utilityInstance.send_keys_to_focused(Keys.ENTER)
     
-    utilityInstance.wait_for_element.until( locators.welcome_span)
+    utilityInstance.wait_for_element( locators.welcome_span)
     sleep(1.5)  # to deal with input animation
    
     account_pwd = parser.get("Account Credentials", "password")
@@ -103,7 +103,7 @@ Test function to remove a file from the Google Drive web GUI.
 
 
 def test_remove_file(utilityInstance):
-    file_name = files.trashed_file_name
+    file_name = files.file_to_be_deleted
     utilityInstance.remove_file(file_name)
     utilityInstance.driver.refresh()
 
@@ -196,12 +196,8 @@ def test_upload_file(utilityInstance):
 
 
 def test_download_file(utilityInstance):
-    file_div = utilityInstance.wait_to_click(
-        locators.file_selector(files.renamed_file_name))
- 
-    file_div.click()
-    download_button = utilityInstance.wait_to_click(
-      locators.download_file_selector)
+    utilityInstance.select_item(files.renamed_file_name,True)
+    download_button = utilityInstance.wait_to_click(locators.action_bar_button_selector("Download"))
  
     download_button.click()
     
@@ -288,14 +284,14 @@ def test_delete_file_permanently(utilityInstance):
     utilityInstance.driver.refresh()
     sleep(5)    
     utilityInstance.remove_file( files.delete_forever_file_name)    
-    trash_btn_element=utilityInstance.wait_to_click(locators.trash_button_locator)
-    utilityInstance.click_element(trash_btn_element)    
+    utilityInstance.click_trash_button()
+    
     deleted_file_locator = locators.file_selector(files.delete_forever_file_name)
     utilityInstance.wait_for_element(deleted_file_locator)
       
     utilityInstance.select_file( files.delete_forever_file_name, show_more_needed=False)    
     delete_forever_btn_element=utilityInstance.wait_to_click(locators.delete_forever_button_locator) 
-    utilityInstance.click_element(delete_forever_btn_element)      
+    delete_forever_btn_element.click()  
     sleep(2)    
     try:
         delete_confirm_btn_element = utilityInstance.wait_for_element(locators.delete_confirm_button_locator) 
@@ -305,6 +301,25 @@ def test_delete_file_permanently(utilityInstance):
         assert False, "Error occured"
     else:
         assert True, f"{files.delete_forever_file_name} is permanently deleted"
+
+
+def test_share_via_link(utilityInstance):
+    utilityInstance.select_item(files.share_file,False)
+    sleep(3)
+    share_button = utilityInstance.wait_to_click(locators.action_bar_button_selector("Share"))
+    share_button.click()
+    sleep(3)
+    span_button = utilityInstance.wait_to_click(locators.permission_change_link_button)
+    span_button.click()
+    
+    dropdown_element = utilityInstance.wait_for_element(locators.span_with_text("Anyone with the link"))
+    action_chain = ActionChains(utilityInstance.driver)
+    action_chain.move_to_element(dropdown_element).perform()
+    dropdown_element.click()
+    
+    sleep(6)
+    
+    
 
 """
 ## Test function to logout from the Google Drive web GUI.
