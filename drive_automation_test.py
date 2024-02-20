@@ -102,7 +102,8 @@ Test function to remove a file from the Google Drive web GUI.
 
 def test_remove_file(utilityInstance):
     file_name = files.file_to_be_deleted
-    utilityInstance.remove_file(file_name)
+    utilityInstance.select_item(file_name,True)
+    utilityInstance.delete_file(file_name)
     utilityInstance.driver.refresh()
 
 
@@ -210,7 +211,8 @@ def test_remove_multiple_files(utilityInstance):
     files = ['test.txt', 'test1.txt']
     for file in files:
         try:
-            utilityInstance.remove_file( file)
+            utilityInstance.select_item( file , False)
+            utilityInstance.delete_file( file)
         except FileNotFoundError as e:
             assert False, repr(e)
         finally:
@@ -296,7 +298,8 @@ def test_view_file_info(utilityInstance):
 def test_delete_file_permanently(utilityInstance):
     utilityInstance.driver.refresh()
     sleep(5)    
-    utilityInstance.remove_file( files.delete_forever_file_name)    
+    utilityInstance.select_item( files.delete_forever_file_name,True)
+    utilityInstance.delete_file( files.delete_forever_file_name)    
     utilityInstance.click_trash_button()
     
     deleted_file_locator = locators.file_selector(files.delete_forever_file_name)
