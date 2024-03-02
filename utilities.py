@@ -15,7 +15,7 @@ import files
 import autoGUIutils
 
 
-class Utilities:
+class CommonActions:
     def __init__(self):
         pass
     
@@ -157,7 +157,7 @@ class Utilities:
 
 
     def click_on_restore_from_trash_button(self):
-        restore_from_trash_button = self.wait_to_click(locators.restore_from_trash_button_locator)
+        restore_from_trash_button = self.wait_to_click(locators.action_bar_button_selector("Restore from trash"))
         restore_from_trash_button.click()
         sleep(3)
 
@@ -330,9 +330,9 @@ class Utilities:
 
     def delete_file(self):
         # click on delete button
-        delete_button = self.wait_to_click.until(locators.action_bar_button_selector("Move to trash"))
-  
+        delete_button = self.wait_for_element(locators.action_bar_button_selector("Move to trash")) # some times this is called 'Remove' // in edge i guess
         delete_button.click()
+        
         sleep(3)
     
     
@@ -489,25 +489,19 @@ class Utilities:
     
     def click_on_new_button(self):
         # clicks on new button
-        self.web_driver_wait.until(EC.element_to_be_clickable(
-            locators.new_button_selector))
-        new_button = self.wait_for_element(*locators.new_button_selector)
+       
+        new_button = self.wait_to_click(locators.new_button_selector)
         new_button.click()
         sleep(2)
 
-        # clicks on new file
-        self.web_driver_wait.until(EC.element_to_be_clickable(
-            locators.file_upload_button_selector))
-        upload_button = self.wait_for_element(*locators.file_upload_button_selector)
-        upload_button.click()
-        sleep(3)
+      
 
 
     def deal_duplicate_and_await_upload(self):
         # try block to deal with situation of file being there already
         try:
             # to see if the warning of file being alreay ent shows up
-            self.wait_for_element(*locators.file_already_present_text)
+            self.wait_for_element(locators.file_already_present_text)
         except EXC.NoSuchElementException:
 
             print("file not already in google drive, uploading as new file")

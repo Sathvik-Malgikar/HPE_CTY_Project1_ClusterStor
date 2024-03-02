@@ -12,13 +12,15 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.common.exceptions import NoSuchElementException
 import locators
 import files
-from utilities import Utilities
+from utilities import CommonActions
 import autoGUIutils
 
 
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture( scope="session" ,autouse=True)
 def utilityInstance():
-    instance = Utilities()
+    instance = CommonActions()
+    driver2 = Chrome(executable_path="./chromedriver.exe")
+    web_driver_wait2 = WebDriverWait(driver2 , 10)
     instance.setup()
     yield instance
     instance.teardown()
@@ -49,9 +51,10 @@ def test_signin(utilityInstance):
     utilityInstance.send_keys_to_focused(Keys.ENTER)
     
     utilityInstance.wait_for_element( locators.welcome_span)
-    sleep(1.5)  # to deal with input animation
+    sleep(3)  # to deal with input animation
    
     account_pwd = parser.get("Account Credentials", "password")
+    print(account_pwd)
     utilityInstance.send_keys_to_focused(account_pwd)
     utilityInstance.send_keys_to_focused(Keys.ENTER)
     
@@ -69,17 +72,21 @@ def test_signin(utilityInstance):
     sleep(5)
 
 
-def test_dummy_test_prerequisite(driver):
+def test_dummy_test_prerequisite(utilityInstance):
     file_list_to_upload = ["test.txt", "cty_ppt.pdf", "test2.txt"]
 
     for file in file_list_to_upload:
 
         utilityInstance.click_on_new_button()
+          
+        upload_button = utilityInstance.wait_to_click(locators.new_menu_button_locator("File upload"))
+        upload_button.click()
+        sleep(2)
 
         autoGUIutils.type_into_dialogue_box(file)
 
-        utilityInstance.wait_till_upload()
-        driver.refresh()
+        utilityInstance.deal_duplicate_and_await_upload()
+        utilityInstance.driver.refresh()
         sleep(5)
 
 
@@ -103,8 +110,7 @@ Test function to remove a file from the Google Drive web GUI.
 def test_remove_file(utilityInstance):
     file_name = files.file_to_be_deleted
     utilityInstance.select_item(file_name,True)
-    utilityInstance.delete_file(file_name)
-    utilityInstance.driver.refresh()
+    utilityInstance.delete_file()
 
 
 """
@@ -115,8 +121,8 @@ Test function to rename a file in the Google Drive web GUI.
 def test_rename_file(utilityInstance):
     old_file_name = files.file_name
     new_file_name = files.renamed_file_name
-    utilityInstance.select_file(old_file_name, False)
-    utilityInstance.rename_action(new_file_name)
+    utilityInstance.select_item(old_file_name, False)
+    utilityInstance.rename_selected_item(new_file_name)
     utilityInstance.click_on_ok_button()
     utilityInstance.rename_verification(old_file_name, new_file_name)
 
@@ -142,8 +148,8 @@ Test function to rename a folder in the Google Drive web GUI.
 def test_rename_folder(utilityInstance):
     old_folder_name = files.folder_name
     new_folder_name = files.renamed_folder_name
-    utilityInstance.select_file_from_trash(old_folder_name)
-    utilityInstance.rename(new_folder_name)
+    utilityInstance.select_item(old_folder_name,True)
+    utilityInstance.rename_selected_item(new_folder_name)
     utilityInstance.click_on_ok_button()
 
 
@@ -158,8 +164,11 @@ def folder_name():
 
 
 def test_create_folder(utilityInstance, folder_name):
-    new_btn_element = utilityInstance.wait_for_element(locators.new_btn_locator)
-    utilityInstance.click_element(new_btn_element)
+    utilityInstance.click_on_new_button()
+      
+    create_folder_button = utilityInstance.wait_to_click(locators.new_menu_button_locator("New folder"))
+    create_folder_button.click()
+    sleep(2)
 
     input_field = utilityInstance.wait_for_element(locators.input_field_locator)
 
@@ -180,6 +189,10 @@ def test_upload_file(utilityInstance):
     
 
     utilityInstance.click_on_new_button()
+    
+    upload_button = utilityInstance.wait_to_click(locators.new_menu_button_locator("File upload"))
+    upload_button.click()
+    sleep(2)
 
     autoGUIutils.type_into_dialogue_box(files.FILE_TO_UPLOAD)
 
@@ -211,8 +224,8 @@ def test_remove_multiple_files(utilityInstance):
     files = ['test.txt', 'test1.txt']
     for file in files:
         try:
-            utilityInstance.select_item( file , False)
-            utilityInstance.delete_file( file)
+            utilityInstance.select_item( file , True)
+            utilityInstance.delete_file( )
         except FileNotFoundError as e:
             assert False, repr(e)
         finally:
@@ -221,7 +234,7 @@ def test_remove_multiple_files(utilityInstance):
 
 
 def test_copy_file(utilityInstance):
-    utilityInstance.select_file( files.file_name_for_copy,show_more_needed=True)
+    utilityInstance.select_item( files.file_name_for_copy,show_more_needed=True)
     utilityInstance.context_click()
     sleep(5)
 
@@ -234,20 +247,19 @@ def test_copy_file(utilityInstance):
     copied_file_element = utilityInstance.wait_for_element(locators.copied_file_locator)
     assert copied_file_element is not None
 
-def test_move_file(utilityInstance,move_file):
+def test_move_file(utilityInstance):
 
-    utilityInstance.select_file(move_file, show_more_needed=True)
-    
+    utilityInstance.select_item(files.file_move_name, show_more_needed=True)
     
     file_element = utilityInstance.wait_for_element(locators.file_move_locator)
-    destination_folder_element = utilityInstance.wait_for_element(locators.destination_folder_element_locator)
+    destination_folder_element = utilityInstance.wait_for_element(locators.file_selector(files.destination_folder_name))
     utilityInstance.drag_and_drop_element(file_element, destination_folder_element)
     
     sleep(5)
 
     try:
         destination_folder_element = utilityInstance.wait_to_click(
-            locators.destination_folder_element_locator)
+          locators.file_selector(files.destination_folder_name))
         utilityInstance.double_click_element(destination_folder_element)
         sleep(4)
     except EXC.StaleElementReferenceException:
@@ -299,13 +311,13 @@ def test_delete_file_permanently(utilityInstance):
     utilityInstance.driver.refresh()
     sleep(5)    
     utilityInstance.select_item( files.delete_forever_file_name,True)
-    utilityInstance.delete_file( files.delete_forever_file_name)    
+    utilityInstance.delete_file( )    
     utilityInstance.click_trash_button()
     
     deleted_file_locator = locators.file_selector(files.delete_forever_file_name)
     utilityInstance.wait_for_element(deleted_file_locator)
       
-    utilityInstance.select_file( files.delete_forever_file_name, show_more_needed=False)    
+    utilityInstance.select_item( files.delete_forever_file_name, show_more_needed=False)    
     delete_forever_btn_element=utilityInstance.wait_to_click(locators.delete_forever_button_locator) 
     delete_forever_btn_element.click()  
     sleep(2)    
@@ -341,7 +353,7 @@ def test_search_for_file_by_name(utilityInstance):
     
     utilityInstance.click_on_search_in_drive()
     autoGUIutils.type_into_dialogue_box(files.file_to_be_searched)
-    file_element = utilityInstance.wait_to_click(locators.file_selector(locators.file_to_be_searched))
+    file_element = utilityInstance.wait_to_click(locators.file_selector(files.file_to_be_searched))
     utilityInstance.double_click_element(file_element)
     sleep(5)
 
