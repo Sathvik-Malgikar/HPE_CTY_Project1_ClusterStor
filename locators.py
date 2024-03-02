@@ -7,9 +7,9 @@ sign_in_link = (By.LINK_TEXT, "Sign in")
 
 new_button_selector = (By.CSS_SELECTOR, "button.brbsPe.Ss7qXc.a-qb-d")
 
-def new_menu_button_locator (button):
+def new_menu_button_locator (button_text):
     return (
-    By.CSS_SELECTOR, f"div[data-tooltip='{button}'].a-v-T")
+    By.CSS_SELECTOR, f"div[data-tooltip='{button_text}'].a-v-T")
 file_selector_ = (By.CSS_SELECTOR, "div.tyTrke.M3pype")
 
 upload_complete_text = (
@@ -44,11 +44,8 @@ copied_file_locator = (
 make_a_copy_element_locator = (
     By.CSS_SELECTOR, 'div[aria-label="Make a copy"]')
 
-    
-
 
 input_field_locator=(By.CLASS_NAME, "LUNIy")
-delete_forever_button_locator = (By.XPATH, "//div[@aria-label='Delete forever']")
 file_info_dialog_locator = (By.CSS_SELECTOR,"div.wbg7nb")
 
 user_profile_button_locator = (By.CSS_SELECTOR, 'a.gb_d[aria-label*="Google Account"]')
@@ -60,7 +57,7 @@ def action_bar_button_selector(aria_label):
     return (By.CSS_SELECTOR , f"div[aria-label='{aria_label}'][role='button'][aria-hidden='false'][aria-disabled='false']" )
 
 def left_menu_page_selector(aria_label):
-    return (By.CSS_SELECTOR , f"span.a-s-T[aria-label='{aria_label}']")
+    return (By.CSS_SELECTOR , f"div[aria-label='{aria_label}']")
 
 def span_with_text(text):
     return (By.XPATH, f"//span[contains(text(), {text})]")

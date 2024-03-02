@@ -25,6 +25,14 @@ def type_into_dialogue_box(FILE_TO_UPLOAD):
     sleep(1)
     pyautogui.press("enter")
     sleep(3)
+
+def go_back_esc():
+    # types into dialogue box
+    pyautogui.press("esc")
+    sleep(2)
+  
+    
+    
     
 def zoom_out():
     pyautogui.keyDown("ctrl")

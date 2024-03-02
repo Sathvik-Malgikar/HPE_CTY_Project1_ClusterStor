@@ -175,7 +175,7 @@ def test_create_folder(utilityInstance, folder_name):
     input_field.clear()
     utilityInstance.send_keys_to_element(locators.input_field_locator, folder_name)
     utilityInstance.send_keys_to_element(locators.input_field_locator, Keys.ENTER)
-    assert utilityInstance.verify_folder_presence(folder_name)
+    assert utilityInstance.wait_for_element(locators.file_selector(folder_name))!=None
     sleep(3)
 
 
@@ -190,14 +190,14 @@ def test_upload_file(utilityInstance):
 
     utilityInstance.click_on_new_button()
     
-    upload_button = utilityInstance.wait_to_click(locators.new_menu_button_locator("File upload"))
+    upload_button = utilityInstance.wait_for_element(locators.new_menu_button_locator("File upload"))
     upload_button.click()
     sleep(2)
 
     autoGUIutils.type_into_dialogue_box(files.FILE_TO_UPLOAD)
 
     # this is utility solely because prerequisites aso reuses this function
-    utilityInstance.wait_till_upload()
+    utilityInstance.deal_duplicate_and_await_upload()
 
     assert utilityInstance.verify_file_presence(files.FILE_TO_UPLOAD, 10)
 
@@ -209,10 +209,12 @@ def test_upload_file(utilityInstance):
 
 def test_download_file(utilityInstance):
     utilityInstance.select_item(files.renamed_file_name,True)
-    download_button = utilityInstance.wait_to_click(locators.action_bar_button_selector("Download"))
+    download_button = utilityInstance.wait_for_element(locators.action_bar_button_selector("Download"))
  
     download_button.click()
     
+    sleep(10)
+    assert True
 
 
 """
@@ -318,7 +320,7 @@ def test_delete_file_permanently(utilityInstance):
     utilityInstance.wait_for_element(deleted_file_locator)
       
     utilityInstance.select_item( files.delete_forever_file_name, show_more_needed=False)    
-    delete_forever_btn_element=utilityInstance.wait_to_click(locators.delete_forever_button_locator) 
+    delete_forever_btn_element=utilityInstance.wait_for_element(locators.action_bar_button_selector("Delete forever")) 
     delete_forever_btn_element.click()  
     sleep(2)    
     try:
@@ -334,7 +336,7 @@ def test_delete_file_permanently(utilityInstance):
 def test_share_via_link(utilityInstance):
     utilityInstance.select_item(files.share_file,False)
     sleep(3)
-    share_button = utilityInstance.wait_to_click(locators.action_bar_button_selector("Share"))
+    share_button = utilityInstance.wait_for_element(locators.action_bar_button_selector("Share"))
     share_button.click()
     sleep(3)
     span_button = utilityInstance.wait_to_click(locators.permission_change_link_button)
@@ -355,7 +357,8 @@ def test_search_for_file_by_name(utilityInstance):
     autoGUIutils.type_into_dialogue_box(files.file_to_be_searched)
     file_element = utilityInstance.wait_to_click(locators.file_selector(files.file_to_be_searched))
     utilityInstance.double_click_element(file_element)
-    sleep(5)
+    sleep(3)
+    autoGUIutils.go_back_esc()
 
 
 def test_search_file_by_type(utilityInstance):
@@ -363,7 +366,7 @@ def test_search_file_by_type(utilityInstance):
     
     utilityInstance.click_on_my_drive_button()
     utilityInstance.click_on_type_button()
-    utilityInstance.click_on_the_required_type(files.type)
+    utilityInstance.click_on_the_required_type()
     file_element = utilityInstance.wait_to_click(locators.file_selector(files.file_to_be_searched_by_type))
     utilityInstance.double_click_element(file_element)
     sleep(5)
