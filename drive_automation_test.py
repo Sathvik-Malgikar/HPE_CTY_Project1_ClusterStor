@@ -74,6 +74,7 @@ def test_signin(utilityInstance):
 
 def test_dummy_test_prerequisite(utilityInstance):
     file_list_to_upload = ["test.txt", "cty_ppt.pdf", "test2.txt"]
+    
 
     for file in file_list_to_upload:
 
@@ -88,6 +89,19 @@ def test_dummy_test_prerequisite(utilityInstance):
         utilityInstance.deal_duplicate_and_await_upload()
         utilityInstance.driver.refresh()
         sleep(5)
+    
+    # to create SVM folder
+    utilityInstance.click_on_new_button()
+        
+    action_button = utilityInstance.wait_to_click(locators.new_menu_button_locator("New folder"))
+    action_button.click()
+    sleep(2)
+
+    autoGUIutils.type_into_dialogue_box("SVM")
+    
+    utilityInstance.driver.refresh()
+    assert True
+
 
 
 """
@@ -376,7 +390,7 @@ def test_remove_folder(utilityInstance):
     
     utilityInstance.click_on_home_button()
     utilityInstance.click_on_folders_button()
-    utilityInstance.select_item(files.folder_name_to_be_removed, True)
+    utilityInstance.select_item(files.folder_name_to_be_removed, False)
     utilityInstance.delete_file()    
 
 
@@ -389,7 +403,7 @@ def test_logout(utilityInstance):
     sleep(2)
     try:
         sign_out_button_element = utilityInstance.wait_for_element(locators.sign_out_button_locator)
-        utilityInstance.click_element(sign_out_button_element)
+        sign_out_button_element.click()
     except Exception as e:
         print("error occured ",e)
         
