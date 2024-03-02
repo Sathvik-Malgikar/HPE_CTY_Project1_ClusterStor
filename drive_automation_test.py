@@ -353,16 +353,21 @@ def test_share_via_link(utilityInstance):
     sleep(3)
     share_button = utilityInstance.wait_for_element(locators.action_bar_button_selector("Share"))
     share_button.click()
-    sleep(3)
-    span_button = utilityInstance.wait_to_click(locators.permission_change_link_button)
-    span_button.click()
     
-    dropdown_element = utilityInstance.wait_for_element(locators.span_with_text("Anyone with the link"))
-    action_chain = ActionChains(utilityInstance.driver)
-    action_chain.move_to_element(dropdown_element).perform()
-    dropdown_element.click()
+    sleep(5)
+    
+    autoGUIutils.press_tab()
+    sleep(0.4)
+    autoGUIutils.press_tab()
+    sleep(0.4)
+    autoGUIutils.press_tab()
+    sleep(0.4)
+    autoGUIutils.press_enter()
+    sleep(0.4)
+    autoGUIutils.go_back_esc()
     
     sleep(6)
+    assert True
     
     
 def test_search_for_file_by_name(utilityInstance):

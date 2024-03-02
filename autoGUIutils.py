@@ -30,7 +30,16 @@ def go_back_esc():
     # types into dialogue box
     pyautogui.press("esc")
     sleep(2)
+
+def press_tab():
+    # types into dialogue box
+    pyautogui.press("tab")
+    sleep(2)
   
+def press_enter():
+    # types into dialogue box
+    pyautogui.press("enter")
+    sleep(2)
     
 def view_shortcut():
     # types into dialogue box

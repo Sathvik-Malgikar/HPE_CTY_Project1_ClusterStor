@@ -51,8 +51,6 @@ file_info_dialog_locator = (By.CSS_SELECTOR,"div.wbg7nb")
 user_profile_button_locator = (By.CSS_SELECTOR, 'a.gb_d[aria-label*="Google Account"]')
 sign_out_button_locator = (By.XPATH, '//*[@id="yDmH0d"]/c-wiz/div/div/div/div/div[2]/div/div[2]/div[2]/span/span[2]') 
 
-permission_change_link_button = (By.XPATH , "button.VfPpkd-LgbsSe.VfPpkd-LgbsSe-OWXEXe-Bz112c-UbuQg.ksBjEc.lKxP2d.LQeN7.xFWpbf.CZCFtc-c5RTEf.qoCZef.cd29Sd.RCmsv.jbArdc.uFAPIe.QdKnMc.FnERz.S9uFJc")
-
 def action_bar_button_selector(aria_label):
     return (By.CSS_SELECTOR , f"div[aria-label='{aria_label}'][role='button'][aria-hidden='false'][aria-disabled='false']" )
 
@@ -70,7 +68,3 @@ type_of_file_locator = (By.CSS_SELECTOR, f'li[role="menuitemcheckbox"][name="{fi
 
 folders_button_locator = (By.CSS_SELECTOR, 'button[name="T5ycX"]')
 move_to_trash_button_locator = (By.CSS_SELECTOR, 'div[aria-label="Move to trash"]')
-
-def folder_selector(folder_name): return (
-    By.XPATH, f'//div[@class="uXB7xe" and contains(@aria-label,"{files.folder_name_to_be_removed}" )]')
-
