@@ -32,6 +32,12 @@ def go_back_esc():
     sleep(2)
   
     
+def view_shortcut():
+    # types into dialogue box
+    pyautogui.typewrite("gd")
+    sleep(2)
+  
+    
     
     
 def zoom_out():

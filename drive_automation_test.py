@@ -73,7 +73,7 @@ def test_signin(utilityInstance):
 
 
 def test_dummy_test_prerequisite(utilityInstance):
-    file_list_to_upload = ["test.txt", "cty_ppt.pdf", "test2.txt"]
+    file_list_to_upload = [files.file_name_for_copy, "cty_ppt.pdf", files.file_move_name,files.view_info_file_name]
     
 
     for file in file_list_to_upload:
@@ -97,7 +97,7 @@ def test_dummy_test_prerequisite(utilityInstance):
     action_button.click()
     sleep(2)
 
-    autoGUIutils.type_into_dialogue_box("SVM")
+    autoGUIutils.type_into_dialogue_box(files.folder_name_to_be_removed)
     
     utilityInstance.driver.refresh()
     assert True
@@ -179,16 +179,15 @@ def folder_name():
 
 def test_create_folder(utilityInstance, folder_name):
     utilityInstance.click_on_new_button()
-      
-    create_folder_button = utilityInstance.wait_to_click(locators.new_menu_button_locator("New folder"))
-    create_folder_button.click()
+        
+    action_button = utilityInstance.wait_to_click(locators.new_menu_button_locator("New folder"))
+    action_button.click()
     sleep(2)
 
-    input_field = utilityInstance.wait_for_element(locators.input_field_locator)
-
-    input_field.clear()
-    utilityInstance.send_keys_to_element(locators.input_field_locator, folder_name)
-    utilityInstance.send_keys_to_element(locators.input_field_locator, Keys.ENTER)
+    autoGUIutils.type_into_dialogue_box(folder_name)
+    
+    utilityInstance.driver.refresh()
+ 
     assert utilityInstance.wait_for_element(locators.file_selector(folder_name))!=None
     sleep(3)
 
@@ -311,9 +310,11 @@ def test_move_multiple_files(utilityInstance):
             continue
 
 
-def test_view_file_info(utilityInstance):    
-    utilityInstance.send_keys_to_element( files.view_info_file_name,"gd")
+def test_view_file_info(utilityInstance):  
+    utilityInstance.select_item(files.view_info_file_name,True)  
+    autoGUIutils.view_shortcut()
     
+    sleep(2)
          
     element = utilityInstance.wait_to_click(locators.file_info_dialog_locator)
     if not element:
