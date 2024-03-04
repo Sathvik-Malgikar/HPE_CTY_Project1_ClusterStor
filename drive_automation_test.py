@@ -70,23 +70,21 @@ def test_signin(utilityInstance):
     sleep(5)
 
 
-def test_dummy_test_prerequisite(utilityInstance):
-    file_list_to_upload = [files.file_name_for_copy, files.file_name, files.file_move_name,files.view_info_file_name, *files.fileCollection ,files.share_file,files.delete_forever_file_name]
+def test_prerequisites(utilityInstance):
+    rawfilenames= [files.file_name_for_copy, files.file_name, files.file_move_name,files.view_info_file_name, *files.fileCollection ,files.share_file,files.delete_forever_file_name]
+    file_list_to_upload = " ".join(list(map(lambda a:f'"{a}"',rawfilenames)))
     
+    utilityInstance.click_on_new_button()
+        
+    upload_button = utilityInstance.wait_to_click(locators.new_menu_button_locator("File upload"))
+    upload_button.click()
+    sleep(2)
 
-    for file in file_list_to_upload:
+    autoGUIutils.type_into_dialogue_box(file_list_to_upload)
 
-        utilityInstance.click_on_new_button()
-          
-        upload_button = utilityInstance.wait_to_click(locators.new_menu_button_locator("File upload"))
-        upload_button.click()
-        sleep(2)
-
-        autoGUIutils.type_into_dialogue_box(file)
-
-        utilityInstance.deal_duplicate_and_await_upload()
-        utilityInstance.driver.refresh()
-        sleep(5)
+    utilityInstance.deal_duplicate_and_await_upload()
+    utilityInstance.driver.refresh()
+    sleep(5)
     
     # to create SVM folder
     utilityInstance.click_on_new_button()

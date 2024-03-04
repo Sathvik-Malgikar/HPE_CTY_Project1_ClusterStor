@@ -507,6 +507,7 @@ class CommonActions:
 
             print("file not already in google drive, uploading as new file")
         else:
+            sleep(0.8) # transition
             # to deal with file already exisiting
             pyautogui.press("tab")
             pyautogui.press("tab")

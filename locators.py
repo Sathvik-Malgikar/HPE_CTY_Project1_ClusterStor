@@ -13,7 +13,7 @@ def new_menu_button_locator (button_text):
 file_selector_ = (By.CSS_SELECTOR, "div.tyTrke.M3pype")
 
 upload_complete_text = (
-    By.CSS_SELECTOR, "span[aria-label='1 upload complete'].af-V")
+    By.XPATH, "//span[contains(text(), 'upload') and contains(text(), 'complete')]")
 file_already_present_text = (By.CSS_SELECTOR, "div#EJL26d")
 file_name_containerdiv = (By.CSS_SELECTOR, "div.KL4NAf")
 
