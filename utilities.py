@@ -20,7 +20,7 @@ class CommonActions:
         pass
     
     def setup(self):
-        self.driver = Chrome(executable_path="./chromedriver.exe")
+        self.driver = Chrome()
         self.web_driver_wait = WebDriverWait(self.driver , 10)
     
     def teardown(self):
@@ -227,6 +227,7 @@ class CommonActions:
 
     def rename_selected_item(self, new_file_name):
         pyautogui.press('n')
+        sleep(2)
         pyautogui.write(new_file_name)
     
         

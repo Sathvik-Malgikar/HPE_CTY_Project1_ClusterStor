@@ -19,8 +19,6 @@ import autoGUIutils
 @pytest.fixture( scope="session" ,autouse=True)
 def utilityInstance():
     instance = CommonActions()
-    driver2 = Chrome(executable_path="./chromedriver.exe")
-    web_driver_wait2 = WebDriverWait(driver2 , 10)
     instance.setup()
     yield instance
     instance.teardown()
@@ -110,7 +108,7 @@ def test_dummy_test_prerequisite(utilityInstance):
 
 
 def test_get_filenames(utilityInstance):
-    file_name_divs = utilityInstance.driver.find_elements_by_css_selector(
+    file_name_divs = utilityInstance.driver.find_elements(By.CSS_SELECTOR , 
         "div.KL4NAf")
     sleep(4)
     assert len(file_name_divs) > 0
@@ -122,6 +120,8 @@ Test function to remove a file from the Google Drive web GUI.
 
 
 def test_remove_file(utilityInstance):
+    utilityInstance.click_on_home_button()
+    sleep(2)
     file_name = files.file_to_be_deleted
     utilityInstance.select_item(file_name,True)
     utilityInstance.delete_file()
@@ -133,6 +133,9 @@ Test function to rename a file in the Google Drive web GUI.
 
 
 def test_rename_file(utilityInstance):
+
+    utilityInstance.click_on_home_button()
+    sleep(2)
     old_file_name = files.file_name
     new_file_name = files.renamed_file_name
     utilityInstance.select_item(old_file_name, False)
@@ -160,6 +163,8 @@ Test function to rename a folder in the Google Drive web GUI.
 
 
 def test_rename_folder(utilityInstance):
+    utilityInstance.click_on_home_button()
+    sleep(2)
     old_folder_name = files.folder_name
     new_folder_name = files.renamed_folder_name
     utilityInstance.select_item(old_folder_name,True)
@@ -236,6 +241,8 @@ def test_download_file(utilityInstance):
 
 
 def test_remove_multiple_files(utilityInstance):
+    utilityInstance.click_on_home_button()
+    sleep(2)
     files = ['test.txt', 'test1.txt']
     for file in files:
         try:
@@ -349,7 +356,9 @@ def test_delete_file_permanently(utilityInstance):
 
 
 def test_share_via_link(utilityInstance):
-    utilityInstance.select_item(files.share_file,False)
+    utilityInstance.click_on_home_button()
+    sleep(2)
+    utilityInstance.select_item(files.share_file,True)
     sleep(3)
     share_button = utilityInstance.wait_for_element(locators.action_bar_button_selector("Share"))
     share_button.click()
