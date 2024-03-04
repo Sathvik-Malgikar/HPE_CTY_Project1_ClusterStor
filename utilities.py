@@ -86,7 +86,7 @@ class CommonActions:
 
     
     def click_trash_button(self):
-        trash_button = self.wait_to_click(locators.left_menu_page_selector("Trashed items"))
+        trash_button = self.wait_to_click(locators.left_menu_page_selector("Trash"))
         trash_button.click()
         sleep(5)
     

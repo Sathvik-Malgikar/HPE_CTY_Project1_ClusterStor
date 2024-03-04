@@ -14,7 +14,7 @@ import locators
 import files
 from utilities import CommonActions
 import autoGUIutils
-
+import os
 
 @pytest.fixture( scope="session" ,autouse=True)
 def utilityInstance():
@@ -71,7 +71,7 @@ def test_signin(utilityInstance):
 
 
 def test_dummy_test_prerequisite(utilityInstance):
-    file_list_to_upload = [files.file_name_for_copy, "cty_ppt.pdf", files.file_move_name,files.view_info_file_name]
+    file_list_to_upload = [files.file_name_for_copy, files.file_name, files.file_move_name,files.view_info_file_name, *files.fileCollection ,files.share_file,files.delete_forever_file_name]
     
 
     for file in file_list_to_upload:
@@ -113,7 +113,28 @@ def test_get_filenames(utilityInstance):
     sleep(4)
     assert len(file_name_divs) > 0
 
+def test_search_for_file_by_name(utilityInstance):
+  
+    
+    utilityInstance.click_on_search_in_drive()
+    autoGUIutils.type_into_dialogue_box(files.file_to_be_searched)
+    file_element = utilityInstance.wait_to_click(locators.file_selector(files.file_to_be_searched))
+    utilityInstance.double_click_element(file_element)
+    sleep(3)
+    autoGUIutils.go_back_esc()
 
+
+def test_search_file_by_type(utilityInstance):
+    
+    
+    utilityInstance.click_on_my_drive_button()
+    utilityInstance.click_on_type_button()
+    utilityInstance.click_on_the_required_type()
+    file_element = utilityInstance.wait_to_click(locators.file_selector(files.file_to_be_searched_by_type))
+    utilityInstance.double_click_element(file_element)
+    sleep(3)
+    autoGUIutils.go_back_esc()
+    
 """
 Test function to remove a file from the Google Drive web GUI.
 """
@@ -125,6 +146,7 @@ def test_remove_file(utilityInstance):
     file_name = files.file_to_be_deleted
     utilityInstance.select_item(file_name,True)
     utilityInstance.delete_file()
+    assert True
 
 
 """
@@ -231,8 +253,8 @@ def test_download_file(utilityInstance):
  
     download_button.click()
     
-    sleep(10)
-    assert True
+    sleep(6)
+    assert files.renamed_file_name+".pdf" in os.listdir(r"C:\Users\Sathvik Malgikar\Downloads")
 
 
 """
@@ -243,15 +265,17 @@ def test_download_file(utilityInstance):
 def test_remove_multiple_files(utilityInstance):
     utilityInstance.click_on_home_button()
     sleep(2)
-    files = ['test.txt', 'test1.txt']
-    for file in files:
+    for file in files.fileCollection:
         try:
             utilityInstance.select_item( file , True)
             utilityInstance.delete_file( )
         except FileNotFoundError as e:
             assert False, repr(e)
+            
         finally:
             utilityInstance.driver.refresh()
+    
+
 
 
 
@@ -377,28 +401,6 @@ def test_share_via_link(utilityInstance):
     
     sleep(6)
     assert True
-    
-    
-def test_search_for_file_by_name(utilityInstance):
-  
-    
-    utilityInstance.click_on_search_in_drive()
-    autoGUIutils.type_into_dialogue_box(files.file_to_be_searched)
-    file_element = utilityInstance.wait_to_click(locators.file_selector(files.file_to_be_searched))
-    utilityInstance.double_click_element(file_element)
-    sleep(3)
-    autoGUIutils.go_back_esc()
-
-
-def test_search_file_by_type(utilityInstance):
-    
-    
-    utilityInstance.click_on_my_drive_button()
-    utilityInstance.click_on_type_button()
-    utilityInstance.click_on_the_required_type()
-    file_element = utilityInstance.wait_to_click(locators.file_selector(files.file_to_be_searched_by_type))
-    utilityInstance.double_click_element(file_element)
-    sleep(5)
 
 
 def test_remove_folder(utilityInstance):
