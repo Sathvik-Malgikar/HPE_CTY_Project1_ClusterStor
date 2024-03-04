@@ -15,6 +15,67 @@ import files
 import autoGUIutils
 
 
+class ButtonClicker:
+    def __init__(self, driver, web_driver_wait):
+        self.driver = driver
+        self.web_driver_wait = web_driver_wait
+    
+    def click_action_bar_button(self, button_name):
+        button_element = self.wait_to_click(locators.action_bar_button_selector(button_name))
+        button_element.click()
+
+    def click_left_menu_page_buttons(self, button_name):
+        button_element = self.wait_to_click(locators.left_menu_page_selector(button_name))
+        button_element.click()
+
+        
+    def click_on_restore_from_trash_button(self):
+        restore_from_trash_button = self.wait_to_click(locators.action_bar_button_selector("Restore from trash"))
+        restore_from_trash_button.click()
+        sleep(3)
+
+    def click_on_ok_button(self):
+        ok_button = self.wait_to_click(locators.ok_button_locator)
+        ok_button.click()
+        sleep(3)
+
+    def delete_file(self):
+        delete_button = self.wait_to_click(locators.action_bar_button_selector("Move to trash"))
+        delete_button.click()
+        sleep(3)
+
+    def click_on_type_button(self):
+        type_button = self.wait_to_click(locators.type_button_locator)
+        type_button.click()
+
+    def click_on_the_required_type(self):
+        required_type = self.wait_to_click(locators.type_of_file_locator)
+        required_type.click()
+        sleep(6)
+
+    def click_on_folders_button(self):
+        folders_button = self.wait_to_click(locators.folders_button_locator)
+        folders_button.click()
+        sleep(5)
+
+    def click_on_search_in_drive(self):
+        search_bar = self.wait_to_click(locators.search_bar_locator)
+        search_bar.click()
+        sleep(5)
+
+    def click_on_new_button(self):
+        new_button = self.wait_to_click(locators.new_button_selector)
+        new_button.click()
+        sleep(2)
+
+    def wait_to_click(self, locator):
+        try:
+            element = self.web_driver_wait.until(EC.element_to_be_clickable(locator))
+            return element
+        except TimeoutException:
+            print(f"Timeout waiting for element with locator {locator}")
+            return None
+
 class CommonActions:
     def __init__(self):
         pass
@@ -86,7 +147,7 @@ class CommonActions:
 
     
     def click_trash_button(self):
-        trash_button = self.wait_to_click(locators.left_menu_page_selector("Trashed items"))
+        trash_button = self.wait_to_click(locators.left_menu_page_selector("Trash"))
         trash_button.click()
         sleep(5)
     

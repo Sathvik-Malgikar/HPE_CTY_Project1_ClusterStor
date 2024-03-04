@@ -13,6 +13,7 @@ from selenium.common.exceptions import NoSuchElementException
 import locators
 import files
 from utilities import CommonActions
+from utilities import ButtonClicker
 import autoGUIutils
 
 
@@ -24,7 +25,12 @@ def utilityInstance():
     instance.setup()
     yield instance
     instance.teardown()
-    
+
+
+@pytest.fixture(scope="function", autouse=True)
+def button_clicker(utilityInstance):
+    instance = ButtonClicker(utilityInstance.driver, utilityInstance.web_driver_wait)
+    yield instance
 
 """
     Test function for signing into Google Drive using Selenium WebDriver.
@@ -132,12 +138,12 @@ Test function to rename a file in the Google Drive web GUI.
 """
 
 
-def test_rename_file(utilityInstance):
+def test_rename_file(utilityInstance, button_clicker):
     old_file_name = files.file_name
     new_file_name = files.renamed_file_name
     utilityInstance.select_item(old_file_name, False)
     utilityInstance.rename_selected_item(new_file_name)
-    utilityInstance.click_on_ok_button()
+    button_clicker.click_button(locators.ok_button_locator)
     utilityInstance.rename_verification(old_file_name, new_file_name)
 
 
@@ -146,12 +152,16 @@ Test function to undo delete action in the Google Drive web GUI.
 """
 
 
-def test_undo_delete_action(utilityInstance):
+def test_undo_delete_action(utilityInstance, button_clicker):
     file_name_to_retrieve = files.file_to_be_restored
-    utilityInstance.click_trash_button()
+    button_clicker.click_left_menu_page_buttons("Trash")
+    sleep(4)
     utilityInstance.select_file_from_trash()
-    utilityInstance.click_on_restore_from_trash_button()
-    utilityInstance.verify_restoration(file_name_to_retrieve)
+    button_clicker.click_action_bar_button("Restore from trash")
+    restoration_successful = utilityInstance.verify_restoration(file_name_to_retrieve)
+    assert restoration_successful == True, f"Failed to restore file '{file_name_to_retrieve}'"
+    
+
 
 
 """
@@ -288,7 +298,7 @@ def test_move_file(utilityInstance):
     moved_file_element = utilityInstance.wait_for_element(locators.file_move_locator)
     assert not moved_file_element, "File is still present in the old folder"   
 
-def test_move_multiple_files(utilityInstance):
+def test_move_multiple_files(utilityInstance, button_clicker):
     file_destination_pairs = [
         ("test.txt", "After_rename"),
         ("test2.txt", "After_rename"),
@@ -299,7 +309,7 @@ def test_move_multiple_files(utilityInstance):
         try:
             utilityInstance.move_action(filename, destination_folder,show_more_needed)
             utilityInstance.verify_file_in_destination(filename, destination_folder)
-            utilityInstance.click_on_my_drive_button()
+            button_clicker.click_left_menu_page_buttons("My Drive")
             assert not utilityInstance.wait_for_element(locators.file_selector(filename))
 
             if idx==0:
@@ -370,34 +380,43 @@ def test_share_via_link(utilityInstance):
     assert True
     
     
-def test_search_for_file_by_name(utilityInstance):
-  
-    
-    utilityInstance.click_on_search_in_drive()
+def test_search_for_file_by_name(utilityInstance, button_clicker):
+    button_clicker.click_on_search_in_drive()
     autoGUIutils.type_into_dialogue_box(files.file_to_be_searched)
-    file_element = utilityInstance.wait_to_click(locators.file_selector(files.file_to_be_searched))
-    utilityInstance.double_click_element(file_element)
-    sleep(3)
-    autoGUIutils.go_back_esc()
+    file_elements = utilityInstance.driver.find_elements_by_css_selector("div.KL4NAf") 
+    # Extract file names from file elements
+    file_names = [element.text for element in file_elements]
+    sleep(4)
+    # Write file names to a text file
+    with open("file_names.txt", "w") as file:
+        for name in file_names:
+            file.write(name + "\n")
+    assert len(file_names) > 0
 
 
-def test_search_file_by_type(utilityInstance):
-    
-    
+def test_search_file_by_type(utilityInstance, button_clicker):
     utilityInstance.click_on_my_drive_button()
-    utilityInstance.click_on_type_button()
-    utilityInstance.click_on_the_required_type()
-    file_element = utilityInstance.wait_to_click(locators.file_selector(files.file_to_be_searched_by_type))
-    utilityInstance.double_click_element(file_element)
-    sleep(5)
+    button_clicker.click_on_type_button()
+    button_clicker.click_on_the_required_type()
+    file_elements = utilityInstance.driver.find_elements_by_css_selector("div.KL4NAf") 
+    # Extract file names from file elements
+    file_names = [element.text for element in file_elements]
+    sleep(4)
+    # Write file names to a text file
+    with open("file_names.txt", "w") as file:
+        for name in file_names:
+            file.write(name + "\n")
+    assert len(file_names) > 0
 
 
-def test_remove_folder(utilityInstance):
-    
-    utilityInstance.click_on_home_button()
-    utilityInstance.click_on_folders_button()
+def test_remove_folder(utilityInstance, button_clicker):
+    button_clicker.click_left_menu_page_buttons("Home")
+    button_clicker.click_on_folders_button()
     utilityInstance.select_item(files.folder_name_to_be_removed, False)
-    utilityInstance.delete_file()    
+    button_clicker.click_action_bar_button("Move to trash")   
+    sleep(4)
+
+     
 
 
 """

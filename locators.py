@@ -18,8 +18,7 @@ file_already_present_text = (By.CSS_SELECTOR, "div#EJL26d")
 file_name_containerdiv = (By.CSS_SELECTOR, "div.KL4NAf")
 
 
-ok_button_locator = (
-    By.XPATH, '//button[@name="ok" and contains(@class, "h-De-Vb h-De-Y")]',)
+ok_button_locator = (By.CSS_SELECTOR, "button[name='ok'].h-De-Vb.h-De-Y[tabindex='0']")
 
 show_more_files = (By.CSS_SELECTOR, 'button.UywwFc-d.UywwFc-d-Qu-dgl2Hf')
 
@@ -61,6 +60,7 @@ def span_with_text(text):
     return (By.XPATH, f"//span[contains(text(), {text})]")
 
 
+
 search_bar_locator = (By.CSS_SELECTOR, 'input[aria-label="Search in Drive"]')
 type_button_locator = (By.CSS_SELECTOR, 'div[aria-label="Type"]')
 my_drive_button_locator = (By.CSS_SELECTOR, 'div[aria-label="My Drive"]')
@@ -68,3 +68,5 @@ type_of_file_locator = (By.CSS_SELECTOR, f'li[role="menuitemcheckbox"][name="{fi
 
 folders_button_locator = (By.CSS_SELECTOR, 'button[name="T5ycX"]')
 move_to_trash_button_locator = (By.CSS_SELECTOR, 'div[aria-label="Move to trash"]')
+
+
