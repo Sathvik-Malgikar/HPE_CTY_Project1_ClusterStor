@@ -13,6 +13,7 @@ from selenium.common.exceptions import NoSuchElementException
 import locators
 import files
 from utilities import CommonActions
+from utilities import LeftMenuClicker
 import autoGUIutils
 import os
 
@@ -22,7 +23,13 @@ def utilityInstance():
     instance.setup()
     yield instance
     instance.teardown()
-    
+
+
+
+@pytest.fixture(scope="function", autouse=True)
+def left_menu_clicker(utilityInstance):
+    instance = LeftMenuClicker(utilityInstance.driver, utilityInstance.web_driver_wait)
+    return instance
 
 """
     Test function for signing into Google Drive using Selenium WebDriver.
@@ -122,10 +129,10 @@ def test_search_for_file_by_name(utilityInstance):
     autoGUIutils.go_back_esc()
 
 
-def test_search_file_by_type(utilityInstance):
+def test_search_file_by_type(utilityInstance,left_menu_clicker):
     
     
-    utilityInstance.click_on_my_drive_button()
+    left_menu_clicker.my_drive_button()
     utilityInstance.click_on_type_button()
     utilityInstance.click_on_the_required_type()
     file_element = utilityInstance.wait_to_click(locators.file_selector(files.file_to_be_searched_by_type))
@@ -138,8 +145,8 @@ Test function to remove a file from the Google Drive web GUI.
 """
 
 
-def test_remove_file(utilityInstance):
-    utilityInstance.click_on_home_button()
+def test_remove_file(utilityInstance,left_menu_clicker):
+    left_menu_clicker.home_button()
     sleep(2)
     file_name = files.file_to_be_deleted
     utilityInstance.select_item(file_name,True)
@@ -152,9 +159,9 @@ Test function to rename a file in the Google Drive web GUI.
 """
 
 
-def test_rename_file(utilityInstance):
+def test_rename_file(utilityInstance,left_menu_clicker):
 
-    utilityInstance.click_on_home_button()
+    left_menu_clicker.home_button()
     sleep(2)
     old_file_name = files.file_name
     new_file_name = files.renamed_file_name
@@ -169,9 +176,9 @@ Test function to undo delete action in the Google Drive web GUI.
 """
 
 
-def test_undo_delete_action(utilityInstance):
+def test_undo_delete_action(utilityInstance,left_menu_clicker):
     file_name_to_retrieve = files.file_to_be_restored
-    utilityInstance.click_trash_button()
+    left_menu_clicker.trash_button()
     utilityInstance.select_file_from_trash()
     utilityInstance.click_on_restore_from_trash_button()
     utilityInstance.verify_restoration(file_name_to_retrieve)
@@ -182,8 +189,8 @@ Test function to rename a folder in the Google Drive web GUI.
 """
 
 
-def test_rename_folder(utilityInstance):
-    utilityInstance.click_on_home_button()
+def test_rename_folder(utilityInstance,left_menu_clicker):
+    left_menu_clicker.home_button()
     sleep(2)
     old_folder_name = files.folder_name
     new_folder_name = files.renamed_folder_name
@@ -196,27 +203,16 @@ def test_rename_folder(utilityInstance):
 ## Test function to create a new folder in the Google Drive web GUI.
 """
 
-
-@pytest.fixture
-def folder_name():
-    return files.create_folder_name
-
-
-def test_create_folder(utilityInstance, folder_name):
-    utilityInstance.click_on_new_button()
-        
-    action_button = utilityInstance.wait_to_click(locators.new_menu_button_locator("New folder"))
-    action_button.click()
-    sleep(2)
-
-    autoGUIutils.type_into_dialogue_box(folder_name)
-    
-    utilityInstance.driver.refresh()
- 
-    assert utilityInstance.wait_for_element(locators.file_selector(folder_name))!=None
+def test_create_folder(utilityInstance):
+    new_btn_element = utilityInstance.wait_for_element(locators.new_btn_locator)
+    utilityInstance.click_element(new_btn_element)
+   
+    input_field = utilityInstance.wait_for_element(locators.input_field_locator)
+    input_field.clear()
+    utilityInstance.send_keys_to_element(locators.input_field_locator, files.create_folder_name)
+    utilityInstance.send_keys_to_element(locators.input_field_locator, Keys.ENTER)
+    assert utilityInstance.verify_presence(files.create_folder_name)
     sleep(3)
-
-
 """
 ## Test function to upload new file in the Google Drive web GUI.
 """
@@ -261,8 +257,7 @@ def test_download_file(utilityInstance):
 
 
 def test_remove_multiple_files(utilityInstance):
-    utilityInstance.click_on_home_button()
-    sleep(2)
+    left_menu_clicker.home_button()   
     for file in files.fileCollection:
         try:
             utilityInstance.select_item( file , True)
@@ -291,31 +286,13 @@ def test_copy_file(utilityInstance):
     copied_file_element = utilityInstance.wait_for_element(locators.copied_file_locator)
     assert copied_file_element is not None
 
-def test_move_file(utilityInstance):
-
-    utilityInstance.select_item(files.file_move_name, show_more_needed=True)
-    
-    file_element = utilityInstance.wait_for_element(locators.file_move_locator)
-    destination_folder_element = utilityInstance.wait_for_element(locators.file_selector(files.destination_folder_name))
-    utilityInstance.drag_and_drop_element(file_element, destination_folder_element)
-    
-    sleep(5)
-
-    try:
-        destination_folder_element = utilityInstance.wait_to_click(
-          locators.file_selector(files.destination_folder_name))
-        utilityInstance.double_click_element(destination_folder_element)
-        sleep(4)
-    except EXC.StaleElementReferenceException:
-        print("StaleElementReferenceException occurred. Retrying...")
-
-    file_in_destination = utilityInstance.wait_for_element(locators.file_move_locator)
-    assert file_in_destination is not None, "File has not been moved successfully to the destination folder"
-    my_drive_button = utilityInstance.wait_to_click(locators.my_drive_button_locator)
-    my_drive_button.click()
-    sleep(3)
-    moved_file_element = utilityInstance.wait_for_element(locators.file_move_locator)
-    assert not moved_file_element, "File is still present in the old folder"   
+def test_move_file(utilityInstance,left_menu_clicker):
+    filename=files.file_move_name
+    destination_folder=files.destination_folder_name
+    utilityInstance.move_action(filename,destination_folder,show_more=True)
+    utilityInstance.verify_file_in_destination(filename,destination_folder)
+    left_menu_clicker.my_drive_button()
+    assert not utilityInstance.wait_for_element(locators.file_selector(filename)) 
 
 def test_move_multiple_files(utilityInstance):
     file_destination_pairs = [
@@ -328,7 +305,7 @@ def test_move_multiple_files(utilityInstance):
         try:
             utilityInstance.move_action(filename, destination_folder,show_more_needed)
             utilityInstance.verify_file_in_destination(filename, destination_folder)
-            utilityInstance.click_on_my_drive_button()
+            left_menu_clicker.my_drive_button()
             assert not utilityInstance.wait_for_element(locators.file_selector(filename))
 
             if idx==0:
@@ -353,12 +330,12 @@ def test_view_file_info(utilityInstance):
         utilityInstance.click_element(element)
 
 
-def test_delete_file_permanently(utilityInstance):
+def test_delete_file_permanently(utilityInstance,left_menu_clicker):
     utilityInstance.driver.refresh()
     sleep(5)    
     utilityInstance.select_item( files.delete_forever_file_name,True)
     utilityInstance.delete_file( )    
-    utilityInstance.click_trash_button()
+    left_menu_clicker.trash_button()
     
     deleted_file_locator = locators.file_selector(files.delete_forever_file_name)
     utilityInstance.wait_for_element(deleted_file_locator)
@@ -378,8 +355,7 @@ def test_delete_file_permanently(utilityInstance):
 
 
 def test_share_via_link(utilityInstance):
-    utilityInstance.click_on_home_button()
-    sleep(2)
+    left_menu_clicker.home_button()   
     utilityInstance.select_item(files.share_file,True)
     sleep(3)
     share_button = utilityInstance.wait_for_element(locators.action_bar_button_selector("Share"))
@@ -402,8 +378,7 @@ def test_share_via_link(utilityInstance):
 
 
 def test_remove_folder(utilityInstance):
-    
-    utilityInstance.click_on_home_button()
+    left_menu_clicker.home_button()
     utilityInstance.click_on_folders_button()
     utilityInstance.select_item(files.folder_name_to_be_removed, False)
     utilityInstance.delete_file()    

@@ -15,6 +15,68 @@ import files
 import autoGUIutils
 
 
+
+class LeftMenuClicker:
+    def __init__(self, driver, web_driver_wait):
+        self.driver = driver
+        self.web_driver_wait = web_driver_wait
+    
+    def home_button(self):
+        home_button = self.wait_to_click(locators.left_menu_page_selector("Home"))
+        home_button.click()
+        sleep(3)
+
+    def my_drive_button(self):
+        my_drive_button = self.wait_to_click(locators.left_menu_page_selector("My Drive"))
+        my_drive_button.click()
+        sleep(3)
+
+    def computers_button(self):
+        computers_button = self.wait_to_click(locators.left_menu_page_selector("Computers"))
+        computers_button.click()
+        sleep(3)
+
+    def shared_with_me_button(self):
+        shared_with_me_button = self.wait_to_click(locators.left_menu_page_selector("Shared with me"))
+        shared_with_me_button.click()
+        sleep(3)
+
+    def recent_button(self):
+        recent_button = self.wait_to_click(locators.left_menu_page_selector("Recent"))
+        recent_button.click()
+        sleep(3)
+
+    def starred_button(self):
+        starred_button = self.wait_to_click(locators.left_menu_page_selector("Starred"))
+        starred_button.click()
+        sleep(3)
+
+    def spam_button(self):
+        spam_button = self.wait_to_click(locators.left_menu_page_selector("Spam"))
+        spam_button.click()
+        sleep(3)
+
+    def trash_button(self):
+        trash_button = self.wait_to_click(locators.left_menu_page_selector("Trash"))
+        trash_button.click()
+        sleep(3)
+
+    def storage_button(self):
+        storage_button = self.wait_to_click(locators.left_menu_page_selector("Storage"))
+        storage_button.click()
+        sleep(3)
+
+    
+    
+    def wait_to_click(self, locator):
+        try:
+            element = self.web_driver_wait.until(EC.element_to_be_clickable(locator))
+            return element
+        except TimeoutException:
+            print(f"Timeout waiting for element with locator {locator}")
+            return None
+        
+        
 class CommonActions:
     def __init__(self):
         pass
@@ -25,6 +87,9 @@ class CommonActions:
     
     def teardown(self):
         self.driver.quit()
+
+
+    
 
     
     """
@@ -85,10 +150,10 @@ class CommonActions:
     """
 
     
-    def click_trash_button(self):
-        trash_button = self.wait_to_click(locators.left_menu_page_selector("Trash"))
-        trash_button.click()
-        sleep(5)
+    # def click_trash_button(self):
+    #     trash_button = self.wait_to_click(locators.left_menu_page_selector("Trash"))
+    #     trash_button.click()
+    #     sleep(5)
     
     """
     ## Utility function to select a file/folder in Google Drive GUI
@@ -162,15 +227,15 @@ class CommonActions:
         sleep(3)
 
 
-    def click_on_home_button(self):
-        home_button = self.wait_to_click(locators.left_menu_page_selector("Home"))
-        home_button.click()
-        sleep(5)
+    # def click_on_home_button(self):
+    #     home_button = self.wait_to_click(locators.left_menu_page_selector("Home"))
+    #     home_button.click()
+    #     sleep(5)
 
-    def click_on_my_drive_button(self):
-        my_drive_button = self.wait_to_click(locators.left_menu_page_selector("My Drive"))
-        my_drive_button.click()
-        sleep(5)
+    # def click_on_my_drive_button(self):
+    #     my_drive_button = self.wait_to_click(locators.left_menu_page_selector("My Drive"))
+    #     my_drive_button.click()
+    #     sleep(5)
 
         
     """
@@ -200,7 +265,7 @@ class CommonActions:
 
     def move_action(self,move_file_name,destination_folder_name,show_more):
         
-        self.select_file(move_file_name, show_more_needed=show_more)
+        self.select_item(move_file_name, show_more_needed=show_more)
         sleep(2)
         
         file_element = self.wait_for_element(locators.file_selector(move_file_name))
