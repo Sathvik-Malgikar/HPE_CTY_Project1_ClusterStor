@@ -77,7 +77,7 @@ def test_signin(utilityInstance):
 
 
 def test_prerequisites(utilityInstance):
-    rawfilenames= [files.file_name_for_copy, files.file_name, files.file_move_name,files.view_info_file_name, *files.fileCollection ,files.share_file,files.delete_forever_file_name]
+    rawfilenames= [files.file_name_for_copy, files.file_to_be_deleted, files.file_name, files.file_move_name,files.view_info_file_name, *files.fileCollection ,files.share_file,files.delete_forever_file_name]
     file_list_to_upload = " ".join(list(map(lambda a:f'"{a}"',rawfilenames)))
     
     utilityInstance.click_on_new_button()
@@ -158,12 +158,12 @@ Test function to rename a file in the Google Drive web GUI.
 """
 
 
-def test_rename_file(utilityInstance):
+def test_rename_file(utilityInstance,button_clicker):
     old_file_name = files.file_name
     new_file_name = files.renamed_file_name
     utilityInstance.select_item(old_file_name, False)
     utilityInstance.rename_selected_item(new_file_name)
-    button_clicker.click_button(locators.ok_button_locator)
+    button_clicker.click_on_ok_button()
     utilityInstance.rename_verification(old_file_name, new_file_name)
 
 
@@ -414,7 +414,7 @@ def test_search_for_file_by_name(utilityInstance, button_clicker):
     autoGUIutils.type_into_dialogue_box(files.file_to_be_searched)
     file_element = utilityInstance.wait_to_click(locators.file_selector(files.file_to_be_searched))
     # Extract file names from file elements
-    file_names = [element.text for element in files.file_elements]
+    file_names = [element.text for element in file_element]
     sleep(4)
     # Write file names to a text file
     with open("file_names.txt", "w") as file:
@@ -431,7 +431,7 @@ def test_search_file_by_type(utilityInstance, button_clicker):
     button_clicker.click_on_the_required_type()
     file_element = utilityInstance.wait_to_click(locators.file_selector(files.file_to_be_searched_by_type))
     # Extract file names from file elements
-    file_names = [element.text for element in files.file_elements]
+    file_names = [element.text for element in file_element]
     sleep(4)
     # Write file names to a text file
     with open("file_names.txt", "w") as file:
