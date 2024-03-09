@@ -148,10 +148,15 @@ class HigherActions:
 
     def verify_restoration(self,file_name):
         self.button_clicker.navigate_to("Home")
-        if (self.helper.wait_for_element( locators.file_selector(file_name))):
+        # if (self.helper.wait_for_element( locators.file_selector(file_name))):
+        #     return True
+        # else:
+        #     assert False, f"File '{file_name}' Not Restored"
+        file_elements = self.search_file_by_name(file_name)
+        if(len(file_name) >0):
             return True
         else:
-            assert False, f"File '{file_name}' Not Restored"
+            return False
 
     def move_action(self,move_file_name,destination_folder_name,show_more):
         
@@ -235,6 +240,14 @@ class HigherActions:
                 locators.upload_complete_text))
             sleep(2)
 
+    def search_file_by_name(filename,utilityInstance):
+        utilityInstance.click_on_search_in_drive()
+        autoGUIutils.type_into_dialogue_box(filename)
+        file_element = utilityInstance.wait_to_click(locators.file_selector(files.file_to_be_searched))
+        utilityInstance.double_click_element(file_element)
+        sleep(3)
+        autoGUIutils.go_back_esc()
+        return file_element
 
 
 

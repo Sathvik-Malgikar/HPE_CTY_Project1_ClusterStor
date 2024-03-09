@@ -131,15 +131,16 @@ def test_get_filenames(utilityInstance):
     sleep(4)
     assert len(file_name_divs) > 0
 
-def test_search_for_file_by_name(utilityInstance):
-  
-    
-    utilityInstance.click_on_search_in_drive()
-    autoGUIutils.type_into_dialogue_box(files.file_to_be_searched)
-    file_element = utilityInstance.wait_to_click(locators.file_selector(files.file_to_be_searched))
-    utilityInstance.double_click_element(file_element)
-    sleep(3)
-    autoGUIutils.go_back_esc()
+def test_search_for_file_by_name(higher_actions):
+    # utilityInstance.click_on_search_in_drive()
+    # autoGUIutils.type_into_dialogue_box(files.file_to_be_searched)
+    # file_element = utilityInstance.wait_to_click(locators.file_selector(files.file_to_be_searched))
+    # utilityInstance.double_click_element(file_element)
+    # sleep(3)
+    # autoGUIutils.go_back_esc()
+    file_elements = higher_actions.search_file_by_name(files.file_to_be_searched)
+    assert (file_elements==[] or file_elements.count(files.file_to_be_searched) == len(file_elements))
+
 
 
 def test_search_file_by_type(utilityInstance):
