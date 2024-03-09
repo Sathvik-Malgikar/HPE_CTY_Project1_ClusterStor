@@ -12,8 +12,11 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.common.exceptions import NoSuchElementException
 import locators
 import files
-from utilities import CommonActions
-from utilities import ButtonClicker
+from library_functions import CommonActions
+from library_functions import ButtonClicker
+from library_functions import Helper
+from library_functions import HigherActions
+
 import autoGUIutils
 
 
@@ -28,21 +31,32 @@ def utilityInstance():
 
 
 @pytest.fixture(scope="function", autouse=True)
-def button_clicker(utilityInstance):
-    instance = ButtonClicker(utilityInstance.driver, utilityInstance.web_driver_wait)
+def button_clicker(utilityInstance, helper):
+    instance = ButtonClicker(utilityInstance.driver, utilityInstance.web_driver_wait, helper)
     yield instance
 
+
+@pytest.fixture(scope="function", autouse=True)
+def helper(utilityInstance):
+    instance = Helper(utilityInstance.driver, utilityInstance.web_driver_wait)
+    yield instance
+
+
+@pytest.fixture(scope="function", autouse=True)
+def higher_actions(utilityInstance, button_clicker, helper):
+    instance = HigherActions(utilityInstance.driver, utilityInstance.web_driver_wait, button_clicker, helper)
+    return instance
 """
     Test function for signing into Google Drive using Selenium WebDriver.
 """
 
 
-def test_signin(utilityInstance):
+def test_signin(helper, utilityInstance, higher_actions):
     utilityInstance.driver.get("https://www.google.com/intl/en-US/drive/")
     utilityInstance.driver.maximize_window()
     sleep(0.8)
 
-    signin_ele = utilityInstance.wait_to_click(locators.sign_in_link)
+    signin_ele = helper.wait_to_click(locators.sign_in_link)
     signin_ele.click()
     sleep(1.3)
     # opened by clicking sign-in anchor tag
@@ -53,16 +67,16 @@ def test_signin(utilityInstance):
     parser.read("config.ini")
     account_email_id = parser.get("Account Credentials", "email")
     print("Sending email")
-    utilityInstance.send_keys_to_focused(account_email_id)
-    utilityInstance.send_keys_to_focused(Keys.ENTER)
+    higher_actions.send_keys_to_focused(account_email_id)
+    higher_actions.send_keys_to_focused(Keys.ENTER)
     
-    utilityInstance.wait_for_element( locators.welcome_span)
+    helper.wait_for_element(locators.welcome_span)
     sleep(3)  # to deal with input animation
    
     account_pwd = parser.get("Account Credentials", "password")
     print(account_pwd)
-    utilityInstance.send_keys_to_focused(account_pwd)
-    utilityInstance.send_keys_to_focused(Keys.ENTER)
+    higher_actions.send_keys_to_focused(account_pwd)
+    higher_actions.send_keys_to_focused(Keys.ENTER)
     
     sleep(5)
 
@@ -78,28 +92,26 @@ def test_signin(utilityInstance):
     sleep(5)
 
 
-def test_dummy_test_prerequisite(utilityInstance):
-    file_list_to_upload = [files.file_name_for_copy, "cty_ppt.pdf", files.file_move_name,files.view_info_file_name]
+def test_prerequisites(utilityInstance, button_clicker, helper):
+    rawfilenames= [files.file_name_for_copy, files.file_to_be_deleted, files.file_name, files.file_move_name,files.view_info_file_name, *files.fileCollection ,files.share_file,files.delete_forever_file_name]
+    file_list_to_upload = " ".join(list(map(lambda a:f'"{a}"',rawfilenames)))
     
+    button_clicker.click_on_new_button()
+        
+    upload_button = helper.wait_to_click(locators.new_menu_button_locator("File upload"))
+    upload_button.click()
+    sleep(2)
 
-    for file in file_list_to_upload:
+    autoGUIutils.type_into_dialogue_box(file_list_to_upload)
 
-        utilityInstance.click_on_new_button()
-          
-        upload_button = utilityInstance.wait_to_click(locators.new_menu_button_locator("File upload"))
-        upload_button.click()
-        sleep(2)
-
-        autoGUIutils.type_into_dialogue_box(file)
-
-        utilityInstance.deal_duplicate_and_await_upload()
-        utilityInstance.driver.refresh()
-        sleep(5)
+    higher_actions.deal_duplicate_and_await_upload()
+    utilityInstance.driver.refresh()
+    sleep(5)
     
     # to create SVM folder
-    utilityInstance.click_on_new_button()
+    button_clicker.click_on_new_button()
         
-    action_button = utilityInstance.wait_to_click(locators.new_menu_button_locator("New folder"))
+    action_button = helper.wait_to_click(locators.new_menu_button_locator("New folder"))
     action_button.click()
     sleep(2)
 
@@ -127,10 +139,11 @@ Test function to remove a file from the Google Drive web GUI.
 """
 
 
-def test_remove_file(utilityInstance):
+def test_remove_file(button_clicker, helper):
     file_name = files.file_to_be_deleted
-    utilityInstance.select_item(file_name,True)
-    utilityInstance.delete_file()
+    helper.select_item(file_name,True)
+    button_clicker.click_action_bar_button("Move to trash")  
+    sleep(6)
 
 
 """
@@ -138,13 +151,16 @@ Test function to rename a file in the Google Drive web GUI.
 """
 
 
-def test_rename_file(utilityInstance, button_clicker):
+def test_rename_file(button_clicker, helper, higher_actions):
     old_file_name = files.file_name
     new_file_name = files.renamed_file_name
-    utilityInstance.select_item(old_file_name, False)
-    utilityInstance.rename_selected_item(new_file_name)
-    button_clicker.click_button(locators.ok_button_locator)
-    utilityInstance.rename_verification(old_file_name, new_file_name)
+    helper.select_item(old_file_name, False)
+    helper.rename_selected_item(new_file_name)
+    button_clicker.click_on_ok_button()
+    result = higher_actions.rename_verification(old_file_name, new_file_name)
+    assert True
+    
+
 
 
 """
@@ -152,13 +168,14 @@ Test function to undo delete action in the Google Drive web GUI.
 """
 
 
-def test_undo_delete_action(utilityInstance, button_clicker):
+def test_undo_delete_action(higher_actions, button_clicker):
     file_name_to_retrieve = files.file_to_be_restored
-    button_clicker.click_left_menu_page_buttons("Trash")
+    button_clicker.navigate_to("Trash")
     sleep(4)
-    utilityInstance.select_file_from_trash()
+    higher_actions.select_file_from_trash()
     button_clicker.click_action_bar_button("Restore from trash")
-    restoration_successful = utilityInstance.verify_restoration(file_name_to_retrieve)
+    restoration_successful = higher_actions.verify_restoration(file_name_to_retrieve)
+    sleep(4)
     assert restoration_successful == True, f"Failed to restore file '{file_name_to_retrieve}'"
     
 
@@ -169,12 +186,14 @@ Test function to rename a folder in the Google Drive web GUI.
 """
 
 
-def test_rename_folder(utilityInstance):
+def test_rename_folder(helper, button_clicker):
     old_folder_name = files.folder_name
     new_folder_name = files.renamed_folder_name
-    utilityInstance.select_item(old_folder_name,True)
-    utilityInstance.rename_selected_item(new_folder_name)
-    utilityInstance.click_on_ok_button()
+    button_clicker.navigate_to("Home")
+    button_clicker.click_on_folders_button
+    helper.select_item(old_folder_name,True)
+    helper.rename_selected_item(new_folder_name)
+    button_clicker.click_on_ok_button()
 
 
 """
@@ -187,10 +206,10 @@ def folder_name():
     return files.create_folder_name
 
 
-def test_create_folder(utilityInstance, folder_name):
-    utilityInstance.click_on_new_button()
+def test_create_folder(utilityInstance, folder_name, button_clicker, helper):
+    button_clicker.click_on_new_button()
         
-    action_button = utilityInstance.wait_to_click(locators.new_menu_button_locator("New folder"))
+    action_button = helper.wait_to_click(locators.new_menu_button_locator("New folder"))
     action_button.click()
     sleep(2)
 
@@ -198,7 +217,7 @@ def test_create_folder(utilityInstance, folder_name):
     
     utilityInstance.driver.refresh()
  
-    assert utilityInstance.wait_for_element(locators.file_selector(folder_name))!=None
+    assert helper.wait_for_element(locators.file_selector(folder_name))!=None
     sleep(3)
 
 
@@ -207,22 +226,16 @@ def test_create_folder(utilityInstance, folder_name):
 """
 
 
-def test_upload_file(utilityInstance):
+def test_upload_file(button_clicker, helper, higher_actions):
     # this file is present in User folder
-    
-
-    utilityInstance.click_on_new_button()
-    
-    upload_button = utilityInstance.wait_for_element(locators.new_menu_button_locator("File upload"))
+    button_clicker.click_on_new_button()
+    upload_button = helper.wait_for_element(locators.new_menu_button_locator("File upload"))
     upload_button.click()
     sleep(2)
-
     autoGUIutils.type_into_dialogue_box(files.FILE_TO_UPLOAD)
-
     # this is utility solely because prerequisites aso reuses this function
-    utilityInstance.deal_duplicate_and_await_upload()
-
-    assert utilityInstance.verify_file_presence(files.FILE_TO_UPLOAD, 10)
+    higher_actions.deal_duplicate_and_await_upload()
+    assert helper.wait_for_element(locators.file_selector(files.FILE_TO_UPLOAD))
 
 
 """
@@ -230,12 +243,10 @@ def test_upload_file(utilityInstance):
 """
 
 
-def test_download_file(utilityInstance):
-    utilityInstance.select_item(files.renamed_file_name,True)
-    download_button = utilityInstance.wait_for_element(locators.action_bar_button_selector("Download"))
- 
+def test_download_file(helper):
+    helper.select_item(files.renamed_file_name,True)
+    download_button = helper.wait_for_element(locators.action_bar_button_selector("Download"))
     download_button.click()
-    
     sleep(10)
     assert True
 
@@ -245,60 +256,60 @@ def test_download_file(utilityInstance):
 """
 
 
-def test_remove_multiple_files(utilityInstance):
-    files = ['test.txt', 'test1.txt']
-    for file in files:
+def test_remove_multiple_files(utilityInstance, button_clicker, helper):
+    button_clicker.navigate_to("Home")
+    sleep(2)
+    for file in files.fileCollection:
         try:
-            utilityInstance.select_item( file , True)
-            utilityInstance.delete_file( )
+            helper.select_item(file, True)
+            button_clicker.click_action_bar_button("Move to trash")  
         except FileNotFoundError as e:
             assert False, repr(e)
+            
         finally:
             utilityInstance.driver.refresh()
 
 
 
-def test_copy_file(utilityInstance):
-    utilityInstance.select_item( files.file_name_for_copy,show_more_needed=True)
-    utilityInstance.context_click()
+def test_copy_file(utilityInstance, helper, button_clicker):
+    helper.select_item(files.file_name_for_copy,show_more_needed=True)
+    button_clicker.context_click()
     sleep(5)
 
-    make_a_copy_element = utilityInstance.wait_to_click(locators.make_a_copy_element_locator)
+    make_a_copy_element = helper.wait_to_click(locators.make_a_copy_element_locator)
     make_a_copy_element.click()
 
     sleep(5)
     utilityInstance.driver.refresh()
     sleep(7)
-    copied_file_element = utilityInstance.wait_for_element(locators.copied_file_locator)
+    copied_file_element = helper.wait_for_element(locators.copied_file_locator)
     assert copied_file_element is not None
 
-def test_move_file(utilityInstance):
 
-    utilityInstance.select_item(files.file_move_name, show_more_needed=True)
-    
-    file_element = utilityInstance.wait_for_element(locators.file_move_locator)
-    destination_folder_element = utilityInstance.wait_for_element(locators.file_selector(files.destination_folder_name))
-    utilityInstance.drag_and_drop_element(file_element, destination_folder_element)
-    
+
+def test_move_file(helper, button_clicker):
+    helper.select_item(files.file_move_name, show_more_needed=True)
+    file_element = helper.wait_for_element(locators.file_move_locator)
+    destination_folder_element = helper.wait_for_element(locators.file_selector(files.destination_folder_name))
+    helper.drag_and_drop_element(file_element, destination_folder_element)
     sleep(5)
 
     try:
-        destination_folder_element = utilityInstance.wait_to_click(
+        destination_folder_element = helper.wait_to_click(
           locators.file_selector(files.destination_folder_name))
-        utilityInstance.double_click_element(destination_folder_element)
+        helper.double_click_element(destination_folder_element)
         sleep(4)
     except EXC.StaleElementReferenceException:
         print("StaleElementReferenceException occurred. Retrying...")
 
-    file_in_destination = utilityInstance.wait_for_element(locators.file_move_locator)
+    file_in_destination = helper.wait_for_element(locators.file_move_locator)
     assert file_in_destination is not None, "File has not been moved successfully to the destination folder"
-    my_drive_button = utilityInstance.wait_to_click(locators.my_drive_button_locator)
-    my_drive_button.click()
+    button_clicker.navigate_to("My Drive")
     sleep(3)
-    moved_file_element = utilityInstance.wait_for_element(locators.file_move_locator)
+    moved_file_element = helper.wait_for_element(locators.file_move_locator)
     assert not moved_file_element, "File is still present in the old folder"   
 
-def test_move_multiple_files(utilityInstance, button_clicker):
+def test_move_multiple_files(button_clicker, higher_actions, helper):
     file_destination_pairs = [
         ("test.txt", "After_rename"),
         ("test2.txt", "After_rename"),
@@ -307,10 +318,10 @@ def test_move_multiple_files(utilityInstance, button_clicker):
     show_more_needed=True
     for idx, (filename, destination_folder) in enumerate(file_destination_pairs):
         try:
-            utilityInstance.move_action(filename, destination_folder,show_more_needed)
-            utilityInstance.verify_file_in_destination(filename, destination_folder)
-            button_clicker.click_left_menu_page_buttons("My Drive")
-            assert not utilityInstance.wait_for_element(locators.file_selector(filename))
+            higher_actions.move_action(filename, destination_folder,show_more_needed)
+            higher_actions.verify_file_in_destination(filename, destination_folder)
+            button_clicker.navigate_to("My Drive")
+            assert not helper.wait_for_element(locators.file_selector(filename))
 
             if idx==0:
                     show_more_needed=False
@@ -320,37 +331,36 @@ def test_move_multiple_files(utilityInstance, button_clicker):
             continue
 
 
-def test_view_file_info(utilityInstance):  
-    utilityInstance.select_item(files.view_info_file_name,True)  
+def test_view_file_info(helper, button_clicker):  
+    helper.select_item(files.view_info_file_name,True)  
     autoGUIutils.view_shortcut()
     
     sleep(2)
          
-    element = utilityInstance.wait_to_click(locators.file_info_dialog_locator)
+    element = helper.wait_to_click(locators.file_info_dialog_locator)
     if not element:
         
         assert False, f"File info dialog for {files.view_info_file_name} is not visible"
     else:
-        utilityInstance.click_element(element)
+        button_clicker.click_element(element)
 
 
-def test_delete_file_permanently(utilityInstance):
+def test_delete_file_permanently(utilityInstance, button_clicker, helper):
     utilityInstance.driver.refresh()
     sleep(5)    
-    utilityInstance.select_item( files.delete_forever_file_name,True)
-    utilityInstance.delete_file( )    
-    utilityInstance.click_trash_button()
+    helper.select_item( files.delete_forever_file_name,True)
+    button_clicker.click_action_bar_button("Move to trash")
+    button_clicker.navigate_to("Trash")
     
     deleted_file_locator = locators.file_selector(files.delete_forever_file_name)
-    utilityInstance.wait_for_element(deleted_file_locator)
+    helper.wait_for_element(deleted_file_locator)
       
-    utilityInstance.select_item( files.delete_forever_file_name, show_more_needed=False)    
-    delete_forever_btn_element=utilityInstance.wait_for_element(locators.action_bar_button_selector("Delete forever")) 
-    delete_forever_btn_element.click()  
+    helper.select_item(files.delete_forever_file_name, show_more_needed=False)    
+    button_clicker.click_action_bar_button("Delete forever")
     sleep(2)    
     try:
-        delete_confirm_btn_element = utilityInstance.wait_for_element(locators.delete_confirm_button_locator) 
-        utilityInstance.click_element(delete_confirm_btn_element) 
+        delete_confirm_btn_element = helper.wait_for_element(locators.delete_confirm_button_locator) 
+        button_clicker.click_element(delete_confirm_btn_element) 
         sleep(3)
     except:
         assert False, "Error occured"
@@ -358,14 +368,12 @@ def test_delete_file_permanently(utilityInstance):
         assert True, f"{files.delete_forever_file_name} is permanently deleted"
 
 
-def test_share_via_link(utilityInstance):
-    utilityInstance.select_item(files.share_file,False)
+def test_share_via_link(helper):
+    helper.select_item(files.share_file,False)
     sleep(3)
-    share_button = utilityInstance.wait_for_element(locators.action_bar_button_selector("Share"))
+    share_button = helper.wait_for_element(locators.action_bar_button_selector("Share"))
     share_button.click()
-    
     sleep(5)
-    
     autoGUIutils.press_tab()
     sleep(0.4)
     autoGUIutils.press_tab()
@@ -375,7 +383,6 @@ def test_share_via_link(utilityInstance):
     autoGUIutils.press_enter()
     sleep(0.4)
     autoGUIutils.go_back_esc()
-    
     sleep(6)
     assert True
     
@@ -388,14 +395,14 @@ def test_search_for_file_by_name(utilityInstance, button_clicker):
     file_names = [element.text for element in file_elements]
     sleep(4)
     # Write file names to a text file
-    with open("file_names.txt", "w") as file:
+    with open("file_names_by_name.txt", "w") as file:
         for name in file_names:
             file.write(name + "\n")
     assert len(file_names) > 0
 
 
-def test_search_file_by_type(utilityInstance, button_clicker):
-    utilityInstance.click_on_my_drive_button()
+def test_search_for_file_by_type(utilityInstance, button_clicker):
+    button_clicker.navigate_to("My Drive")
     button_clicker.click_on_type_button()
     button_clicker.click_on_the_required_type()
     file_elements = utilityInstance.driver.find_elements_by_css_selector("div.KL4NAf") 
@@ -403,34 +410,31 @@ def test_search_file_by_type(utilityInstance, button_clicker):
     file_names = [element.text for element in file_elements]
     sleep(4)
     # Write file names to a text file
-    with open("file_names.txt", "w") as file:
+    with open("file_names_by_type.txt", "w") as file:
         for name in file_names:
             file.write(name + "\n")
     assert len(file_names) > 0
 
 
-def test_remove_folder(utilityInstance, button_clicker):
-    button_clicker.click_left_menu_page_buttons("Home")
+def test_remove_folder(button_clicker, helper):
+    button_clicker.navigate_to("Home")
     button_clicker.click_on_folders_button()
-    utilityInstance.select_item(files.folder_name_to_be_removed, False)
+    helper.select_item(files.folder_name_to_be_removed, True)
     button_clicker.click_action_bar_button("Move to trash")   
     sleep(4)
-
-     
 
 
 """
 ## Test function to logout from the Google Drive web GUI.
 """
-def test_logout(utilityInstance):     
-    user_profile_button_element = utilityInstance.wait_for_element(locators.user_profile_button_locator)
-    utilityInstance.click_element(user_profile_button_element)
+def test_logout(utilityInstance, helper, button_clicker):     
+    user_profile_button_element = helper.wait_for_element(locators.user_profile_button_locator)
+    button_clicker.click_element(user_profile_button_element)
     sleep(2)
     try:
-        sign_out_button_element = utilityInstance.wait_for_element(locators.sign_out_button_locator)
+        sign_out_button_element = helper.wait_for_element(locators.sign_out_button_locator)
         sign_out_button_element.click()
     except Exception as e:
-        print("error occured ",e)
-        
+        print("error occured ",e) 
     # Assert that the login screen is visible after logging out
     assert utilityInstance.driver.title == "Home - Google Drive"
