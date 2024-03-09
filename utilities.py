@@ -15,59 +15,59 @@ import files
 import autoGUIutils
 
 
-
-class LeftMenuClicker:
+class ButtonClicker:
     def __init__(self, driver, web_driver_wait):
         self.driver = driver
         self.web_driver_wait = web_driver_wait
     
-    def home_button(self):
-        home_button = self.wait_to_click(locators.left_menu_page_selector("Home"))
-        home_button.click()
+    def click_action_bar_button(self, button_name):
+        button_element = self.wait_to_click(locators.action_bar_button_selector(button_name))
+        button_element.click()
+
+    def click_left_menu_page_buttons(self, button_name):
+        button_element = self.wait_to_click(locators.left_menu_page_selector(button_name))
+        button_element.click()
+
+        
+    def click_on_restore_from_trash_button(self):
+        restore_from_trash_button = self.wait_to_click(locators.action_bar_button_selector("Restore from trash"))
+        restore_from_trash_button.click()
         sleep(3)
 
-    def my_drive_button(self):
-        my_drive_button = self.wait_to_click(locators.left_menu_page_selector("My Drive"))
-        my_drive_button.click()
+    def click_on_ok_button(self):
+        ok_button = self.wait_to_click(locators.ok_button_locator)
+        ok_button.click()
         sleep(3)
 
-    def computers_button(self):
-        computers_button = self.wait_to_click(locators.left_menu_page_selector("Computers"))
-        computers_button.click()
+    def delete_file(self):
+        delete_button = self.wait_to_click(locators.action_bar_button_selector("Move to trash"))
+        delete_button.click()
         sleep(3)
 
-    def shared_with_me_button(self):
-        shared_with_me_button = self.wait_to_click(locators.left_menu_page_selector("Shared with me"))
-        shared_with_me_button.click()
-        sleep(3)
+    def click_on_type_button(self):
+        type_button = self.wait_to_click(locators.type_button_locator)
+        type_button.click()
 
-    def recent_button(self):
-        recent_button = self.wait_to_click(locators.left_menu_page_selector("Recent"))
-        recent_button.click()
-        sleep(3)
+    def click_on_the_required_type(self):
+        required_type = self.wait_to_click(locators.type_of_file_locator)
+        required_type.click()
+        sleep(6)
 
-    def starred_button(self):
-        starred_button = self.wait_to_click(locators.left_menu_page_selector("Starred"))
-        starred_button.click()
-        sleep(3)
+    def click_on_folders_button(self):
+        folders_button = self.wait_to_click(locators.folders_button_locator)
+        folders_button.click()
+        sleep(5)
 
-    def spam_button(self):
-        spam_button = self.wait_to_click(locators.left_menu_page_selector("Spam"))
-        spam_button.click()
-        sleep(3)
+    def click_on_search_in_drive(self):
+        search_bar = self.wait_to_click(locators.search_bar_locator)
+        search_bar.click()
+        sleep(5)
 
-    def trash_button(self):
-        trash_button = self.wait_to_click(locators.left_menu_page_selector("Trash"))
-        trash_button.click()
-        sleep(3)
+    def click_on_new_button(self):
+        new_button = self.wait_to_click(locators.new_button_selector)
+        new_button.click()
+        sleep(2)
 
-    def storage_button(self):
-        storage_button = self.wait_to_click(locators.left_menu_page_selector("Storage"))
-        storage_button.click()
-        sleep(3)
-
-    
-    
     def wait_to_click(self, locator):
         try:
             element = self.web_driver_wait.until(EC.element_to_be_clickable(locator))
@@ -75,8 +75,7 @@ class LeftMenuClicker:
         except TimeoutException:
             print(f"Timeout waiting for element with locator {locator}")
             return None
-        
-        
+
 class CommonActions:
     def __init__(self):
         pass
