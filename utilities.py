@@ -80,11 +80,11 @@ class CommonActions:
     def __init__(self):
         pass
     
-    def setup(self):
+    def setup(self):# TODO to be removed
         self.driver = Chrome()
         self.web_driver_wait = WebDriverWait(self.driver , 10)
     
-    def teardown(self):
+    def teardown(self):# TODO to be removed
         self.driver.quit()
 
     
@@ -113,20 +113,20 @@ class CommonActions:
             self.select_item(old_folder_name)
         except FileNotFoundError as e:
             raise e
-        else:
-            folder_element = self.wait_for_element(locators.folder_locator)
+    
+        folder_element = self.wait_for_element(locators.folder_locator)
 
-            action_chain.move_to_element(folder_element).send_keys("n").perform()
-            action_chain = ActionChains(self.driver)# making a new one instead of clearing
+        action_chain.move_to_element(folder_element).send_keys("n").perform()
+        action_chain = ActionChains(self.driver)# making a new one instead of clearing
 
-            sleep(3)
+        sleep(3)
 
-            action_chain.send_keys(new_folder_name).perform()
+        action_chain.send_keys(new_folder_name).perform()
 
-            # Locate and click the OK button
-            ok_button = self.wait_to_click(locators.ok_button_locator)
-            ok_button.click()
-            sleep(10)
+        # Locate and click the OK button
+        ok_button = self.wait_to_click(locators.ok_button_locator)
+        ok_button.click()
+        sleep(10)
 
         
     """
@@ -175,17 +175,16 @@ class CommonActions:
     - newer testcases can explicitly mention if show more button is to be clicked or not before looking for file
     """
     def select_item(self, item_name, show_more_needed):
-        # show_more_needed is to ensure backwards compatibility
+        
         action_chain = ActionChains(self.driver)
-        if (show_more_needed):  # old testcases do not have show_more param, so by default True,
-        # newer testcases can explicitly mention if show more button is to be clicked or not before looking for file
+        if (show_more_needed):  
         
             show_more_button = self.wait_to_click(
                 locators.show_more_files
             )
             show_more_button.click()
 
-        sleep(5)
+            sleep(5)
         
         file_selector = locators.file_selector(item_name)
         file_element = self.wait_for_element(file_selector)
@@ -253,7 +252,7 @@ class CommonActions:
     """
     
     def verify_restoration(self,file_name):
-        self.click_on_home_button()
+        self.click_on_home_button()# TODO make it search not only home page, make it work for other files
         if (self.wait_for_element( locators.file_selector(file_name))):
             return True
         else:
