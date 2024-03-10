@@ -116,29 +116,6 @@ def prepare_for_class(helper, utilityInstance, higher_actions,button_clicker):
     utilityInstance.driver.switch_to.window(before_signin)
     ### TEARDOWN END ###
 
-class Test_tt:
-    """
-        Test function to retrieve filenames from the Google Drive web GUI.
-    """
-
-
-    def test_get_filenames(utilityInstance,prepare_for_class):
-        file_name_divs = utilityInstance.driver.find_elements(By.CSS_SELECTOR , 
-            "div.KL4NAf")
-        sleep(4)
-        assert len(file_name_divs) > 0  
-class Test_tt2:
-    """
-        Test function to retrieve filenames from the Google Drive web GUI.
-    """
-
-
-    def test_get_filenames2(utilityInstance,prepare_for_class):
-        file_name_divs = utilityInstance.driver.find_elements(By.CSS_SELECTOR , 
-            "div.KL4NAf")
-        sleep(4)
-        assert len(file_name_divs) > 0  
-    
 
 def test_prerequisites(utilityInstance, button_clicker, helper,higher_actions):
     rawfilenames= [files.file_name_for_copy, files.file_to_be_deleted, files.file_name, files.file_move_name,files.view_info_file_name, *files.fileCollection ,files.share_file,files.delete_forever_file_name]
@@ -170,6 +147,18 @@ def test_prerequisites(utilityInstance, button_clicker, helper,higher_actions):
     assert True
 
 
+
+
+"""
+    Test function to retrieve filenames from the Google Drive web GUI.
+"""
+
+
+def test_get_filenames(utilityInstance):
+    file_name_divs = utilityInstance.driver.find_elements(By.CSS_SELECTOR , 
+        "div.KL4NAf")
+    sleep(4)
+    assert len(file_name_divs) > 0  
 
 
 
