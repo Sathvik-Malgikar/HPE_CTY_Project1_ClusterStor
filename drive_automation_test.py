@@ -28,28 +28,31 @@ def utilityInstance():
     instance.teardown()
 
 
-@pytest.fixture(scope="function", autouse=True)
+@pytest.fixture(scope="class", autouse=True)
 def button_clicker(utilityInstance, helper):
     instance = ButtonClicker(utilityInstance.driver, utilityInstance.web_driver_wait, helper)
     yield instance
 
 
-@pytest.fixture(scope="function", autouse=True)
+@pytest.fixture(scope="class", autouse=True)
 def helper(utilityInstance):
     instance = Helper(utilityInstance.driver, utilityInstance.web_driver_wait)
     yield instance
 
 
-@pytest.fixture(scope="function", autouse=True)
+@pytest.fixture(scope="class", autouse=True)
 def higher_actions(utilityInstance, button_clicker, helper):
     instance = HigherActions(utilityInstance.driver, utilityInstance.web_driver_wait, button_clicker, helper)
     return instance
-"""
-    Test function for signing into Google Drive using Selenium WebDriver.
-"""
 
+not_first_sign_in = False
 
-def test_signin(helper, utilityInstance, higher_actions):
+@pytest.fixture(scope="class")
+def prepare_for_class(helper, utilityInstance, higher_actions,button_clicker):
+
+    global not_first_sign_in
+    ### SETUP START ###
+    
     utilityInstance.driver.get("https://www.google.com/intl/en-US/drive/")
     utilityInstance.driver.maximize_window()
     sleep(0.8)
@@ -60,37 +63,84 @@ def test_signin(helper, utilityInstance, higher_actions):
     # opened by clicking sign-in anchor tag
     sign_in_tab = utilityInstance.driver.window_handles[-1]
     utilityInstance.driver.switch_to.window(sign_in_tab)
-    sleep(1.3)
+    
     parser = configparser.ConfigParser()
     parser.read("config.ini")
     account_email_id = parser.get("Account Credentials", "email")
-    print("Sending email")
-    higher_actions.send_keys_to_focused(account_email_id)
-    higher_actions.send_keys_to_focused(Keys.ENTER)
-    
-    helper.wait_for_element(locators.welcome_span)
-    sleep(3)  # to deal with input animation
-   
     account_pwd = parser.get("Account Credentials", "password")
-    print(account_pwd)
+    
+    #LOGIC FOR HANDLING SECOND TIME LOGIN'S , ONE EXTRA CLICK .
+    
+    if not_first_sign_in:
+        account_div = helper.wait_to_click(locators.sign_in_account_locator)
+        account_div.click()
+        sleep(5)
+    else:
+        autoGUIutils.zoom_out()# SET ZOOM LEVEL ONCE AND FOR ALL  
+        higher_actions.send_keys_to_focused(account_email_id)
+        higher_actions.send_keys_to_focused(Keys.ENTER)
+        
+        helper.wait_for_element(locators.welcome_span)
+        sleep(3)  # to deal with input animation
+   
+    not_first_sign_in = True
+   
     higher_actions.send_keys_to_focused(account_pwd)
     higher_actions.send_keys_to_focused(Keys.ENTER)
     
     sleep(5)
-
-    try:
-        utilityInstance.web_driver_wait.until(EC.title_is("Home - Google Drive"))
-        assert True
-
-    except TimeoutError:
-        assert False
-    else:
-        autoGUIutils.zoom_out()
+    
+    utilityInstance.web_driver_wait.until(EC.title_is("Home - Google Drive"))
+    
+    
 
     sleep(5)
+    ### SETUP END ###
+
+    yield
+  
+    ### TEARDOWN START ###
+    user_profile_button_element = helper.wait_for_element(locators.user_profile_button_locator)
+    button_clicker.click_element(user_profile_button_element)
+    sleep(2)
+   
+    autoGUIutils.press_tab()
+    autoGUIutils.press_tab()
+    autoGUIutils.press_tab()
+    autoGUIutils.press_tab()
+    autoGUIutils.press_tab()
+    autoGUIutils.press_enter()
+    
+    utilityInstance.driver.close()
+    before_signin = utilityInstance.driver.window_handles[-1]
+    utilityInstance.driver.switch_to.window(before_signin)
+    ### TEARDOWN END ###
+
+class Test_tt:
+    """
+        Test function to retrieve filenames from the Google Drive web GUI.
+    """
 
 
-def test_prerequisites(utilityInstance, button_clicker, helper):
+    def test_get_filenames(utilityInstance,prepare_for_class):
+        file_name_divs = utilityInstance.driver.find_elements(By.CSS_SELECTOR , 
+            "div.KL4NAf")
+        sleep(4)
+        assert len(file_name_divs) > 0  
+class Test_tt2:
+    """
+        Test function to retrieve filenames from the Google Drive web GUI.
+    """
+
+
+    def test_get_filenames2(utilityInstance,prepare_for_class):
+        file_name_divs = utilityInstance.driver.find_elements(By.CSS_SELECTOR , 
+            "div.KL4NAf")
+        sleep(4)
+        assert len(file_name_divs) > 0  
+    
+
+def test_prerequisites(utilityInstance, button_clicker, helper,higher_actions):
     rawfilenames= [files.file_name_for_copy, files.file_to_be_deleted, files.file_name, files.file_move_name,files.view_info_file_name, *files.fileCollection ,files.share_file,files.delete_forever_file_name]
     file_list_to_upload = " ".join(list(map(lambda a:f'"{a}"',rawfilenames)))
     
@@ -101,6 +151,7 @@ def test_prerequisites(utilityInstance, button_clicker, helper):
     sleep(2)
 
     autoGUIutils.type_into_dialogue_box(file_list_to_upload)
+    sleep(3)
 
     higher_actions.deal_duplicate_and_await_upload()
     utilityInstance.driver.refresh()
@@ -120,16 +171,7 @@ def test_prerequisites(utilityInstance, button_clicker, helper):
 
 
 
-"""
-    Test function to retrieve filenames from the Google Drive web GUI.
-"""
 
-
-def test_get_filenames(utilityInstance):
-    file_name_divs = utilityInstance.driver.find_elements(By.CSS_SELECTOR , 
-        "div.KL4NAf")
-    sleep(4)
-    assert len(file_name_divs) > 0
 
 def test_search_for_file_by_name(higher_actions):
     # utilityInstance.click_on_search_in_drive()
@@ -449,18 +491,3 @@ def test_remove_folder(button_clicker, helper):
     button_clicker.click_action_bar_button("Move to trash")   
     sleep(4)
 
-
-"""
-## Test function to logout from the Google Drive web GUI.
-"""
-def test_logout(utilityInstance, helper, button_clicker):     
-    user_profile_button_element = helper.wait_for_element(locators.user_profile_button_locator)
-    button_clicker.click_element(user_profile_button_element)
-    sleep(2)
-    try:
-        sign_out_button_element = helper.wait_for_element(locators.sign_out_button_locator)
-        sign_out_button_element.click()
-    except Exception as e:
-        print("error occured ",e) 
-    # Assert that the login screen is visible after logging out
-    assert utilityInstance.driver.title == "Home - Google Drive"

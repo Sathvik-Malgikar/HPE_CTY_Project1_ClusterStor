@@ -70,3 +70,4 @@ folders_button_locator = (By.CSS_SELECTOR, 'button[name="T5ycX"]')
 move_to_trash_button_locator = (By.CSS_SELECTOR, 'div[aria-label="Move to trash"]')
 
 
+sign_in_account_locator= (By.CSS_SELECTOR , "div[data-authuser='-1']")

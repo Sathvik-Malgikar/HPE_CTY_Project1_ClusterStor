@@ -34,7 +34,7 @@ def go_back_esc():
 def press_tab():
     # types into dialogue box
     pyautogui.press("tab")
-    sleep(2)
+    sleep(1)
   
 def press_enter():
     # types into dialogue box
