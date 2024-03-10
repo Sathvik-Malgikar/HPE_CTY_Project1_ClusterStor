@@ -1,15 +1,9 @@
 import configparser
 from time import sleep
-import pyautogui
 import pytest
-from selenium.webdriver import Chrome
-from selenium.webdriver.common.action_chains import ActionChains
-import selenium.common.exceptions as EXC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium.common.exceptions import NoSuchElementException
 import locators
 import files
 from library_functions import CommonActions
@@ -174,28 +168,10 @@ class TestfileActions:
         assert len(file_name_divs) > 0
 
     def test_search_for_file_by_name(self,file_actions):
-        # utilityInstance.click_on_search_in_drive()
-        # autoGUIutils.type_into_dialogue_box(files.file_to_be_searched)
-        # file_element = utilityInstance.wait_to_click(locators.file_selector(files.file_to_be_searched))
-        # utilityInstance.double_click_element(file_element)
-        # sleep(3)
-        # autoGUIutils.go_back_esc()
-        
-        file_elements = file_actions.higher_actions.search_file_by_name(files.file_to_be_searched,utilityInstance)
+
+        file_elements = file_actions.higher_actions.search_file_by_name(files.file_to_be_searched)
         assert (file_elements==[] or file_elements.count(self.files.file_to_be_searched) == len(file_elements))
 
-
-
-    # def test_search_file_by_type(self,file_actions):
-        
-        
-    #     file_actions.button_clicker.navigate_to("My Drive")
-    #     file_actions.button_clicker.click_on_type_button()
-    #     file_actions.button_clicker.click_on_the_required_type()
-    #     file_element = file_actions.helper.wait_to_click(locators.file_selector(files.file_to_be_searched_by_type))
-    #     file_actions.helper.double_click_element(file_element)
-    #     sleep(3)
-    #     autoGUIutils.go_back_esc()
         
     def test_search_for_file_by_type(self,file_actions):
         file_actions.button_clicker.navigate_to("My Drive")
