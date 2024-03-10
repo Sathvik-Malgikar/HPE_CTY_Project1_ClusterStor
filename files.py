@@ -1,5 +1,5 @@
 file_name = "cty_ppt.pdf"
-renamed_file_name = "renamed_cty"
+renamed_file_name = "renamed_cty.pdf"
 
 
 file_to_be_deleted = "test.txt"

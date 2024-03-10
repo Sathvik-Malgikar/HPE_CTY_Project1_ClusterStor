@@ -160,7 +160,7 @@ class HigherActions:
 
     def move_action(self,move_file_name,destination_folder_name,show_more):
         
-        self.select_file(move_file_name, show_more_needed=show_more)
+        self.helper.select_item(move_file_name, show_more_needed=show_more)
         sleep(2)
         
         file_element = self.helper.wait_for_element(locators.file_selector(move_file_name))
@@ -171,14 +171,14 @@ class HigherActions:
     def verify_file_in_destination(self,moved_file_name,destination_folder):
         try:
             # Double click the destination folder
-            destination_folder_element = self.wait_for_element(locators.file_selector(destination_folder))
-            self.double_click_element(destination_folder_element)
+            destination_folder_element = self.helper.wait_for_element(locators.file_selector(destination_folder))
+            self.helper.double_click_element(destination_folder_element)
             sleep(4)
         except EXC.StaleElementReferenceException:
             print("StaleElementReferenceException occurred. Retrying...")
             
         # Verify file presence in the destination folder
-        assert self.wait_for_element(locators.file_selector(moved_file_name))!=None, "File has not been moved successfully to the destination folder"
+        assert self.helper.wait_for_element(locators.file_selector(moved_file_name))!=None, "File has not been moved successfully to the destination folder"
 
     def rename_verification(self, old_file_name, new_file_name):
         
@@ -240,11 +240,11 @@ class HigherActions:
                 locators.upload_complete_text))
             sleep(2)
 
-    def search_file_by_name(filename,utilityInstance):
-        utilityInstance.click_on_search_in_drive()
+    def search_file_by_name(self,filename,utilityInstance):
+        self.button_clicker.click_on_search_in_drive()
         autoGUIutils.type_into_dialogue_box(filename)
-        file_element = utilityInstance.wait_to_click(locators.file_selector(files.file_to_be_searched))
-        utilityInstance.double_click_element(file_element)
+        file_element = self.helper.wait_to_click(locators.file_selector(files.file_to_be_searched))
+        self.helper.double_click_element(file_element)
         sleep(3)
         autoGUIutils.go_back_esc()
         return file_element
