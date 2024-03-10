@@ -148,7 +148,7 @@ def test_prerequisites(utilityInstance, button_clicker, helper,higher_actions):
 
 
 @pytest.fixture
-def file_actions(helper, button_clicker,higher_actions,utilityInstance):
+def file_actions(helper, button_clicker,higher_actions,utilityInstance,prepare_for_class):
     """
     Fixture to provide an instance of the TestFolderActions class.
     """
@@ -157,6 +157,7 @@ def file_actions(helper, button_clicker,higher_actions,utilityInstance):
     instance.button_clicker = button_clicker
     instance.higher_actions=higher_actions
     instance.utilityInstance=utilityInstance
+    instance.prepare_for_class = prepare_for_class
     return instance
 
 
@@ -179,6 +180,7 @@ class TestfileActions:
         # utilityInstance.double_click_element(file_element)
         # sleep(3)
         # autoGUIutils.go_back_esc()
+        
         file_elements = file_actions.higher_actions.search_file_by_name(files.file_to_be_searched,utilityInstance)
         assert (file_elements==[] or file_elements.count(self.files.file_to_be_searched) == len(file_elements))
 
@@ -394,13 +396,14 @@ class TestfileActions:
             assert True, f"{files.delete_forever_file_name} is permanently deleted"
 
 @pytest.fixture
-def folder_actions(helper, button_clicker):
+def folder_actions(helper, button_clicker,prepare_for_class):
     """
     Fixture to provide an instance of the TestFolderActions class.
     """
     instance = TestfolderActions()  # Create the instance
     instance.helper = helper
     instance.button_clicker = button_clicker
+    instance.prepare_for_class = prepare_for_class
     return instance
 
 

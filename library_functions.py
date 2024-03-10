@@ -183,10 +183,7 @@ class HigherActions:
     def rename_verification(self, old_file_name, new_file_name):
         
         renamed_file_element = self.helper.wait_for_element(locators.file_selector(new_file_name))
-        if renamed_file_element == None:
-            assert False, f"New File '{new_file_name}' Not Found after Rename"
-        else:
-            assert True , "Rename successfull"
+        return renamed_file_element != None 
 
     def select_file_from_trash(self):
         action_chain = ActionChains(self.driver)
