@@ -44,6 +44,9 @@ not_first_sign_in = False
 @pytest.fixture(scope="class")
 def prepare_for_class(helper, utilityInstance, higher_actions,button_clicker):
 
+    #TODO  make a class called Setup
+    #TODO  make a class called Teardown
+
     global not_first_sign_in
     ### SETUP START ###
     
@@ -160,6 +163,11 @@ def file_actions(helper, button_clicker,higher_actions,utilityInstance,prepare_f
     Test function to retrieve filenames from the Google Drive web GUI.
 """
 class TestfileActions:
+    
+    def __init__(self):
+        self.helper= Helper(utilityInstance.driver, utilityInstance.web_driver_wait)
+        self.file_actions = file_actions(self.helper,button_clicker,higher_actions,utilityInstance,prepare_for_class)
+        pass
    
     def test_get_filenames(self,file_actions):
         file_name_divs = file_actions.utilityInstance.driver.find_elements(By.CSS_SELECTOR , 
@@ -190,7 +198,6 @@ class TestfileActions:
     """
     Test function to remove a file from the Google Drive web GUI.
     """
-
 
     def test_remove_file(self,file_actions):
         file_name = files.file_to_be_deleted
@@ -405,9 +412,6 @@ class TestfolderActions:
     """
     ## Test function to create a new folder in the Google Drive web GUI.
     """
-
-
-    
 
     def test_create_folder(self,folder_actions,utilityInstance):
         folder_name=files.create_folder_name

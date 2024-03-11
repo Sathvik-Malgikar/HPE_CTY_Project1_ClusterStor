@@ -5,7 +5,7 @@ import selenium.common.exceptions as EXC
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 import locators
-import files
+import files#TODO REMOVE THIS
 import autoGUIutils
 
 class Helper:
@@ -165,20 +165,22 @@ class HigherActions:
             self.helper.double_click_element(destination_folder_element)
             sleep(4)
         except EXC.StaleElementReferenceException:
-            print("StaleElementReferenceException occurred. Retrying...")
+            print("StaleElementReferenceException occurred. Retrying...")# TODO either actually retry or remove "retrying"
             
         # Verify file presence in the destination folder
         assert self.helper.wait_for_element(locators.file_selector(moved_file_name))!=None, "File has not been moved successfully to the destination folder"
 
     def rename_verification(self, old_file_name, new_file_name):
         
+        # TODO old file shouldnt exist, verify that.
         renamed_file_element = self.helper.wait_for_element(locators.file_selector(new_file_name))
         return renamed_file_element != None 
 
-    def select_file_from_trash(self):
+    def select_file_from_trash(self):# TODO parmeterize filename just like select_file and merge these two functions.
         action_chain = ActionChains(self.driver)
         
         file_element = self.helper.wait_for_element(locators.file_selector(files.file_to_be_restored))
+        #TODO REMOVE "files" AND PARAMTERIZE
                 
         if not file_element:
             assert False, "File Not Found in Trash"
@@ -188,14 +190,14 @@ class HigherActions:
             
             sleep(6)
 
-    def send_keys_to_element(self,element_locator, text):
+    def send_keys_to_element(self,element_locator, text):# TODO not high level , so shift elsewhere
         try:
             element = self.driver.find_element(*element_locator)
             element.send_keys(text)
         except Exception as e:
             print(f"Error sending keys to element: {e}")
 
-    def send_keys_to_focused( self,text):
+    def send_keys_to_focused( self,text):# TODO not high level , so shift elsewhere
         try:
             action_chain = ActionChains(self.driver)
             
@@ -227,11 +229,19 @@ class HigherActions:
                 locators.upload_complete_text))
             sleep(2)
 
-    def search_file_by_name(self,filename,utilityInstance):
+    def search_file_by_name(self,filename):
         self.button_clicker.click_on_search_in_drive()
         autoGUIutils.type_into_dialogue_box(filename)
-        file_element = self.helper.wait_to_click(locators.file_selector(files.file_to_be_searched))
-        self.helper.double_click_element(file_element)
-        sleep(3)
-        autoGUIutils.go_back_esc()
-        return file_element
+    
+    def verify_search_results(self,expected_file_list):#TODO return one boolean
+        flag=True
+        for expected_file in expected_file_list:
+                
+            file_element = self.helper.wait_to_click(locators.file_selector(expected_file))# TODO Check this once
+            if not file_element:
+                flag=False
+                break
+            self.helper.double_click_element(file_element)#TODO ask saad whether opening is needed
+            sleep(3)
+            autoGUIutils.go_back_esc()
+        return flag
