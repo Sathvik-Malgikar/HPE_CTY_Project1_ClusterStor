@@ -1,12 +1,14 @@
 import configparser
 from time import sleep
+from webbrowser import Chrome
 import pytest
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 import locators
 import files
-from library_functions import CommonActions
+
 from library_functions import ButtonClicker
 from library_functions import Helper
 from library_functions import HigherActions
@@ -14,12 +16,15 @@ from library_functions import HigherActions
 import autoGUIutils
 import os
 
-@pytest.fixture( scope="session" ,autouse=True)
+class UtilityInstance:
+    def __init__(self):
+        self.driver = Chrome(executable_path="./chromedriver.exe")
+        self.web_driver_wait = WebDriverWait(self.driver,10)
+
+        
+@pytest.fixture(autouse=True,scope="session")
 def utilityInstance():
-    instance = CommonActions()
-    instance.setup()
-    yield instance
-    instance.teardown()
+    yield UtilityInstance()
 
 
 @pytest.fixture(scope="class", autouse=True)
