@@ -6,7 +6,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 import locators
 import files
-from library_functions import CommonActions
+
 from library_functions import ButtonClicker
 from library_functions import Helper
 from library_functions import HigherActions
@@ -14,12 +14,12 @@ from library_functions import HigherActions
 import autoGUIutils
 import os
 
-@pytest.fixture( scope="session" ,autouse=True)
-def utilityInstance():
-    instance = CommonActions()
-    instance.setup()
-    yield instance
-    instance.teardown()
+# @pytest.fixture( scope="session" ,autouse=True)
+# def utilityInstance():
+#     instance = CommonActions()
+#     instance.setup()
+#     yield instance
+#     instance.teardown()
 
 
 @pytest.fixture(scope="class", autouse=True)
@@ -279,7 +279,7 @@ class TestfileActions:
         file_name_to_retrieve = files.file_to_be_restored
         file_actions.button_clicker.navigate_to("Trash")
         sleep(4)
-        file_actions.higher_actions.select_file_from_trash()
+        file_actions.higher_actions.select_item(file_name_to_retrieve,True)
         file_actions.button_clicker.click_action_bar_button("Restore from trash")
         restoration_successful = file_actions.higher_actions.verify_restoration(file_name_to_retrieve)
         sleep(4)
