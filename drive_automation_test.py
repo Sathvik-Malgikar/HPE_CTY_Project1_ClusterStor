@@ -16,38 +16,40 @@ from library_functions import HigherActions
 import autoGUIutils
 import os
 
-class UtilityInstance:
-    def __init__(self):
-        self.driver = Chrome(executable_path="./chromedriver.exe")
-        self.web_driver_wait = WebDriverWait(self.driver,10)
-
         
 @pytest.fixture(autouse=True,scope="session")
-def utilityInstance():
-    yield UtilityInstance()
-
-
-@pytest.fixture(scope="class", autouse=True)
-def button_clicker(utilityInstance, helper):
-    instance = ButtonClicker(utilityInstance.driver, utilityInstance.web_driver_wait, helper)
+def driver():
+    instance= Chrome(executable_path="./chromedriver.exe")
+    yield instance
+    instance.quit()
+    
+@pytest.fixture(autouse=True,scope="session")
+def web_driver_wait(driver):
+    instance= WebDriverWait(driver,10)
     yield instance
 
 
 @pytest.fixture(scope="class", autouse=True)
-def helper(utilityInstance):
-    instance = Helper(utilityInstance.driver, utilityInstance.web_driver_wait)
+def button_clicker(driver,web_driver_wait, helper):
+    instance = ButtonClicker(driver, web_driver_wait, helper)
     yield instance
 
 
 @pytest.fixture(scope="class", autouse=True)
-def higher_actions(utilityInstance, button_clicker, helper):
-    instance = HigherActions(utilityInstance.driver, utilityInstance.web_driver_wait, button_clicker, helper)
+def helper(driver,web_driver_wait):
+    instance = Helper(driver, web_driver_wait,)
+    yield instance
+
+
+@pytest.fixture(scope="class", autouse=True)
+def higher_actions(driver,web_driver_wait, button_clicker, helper):
+    instance = HigherActions(driver, web_driver_wait, button_clicker, helper)
     return instance
 
 not_first_sign_in = False
 
 @pytest.fixture(scope="class")
-def prepare_for_class(helper, utilityInstance, higher_actions,button_clicker):
+def prepare_for_class(helper, driver,web_driver_wait, higher_actions,button_clicker):
 
     #TODO  make a class called Setup
     #TODO  make a class called Teardown
@@ -55,16 +57,16 @@ def prepare_for_class(helper, utilityInstance, higher_actions,button_clicker):
     global not_first_sign_in
     ### SETUP START ###
     
-    utilityInstance.driver.get("https://www.google.com/intl/en-US/drive/")
-    utilityInstance.driver.maximize_window()
+    driver.get("https://www.google.com/intl/en-US/drive/")
+    driver.maximize_window()
     sleep(0.8)
 
     signin_ele = helper.wait_to_click(locators.sign_in_link)
     signin_ele.click()
     sleep(1.3)
     # opened by clicking sign-in anchor tag
-    sign_in_tab = utilityInstance.driver.window_handles[-1]
-    utilityInstance.driver.switch_to.window(sign_in_tab)
+    sign_in_tab = driver.window_handles[-1]
+    driver.switch_to.window(sign_in_tab)
     
     parser = configparser.ConfigParser()
     parser.read("config.ini")
@@ -92,7 +94,7 @@ def prepare_for_class(helper, utilityInstance, higher_actions,button_clicker):
     
     sleep(5)
     
-    utilityInstance.web_driver_wait.until(EC.title_is("Home - Google Drive"))
+    web_driver_wait.until(EC.title_is("Home - Google Drive"))
     
     
 
@@ -113,13 +115,13 @@ def prepare_for_class(helper, utilityInstance, higher_actions,button_clicker):
     autoGUIutils.press_tab()
     autoGUIutils.press_enter()
     
-    utilityInstance.driver.close()
-    before_signin = utilityInstance.driver.window_handles[-1]
-    utilityInstance.driver.switch_to.window(before_signin)
+    driver.close()
+    before_signin = driver.window_handles[-1]
+    driver.switch_to.window(before_signin)
     ### TEARDOWN END ###
 
 
-def test_prerequisites(utilityInstance, button_clicker, helper,higher_actions):
+def test_prerequisites(driver, web_driver_wait, button_clicker, helper,higher_actions):
     rawfilenames= [files.file_name_for_copy, files.file_to_be_deleted, files.file_name, files.file_move_name,files.view_info_file_name, *files.fileCollection ,files.share_file,files.delete_forever_file_name]
     file_list_to_upload = " ".join(list(map(lambda a:f'"{a}"',rawfilenames)))
     
@@ -133,7 +135,7 @@ def test_prerequisites(utilityInstance, button_clicker, helper,higher_actions):
     sleep(3)
 
     higher_actions.deal_duplicate_and_await_upload()
-    utilityInstance.driver.refresh()
+    driver.refresh()
     sleep(5)
     
     # to create SVM folder
@@ -145,12 +147,12 @@ def test_prerequisites(utilityInstance, button_clicker, helper,higher_actions):
 
     autoGUIutils.type_into_dialogue_box(files.folder_name_to_be_removed)
     
-    utilityInstance.driver.refresh()
+    driver.refresh()
     assert True
 
 
 @pytest.fixture
-def file_actions(helper, button_clicker,higher_actions,utilityInstance,prepare_for_class):
+def file_actions(helper, button_clicker,higher_actions,driver, web_driver_wait,prepare_for_class):
     """
     Fixture to provide an instance of the TestFolderActions class.
     """
@@ -158,7 +160,8 @@ def file_actions(helper, button_clicker,higher_actions,utilityInstance,prepare_f
     instance.helper = helper
     instance.button_clicker = button_clicker
     instance.higher_actions=higher_actions
-    instance.utilityInstance=utilityInstance
+    instance.web_driver_wait= web_driver_wait
+    instance.driver= driver
     instance.prepare_for_class = prepare_for_class
     return instance
 
@@ -170,12 +173,12 @@ def file_actions(helper, button_clicker,higher_actions,utilityInstance,prepare_f
 class TestfileActions:
     
     def __init__(self):
-        self.helper= Helper(utilityInstance.driver, utilityInstance.web_driver_wait)
-        self.file_actions = file_actions(self.helper,button_clicker,higher_actions,utilityInstance,prepare_for_class)
+        self.helper= Helper(driver, web_driver_wait,)
+        self.file_actions = file_actions(self.helper,button_clicker,higher_actions,driver, web_driver_wait,prepare_for_class)
         pass
    
     def test_get_filenames(self,file_actions):
-        file_name_divs = file_actions.utilityInstance.driver.find_elements(By.CSS_SELECTOR , 
+        file_name_divs = file_actions.driver.find_elements(By.CSS_SELECTOR , 
             "div.KL4NAf")
         sleep(4)
         assert len(file_name_divs) > 0
@@ -190,7 +193,7 @@ class TestfileActions:
         file_actions.button_clicker.navigate_to("My Drive")
         file_actions.button_clicker.click_on_type_button()
         file_actions.button_clicker.click_on_the_required_type()
-        file_elements = file_actions.utilityInstance.driver.find_elements_by_css_selector("div.KL4NAf") 
+        file_elements = file_actions.driver.find_elements_by_css_selector("div.KL4NAf") 
         # Extract file names from file elements
         file_names = [element.text for element in file_elements]
         sleep(4)
@@ -230,7 +233,7 @@ class TestfileActions:
                 assert False, repr(e)
                 
             finally:
-                file_actions.utilityInstance.driver.refresh()
+                file_actions.driver.refresh()
         
 
     
@@ -339,7 +342,7 @@ class TestfileActions:
         make_a_copy_element.click()
 
         sleep(5)
-        file_actions.utilityInstance.driver.refresh()
+        file_actions.driver.refresh()
         sleep(7)
         copied_file_element = file_actions.helper.wait_for_element(locators.copied_file_locator)
         assert copied_file_element is not None
@@ -362,7 +365,7 @@ class TestfileActions:
 
 
     def test_delete_file_permanently(self,file_actions):
-        file_actions.utilityInstance.driver.refresh()
+        file_actions.driver.refresh()
         sleep(5)    
         file_actions.helper.select_item( files.delete_forever_file_name,False)
         file_actions.button_clicker.click_action_bar_button("Move to trash")
@@ -428,7 +431,7 @@ class TestfolderActions:
 
         autoGUIutils.type_into_dialogue_box(folder_name)
         
-        utilityInstance.driver.refresh()
+        driver.refresh()
     
         assert folder_actions.helper.wait_for_element(locators.file_selector(folder_name))!=None
         sleep(3)
@@ -447,7 +450,7 @@ class TestfolderActions:
 
 
 
-def test_share_via_link(utilityInstance,helper,button_clicker):
+def test_share_via_link(driver, web_driver_wait,helper,button_clicker):
     button_clicker.navigate_to("Home")
     sleep(2)
     helper.select_item(files.share_file,False)

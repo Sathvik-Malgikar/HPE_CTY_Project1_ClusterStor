@@ -9,7 +9,7 @@ import files#TODO REMOVE THIS
 import autoGUIutils
 
 class Helper:
-    def __init__(self, driver, web_driver_wait):
+    def __init__(self, driver, web_driver_wait,):
         self.driver = driver
         self.web_driver_wait = web_driver_wait
 
@@ -75,7 +75,7 @@ class Helper:
 
 
 class ButtonClicker:
-    def __init__(self, driver, web_driver_wait, helper):
+    def __init__(self, driver, web_driver_wait,, helper):
         self.driver = driver
         self.web_driver_wait = web_driver_wait
         self.helper = helper
@@ -134,7 +134,7 @@ class ButtonClicker:
 
 
 class HigherActions:
-    def __init__(self, driver, web_driver_wait, button_clicker, helper):
+    def __init__(self, driver, web_driver_wait,, button_clicker, helper):
         self.driver = driver
         self.web_driver_wait = web_driver_wait
         self.button_clicker = button_clicker
