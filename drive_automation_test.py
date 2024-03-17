@@ -6,115 +6,195 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver import Chrome
 import locators
 import files
 
 from library_functions import ButtonClicker
 from library_functions import Helper
 from library_functions import HigherActions
-
+from library_functions import ElementaryActions
 import autoGUIutils
 import os
 
         
-@pytest.fixture(autouse=True,scope="session")
-def driver():
-    instance= Chrome(executable_path="./chromedriver.exe")
-    yield instance
-    instance.quit()
+# @pytest.fixture(autouse=True,scope="session")
+# def driver():
+#     instance= Chrome("./chromedriver.exe")
+#     yield instance
+#     instance.quit()
     
-@pytest.fixture(autouse=True,scope="session")
-def web_driver_wait(driver):
-    instance= WebDriverWait(driver,10)
-    yield instance
+# @pytest.fixture(autouse=True,scope="session")
+# def web_driver_wait(driver):
+#     instance= WebDriverWait(driver,10)
+#     yield instance
 
 
-@pytest.fixture(scope="class", autouse=True)
-def button_clicker(driver,web_driver_wait, helper):
-    instance = ButtonClicker(driver, web_driver_wait, helper)
-    yield instance
+# @pytest.fixture(scope="class", autouse=True)
+# def button_clicker(driver,web_driver_wait, helper):
+#     instance = ButtonClicker(driver, web_driver_wait, helper)
+#     yield instance
 
 
-@pytest.fixture(scope="class", autouse=True)
-def helper(driver,web_driver_wait):
-    instance = Helper(driver, web_driver_wait,)
-    yield instance
+# @pytest.fixture(scope="class", autouse=True)
+# def helper(driver,web_driver_wait):
+#     instance = Helper(driver, web_driver_wait,)
+#     yield instance
 
 
-@pytest.fixture(scope="class", autouse=True)
-def higher_actions(driver,web_driver_wait, button_clicker, helper):
-    instance = HigherActions(driver, web_driver_wait, button_clicker, helper)
-    return instance
+# @pytest.fixture(scope="class", autouse=True)
+# def higher_actions(driver,web_driver_wait, button_clicker, helper):
+#     instance = HigherActions(driver, web_driver_wait, button_clicker, helper)
+#     return instance
+
+# @pytest.fixture(scope="class", autouse=True)
+# def elementary_actions(driver,web_driver_wait):
+#     instance = ElementaryActions(driver, web_driver_wait)
+#     return instance
 
 not_first_sign_in = False
 
-@pytest.fixture(scope="class")
-def prepare_for_class(helper, driver,web_driver_wait, higher_actions,button_clicker):
 
-    #TODO  make a class called Setup
-    #TODO  make a class called Teardown
+# def setup_class(driver,web_driver_wait,elementary_actions):
+    
+#     #TODO  make a class called Setup
+#     #TODO  make a class called Teardown
 
-    global not_first_sign_in
-    ### SETUP START ###
+#     global not_first_sign_in
+#     ### SETUP START ###
     
-    driver.get("https://www.google.com/intl/en-US/drive/")
-    driver.maximize_window()
-    sleep(0.8)
+#     driver.get("https://www.google.com/intl/en-US/drive/")
+#     driver.maximize_window()
+#     sleep(0.8)
 
-    signin_ele = helper.wait_to_click(locators.sign_in_link)
-    signin_ele.click()
-    sleep(1.3)
-    # opened by clicking sign-in anchor tag
-    sign_in_tab = driver.window_handles[-1]
-    driver.switch_to.window(sign_in_tab)
+#     signin_ele = elementary_actions.wait_to_click(locators.sign_in_link)
+#     signin_ele.click()
+#     sleep(1.3)
+#     # opened by clicking sign-in anchor tag
+#     sign_in_tab = driver.window_handles[-1]
+#     driver.switch_to.window(sign_in_tab)
     
-    parser = configparser.ConfigParser()
-    parser.read("config.ini")
-    account_email_id = parser.get("Account Credentials", "email")
-    account_pwd = parser.get("Account Credentials", "password")
+#     parser = configparser.ConfigParser()
+#     parser.read("config.ini")
+#     account_email_id = parser.get("Account Credentials", "email")
+#     account_pwd = parser.get("Account Credentials", "password")
     
-    #LOGIC FOR HANDLING SECOND TIME LOGIN'S , ONE EXTRA CLICK .
+#     #LOGIC FOR HANDLING SECOND TIME LOGIN'S , ONE EXTRA CLICK .
     
-    if not_first_sign_in:
-        account_div = helper.wait_to_click(locators.sign_in_account_locator)
-        account_div.click()
-        sleep(5)
-    else:
-        autoGUIutils.zoom_out()# SET ZOOM LEVEL ONCE AND FOR ALL  
-        helper.send_keys_to_focused(account_email_id)
-        helper.send_keys_to_focused(Keys.ENTER)
+#     if not_first_sign_in:
+#         account_div = elementary_actions.wait_to_click(locators.sign_in_account_locator)
+#         account_div.click()
+#         sleep(5)
+#     else:
+#         autoGUIutils.zoom_out()# SET ZOOM LEVEL ONCE AND FOR ALL  
+#         elementary_actions.send_keys_to_focused(account_email_id)
+#         elementary_actions.send_keys_to_focused(Keys.ENTER)
         
-        helper.wait_for_element(locators.welcome_span)
-        sleep(3)  # to deal with input animation
+#         elementary_actions.wait_for_element(locators.welcome_span)
+#         sleep(3)  # to deal with input animation
    
-    not_first_sign_in = True
+#     not_first_sign_in = True
    
-    helper.send_keys_to_focused(account_pwd)
-    helper.send_keys_to_focused(Keys.ENTER)
+#     elementary_actions.send_keys_to_focused(account_pwd)
+#     elementary_actions.send_keys_to_focused(Keys.ENTER)
     
-    sleep(5)
+#     sleep(5)
     
-    web_driver_wait.until(EC.title_is("Home - Google Drive"))
+#     web_driver_wait.until(EC.title_is("Home - Google Drive"))
     
     
 
-    sleep(5)
-    ### SETUP END ###
+#     sleep(5)
+#     ## SETUP END ###
 
-    yield
+# def teardown_class(driver,elementary_actions):
   
-    ### TEARDOWN START ###
-    user_profile_button_element = helper.wait_for_element(locators.user_profile_button_locator)
-    button_clicker.click_element(user_profile_button_element)
-    sleep(2)
+#     ### TEARDOWN START ###
+#     user_profile_button_element = elementary_actions.wait_for_element(locators.user_profile_button_locator)
+#     elementary_actions.click_element(user_profile_button_element)
+#     sleep(2)
    
-    autoGUIutils.n_tabs_shift_focus(5)
-    autoGUIutils.press_enter()
+#     autoGUIutils.n_tabs_shift_focus(5)
+#     autoGUIutils.press_enter()
     
-    driver.close()
-    before_signin = driver.window_handles[-1]
-    driver.switch_to.window(before_signin)
-    ### TEARDOWN END ###
+#     driver.close()
+#     before_signin = driver.window_handles[-1]
+#     driver.switch_to.window(before_signin)
+#     ### TEARDOWN END ###
+
+# @pytest.fixture(scope="class", autouse=True)
+# def class_setup_teardown(driver,web_driver_wait,elementary_actions):
+#     setup_class(driver,web_driver_wait,elementary_actions)
+#     yield
+#     teardown_class(driver,elementary_actions)
+
+# @pytest.fixture(scope="class")
+# def prepare_for_class(helper, driver,web_driver_wait, higher_actions,button_clicker,elementary_actions):
+
+#     #TODO  make a class called Setup
+#     #TODO  make a class called Teardown
+
+#     global not_first_sign_in
+#     ### SETUP START ###
+    
+#     driver.get("https://www.google.com/intl/en-US/drive/")
+#     driver.maximize_window()
+#     sleep(0.8)
+
+#     signin_ele = elementary_actions.wait_to_click(locators.sign_in_link)
+#     signin_ele.click()
+#     sleep(1.3)
+#     # opened by clicking sign-in anchor tag
+#     sign_in_tab = driver.window_handles[-1]
+#     driver.switch_to.window(sign_in_tab)
+    
+#     parser = configparser.ConfigParser()
+#     parser.read("config.ini")
+#     account_email_id = parser.get("Account Credentials", "email")
+#     account_pwd = parser.get("Account Credentials", "password")
+    
+#     #LOGIC FOR HANDLING SECOND TIME LOGIN'S , ONE EXTRA CLICK .
+    
+#     if not_first_sign_in:
+#         account_div = elementary_actions.wait_to_click(locators.sign_in_account_locator)
+#         account_div.click()
+#         sleep(5)
+#     else:
+#         autoGUIutils.zoom_out()# SET ZOOM LEVEL ONCE AND FOR ALL  
+#         elementary_actions.send_keys_to_focused(account_email_id)
+#         elementary_actions.send_keys_to_focused(Keys.ENTER)
+        
+#         elementary_actions.wait_for_element(locators.welcome_span)
+#         sleep(3)  # to deal with input animation
+   
+#     not_first_sign_in = True
+   
+#     elementary_actions.send_keys_to_focused(account_pwd)
+#     elementary_actions.send_keys_to_focused(Keys.ENTER)
+    
+#     sleep(5)
+    
+#     web_driver_wait.until(EC.title_is("Home - Google Drive"))
+    
+    
+
+#     sleep(5)
+#     ### SETUP END ###
+
+#     yield
+  
+#     ### TEARDOWN START ###
+#     user_profile_button_element = elementary_actions.wait_for_element(locators.user_profile_button_locator)
+#     elementary_actions.click_element(user_profile_button_element)
+#     sleep(2)
+   
+#     autoGUIutils.n_tabs_shift_focus(5)
+#     autoGUIutils.press_enter()
+    
+#     driver.close()
+#     before_signin = driver.window_handles[-1]
+#     driver.switch_to.window(before_signin)
+#     ### TEARDOWN END ###
 
 
 def test_prerequisites(driver, web_driver_wait, button_clicker, helper,higher_actions):
@@ -147,18 +227,119 @@ def test_prerequisites(driver, web_driver_wait, button_clicker, helper,higher_ac
     assert True
 
 class BaseTest:
-    @pytest.fixture(autouse=True)
-    def injector(self, helper, button_clicker,higher_actions,driver, web_driver_wait,prepare_for_class):
-        # instantiates pages object, and data readers
-        self.helper = helper
-        self.button_clicker = button_clicker
-        self.higher_actions = higher_actions
-        self.driver = driver
-        self.web_driver_wait = web_driver_wait
-        self.prepare_for_class = prepare_for_class
+    
+            
+    @pytest.fixture(autouse=True,scope="class")
+    def setup_driver(self):
+        instance= Chrome("./chromedriver.exe")
+        self.driver= instance
+        instance.quit()
+        
+    @pytest.fixture(autouse=True,scope="class")
+    def setup_web_driver_wait(self,setup_driver):
+        instance= WebDriverWait(self.driver,10)
+        self.web_driver_wait= instance
+
+    @pytest.fixture(scope="class", autouse=True)
+    def setup_helper(self,setup_driver,setup_web_driver_wait):
+        instance = Helper(self.driver, self.web_driver_wait,)
+        self.helper=instance
+
+
+    @pytest.fixture(scope="class", autouse=True)
+    def setup_button_clicker(self,setup_driver,setup_web_driver_wait,setup_helper):
+        instance = ButtonClicker(self.driver, self.web_driver_wait, self.helper)
+        self.button_clicker= instance
+
+    @pytest.fixture(scope="class", autouse=True)
+    def setup_higher_actions(self,setup_driver,setup_web_driver_wait,setup_button_clicker,setup_helper):
+        instance = HigherActions(self.driver, self.web_driver_wait, self.button_clicker, self.helper)
+        self.higher_actions= instance
+
+    @pytest.fixture(scope="class", autouse=True)
+    def setup_elementary_actions(self,setup_driver,setup_web_driver_wait):
+        instance = ElementaryActions(self.driver, self.web_driver_wait)
+        self.elementary_actions= instance
+
+    # @classmethod
+    # #@pytest.fixture(autouse=True)
+    # def injector(cls, helper, button_clicker,higher_actions,driver, web_driver_wait):
+    #     # instantiates pages object, and data readers
+    #     cls.helper = helper
+    #     cls.button_clicker = button_clicker
+    #     cls.higher_actions = higher_actions
+    #     cls.driver = driver
+    #     cls.web_driver_wait = web_driver_wait
+    #     cls.elementary_actions=elementary_actions
+    #     #cls.prepare_for_class = prepare_for_class
+
+
+    # def setup_class(cls):
+    #     #cls.injector
+    #     #TODO  make a class called Setup
+    #     #TODO  make a class called Teardown
+
+    #     global not_first_sign_in
+    #     ### SETUP START ###
+        
+    #     cls.driver.get("https://www.google.com/intl/en-US/drive/")
+    #     cls.driver.maximize_window()
+    #     sleep(0.8)
+
+    #     signin_ele = cls.elementary_actions.wait_to_click(locators.sign_in_link)
+    #     signin_ele.click()
+    #     sleep(1.3)
+    #     # opened by clicking sign-in anchor tag
+    #     sign_in_tab = cls.driver.window_handles[-1]
+    #     cls.driver.switch_to.window(sign_in_tab)
+        
+    #     parser = configparser.ConfigParser()
+    #     parser.read("config.ini")
+    #     account_email_id = parser.get("Account Credentials", "email")
+    #     account_pwd = parser.get("Account Credentials", "password")
+        
+    #     #LOGIC FOR HANDLING SECOND TIME LOGIN'S , ONE EXTRA CLICK .
+        
+    #     if not_first_sign_in:
+    #         account_div = cls.elementary_actions.wait_to_click(locators.sign_in_account_locator)
+    #         account_div.click()
+    #         sleep(5)
+    #     else:
+    #         autoGUIutils.zoom_out()# SET ZOOM LEVEL ONCE AND FOR ALL  
+    #         cls.elementary_actions.send_keys_to_focused(account_email_id)
+    #         cls.elementary_actions.send_keys_to_focused(Keys.ENTER)
+            
+    #         cls.elementary_actions.wait_for_element(locators.welcome_span)
+    #         sleep(3)  # to deal with input animation
+    
+    #     not_first_sign_in = True
+    
+    #     cls.elementary_actions.send_keys_to_focused(account_pwd)
+    #     cls.elementary_actions.send_keys_to_focused(Keys.ENTER)
+        
+    #     sleep(5)
+        
+    #     cls.web_driver_wait.until(EC.title_is("Home - Google Drive"))
+    #     sleep(5)
+
+    
+    # def teardown_class(cls):
+  
+    #     ### TEARDOWN START ###
+    #     user_profile_button_element = cls.elementary_actions.wait_for_element(locators.user_profile_button_locator)
+    #     cls.elementary_actions.click_element(user_profile_button_element)
+    #     sleep(2)
+    
+    #     autoGUIutils.n_tabs_shift_focus(5)
+    #     autoGUIutils.press_enter()
+        
+    #     cls.driver.close()
+    #     before_signin = cls.driver.window_handles[-1]
+    #     cls.driver.switch_to.window(before_signin)
+    #     ### TEARDOWN END ###
+
 
 class TestMiscellaneousActions(BaseTest):
-      
     def test_share_via_link(self):
         self.button_clicker.navigate_to("Home")
         sleep(2)
@@ -255,9 +436,17 @@ class TestfileActions(BaseTest):
         
 
         def test_search_for_file_by_name(self):
-
-            file_elements = self.higher_actions.search_file_by_name(files.file_to_be_searched)
-            assert (file_elements==[] or file_elements.count(self.files.file_to_be_searched) == len(file_elements))
+            self.button_clicker.click_on_search_in_drive()
+            self.elementary_actions.send_keys_to_focused(files.file_to_be_searched)
+            autoGUIutils.press_enter()
+             # Retrieve file elements from the search results
+            file_elements = self.elementary_actions.wait_for_element(locators.file_selector(files.file_to_be_searched))
+            # Extract file names from file elements
+            file_names = [element.text for element in file_elements]
+            # Write file names to a text file
+            with open("file_names.txt", "w") as file:
+                for name in file_names:
+                    file.write(name + "\n")
 
             
         def test_search_for_file_by_type(self):
@@ -418,7 +607,7 @@ class TestfolderActions(BaseTest):
 
         autoGUIutils.type_into_dialogue_box(folder_name)
         
-        driver.refresh()
+        self.driver.refresh()
     
         assert self.helper.wait_for_element(locators.file_selector(folder_name))!=None
         sleep(3)
