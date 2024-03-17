@@ -5,7 +5,6 @@ import selenium.common.exceptions as EXC
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 import locators
-import files#TODO REMOVE THIS
 import autoGUIutils
 
 class Helper:
@@ -71,6 +70,23 @@ class Helper:
     def rename_selected_item(self, new_file_name):
         pyautogui.press('n')
         pyautogui.write(new_file_name)
+
+    def send_keys_to_element(self,element_locator, text):
+        try:
+            element = self.driver.find_element(*element_locator)
+            element.send_keys(text)
+        except Exception as e:
+            print(f"Error sending keys to element: {e}")
+
+    def send_keys_to_focused( self,text):
+        try:
+            action_chain = ActionChains(self.driver)
+            
+            action_chain.send_keys(text)
+            action_chain.perform()
+            
+        except Exception as e:
+            print(f"Error sending keys to element: {e}")
 
 
 
@@ -176,36 +192,36 @@ class HigherActions:
         renamed_file_element = self.helper.wait_for_element(locators.file_selector(new_file_name))
         return renamed_file_element != None 
 
-    def select_file_from_trash(self):# TODO parmeterize filename just like select_file and merge these two functions.
-        action_chain = ActionChains(self.driver)
+    # def select_file_from_trash(self):# TODO parmeterize filename just like select_file and merge these two functions.
+    #     action_chain = ActionChains(self.driver)
         
-        file_element = self.helper.wait_for_element(locators.file_selector(files.file_to_be_restored))
-        #TODO REMOVE "files" AND PARAMTERIZE
+    #     file_element = self.helper.wait_for_element(locators.file_selector(files.file_to_be_restored))
+    #     #TODO REMOVE "files" AND PARAMTERIZE
                 
-        if not file_element:
-            assert False, "File Not Found in Trash"
-        else:
+    #     if not file_element:
+    #         assert False, "File Not Found in Trash"
+    #     else:
      
-            action_chain.move_to_element(file_element).click().perform()
+    #         action_chain.move_to_element(file_element).click().perform()
             
-            sleep(6)
+    #         sleep(6)
 
-    def send_keys_to_element(self,element_locator, text):# TODO not high level , so shift elsewhere
-        try:
-            element = self.driver.find_element(*element_locator)
-            element.send_keys(text)
-        except Exception as e:
-            print(f"Error sending keys to element: {e}")
+    # def send_keys_to_element(self,element_locator, text):# TODO not high level , so shift elsewhere
+    #     try:
+    #         element = self.driver.find_element(*element_locator)
+    #         element.send_keys(text)
+    #     except Exception as e:
+    #         print(f"Error sending keys to element: {e}")
 
-    def send_keys_to_focused( self,text):# TODO not high level , so shift elsewhere
-        try:
-            action_chain = ActionChains(self.driver)
+    # def send_keys_to_focused( self,text):# TODO not high level , so shift elsewhere
+    #     try:
+    #         action_chain = ActionChains(self.driver)
             
-            action_chain.send_keys(text)
-            action_chain.perform()
+    #         action_chain.send_keys(text)
+    #         action_chain.perform()
             
-        except Exception as e:
-            print(f"Error sending keys to element: {e}")
+    #     except Exception as e:
+    #         print(f"Error sending keys to element: {e}")
 
     def deal_duplicate_and_await_upload(self):
         # try block to deal with situation of file being there already
@@ -229,9 +245,9 @@ class HigherActions:
                 locators.upload_complete_text))
             sleep(2)
 
-    def search_file_by_name(self,filename):
-        self.button_clicker.click_on_search_in_drive()
-        autoGUIutils.type_into_dialogue_box(filename)
+    # def search_file_by_name(self,filename):
+    #     self.button_clicker.click_on_search_in_drive()
+    #     autoGUIutils.type_into_dialogue_box(filename)
     
     def verify_search_results(self,expected_file_list):#TODO return one boolean
         flag=True

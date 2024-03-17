@@ -81,16 +81,16 @@ def prepare_for_class(helper, driver,web_driver_wait, higher_actions,button_clic
         sleep(5)
     else:
         autoGUIutils.zoom_out()# SET ZOOM LEVEL ONCE AND FOR ALL  
-        higher_actions.send_keys_to_focused(account_email_id)
-        higher_actions.send_keys_to_focused(Keys.ENTER)
+        helper.send_keys_to_focused(account_email_id)
+        helper.send_keys_to_focused(Keys.ENTER)
         
         helper.wait_for_element(locators.welcome_span)
         sleep(3)  # to deal with input animation
    
     not_first_sign_in = True
    
-    higher_actions.send_keys_to_focused(account_pwd)
-    higher_actions.send_keys_to_focused(Keys.ENTER)
+    helper.send_keys_to_focused(account_pwd)
+    helper.send_keys_to_focused(Keys.ENTER)
     
     sleep(5)
     
@@ -294,7 +294,7 @@ class TestfileActions:
         file_name_to_retrieve = files.file_to_be_restored
         file_actions.button_clicker.navigate_to("Trash")
         sleep(4)
-        file_actions.higher_actions.select_file_from_trash()
+        file_actions.helper.select_item(file_name_to_retrieve, show_more_needed=False)
         file_actions.button_clicker.click_action_bar_button("Restore from trash")
         restoration_successful = file_actions.higher_actions.verify_restoration(file_name_to_retrieve)
         sleep(4)
