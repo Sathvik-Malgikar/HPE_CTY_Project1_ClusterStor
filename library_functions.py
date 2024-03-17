@@ -187,10 +187,15 @@ class Helper:
         return flag
     
     def rename_verification(self, old_file_name, new_file_name):
-        
-        # TODO old file shouldnt exist, verify that.
+        # Verify that the old file doesn't exist
+        old_file_element = ElementaryActions.wait_for_element(locators.file_selector(old_file_name))
+        assert old_file_element is None, f"Old file '{old_file_name}' still exists after rename operation."
+        # Verify the existence of the new file
         renamed_file_element = ElementaryActions.wait_for_element(locators.file_selector(new_file_name))
-        return renamed_file_element != None 
+        assert renamed_file_element is not None, f"New file '{new_file_name}' not found after rename operation."
+        # return tru if bot conditions are satisfied
+        return True
+
     
     def deal_duplicate_and_await_upload(self):
         # try block to deal with situation of file being there already
@@ -228,8 +233,12 @@ class Helper:
 
     def verify_restoration(self,file_name):            #REDO this function
         # self.button_clicker.navigate_to("Home")
-        file_elements = self.search_file_by_name(file_name)
-        if(len(file_elements) >0):
+        ButtonClicker.click_on_search_in_drive()
+        sleep(2)
+        ElementaryActions.send_keys_to_focused(file_name)
+        sleep(2)
+        file_element = ElementaryActions.wait_for_element(locators.file_selector(file_name))
+        if file_element:
             return True
         else:
             return False
