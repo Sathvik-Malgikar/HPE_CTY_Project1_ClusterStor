@@ -29,13 +29,18 @@ def type_into_dialogue_box(FILE_TO_UPLOAD):
 def go_back_esc():
     # types into dialogue box
     pyautogui.press("esc")
-    sleep(2)
+    sleep(4)
 
 def press_tab():
     # types into dialogue box
     pyautogui.press("tab")
     sleep(1)
   
+def n_tabs_shift_focus(n):
+    for i in range(n):
+        press_tab()
+        sleep(0.4)
+            
 def press_enter():
     # types into dialogue box
     pyautogui.press("enter")
@@ -45,7 +50,7 @@ def view_shortcut():
     # types into dialogue box
     pyautogui.typewrite("gd")
     sleep(2)
-  
+
     
     
     

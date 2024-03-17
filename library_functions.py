@@ -202,8 +202,7 @@ class Helper:
             print("file not already in google drive, uploading as new file")
         else:
             # to deal with file already exisiting
-            pyautogui.press("tab")
-            pyautogui.press("tab")
+            autoGUIutils.n_tabs_shift_focus(2)
 
             sleep(0.5)
             pyautogui.press("space")
