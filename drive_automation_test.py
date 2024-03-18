@@ -130,16 +130,16 @@ def test_prerequisites(driver, web_driver_wait, button_clicker, helper, higher_a
     assert True
 
 
-class BaseTest:
-    @pytest.fixture(autouse=True)
-    def injector(self, helper, button_clicker, higher_actions, driver, web_driver_wait, prepare_for_class):
-        # instantiates pages object, and data readers
-        self.helper = helper
-        self.button_clicker = button_clicker
-        self.higher_actions = higher_actions
-        self.driver = driver
-        self.web_driver_wait = web_driver_wait
-        self.prepare_for_class = prepare_for_class
+# class BaseTest:
+#     @pytest.fixture(autouse=True)
+#     def injector(self, helper, button_clicker, higher_actions, driver, web_driver_wait, prepare_for_class):
+#         # instantiates pages object, and data readers
+#         self.helper = helper
+#         self.button_clicker = button_clicker
+#         self.higher_actions = higher_actions
+#         self.driver = driver
+#         self.web_driver_wait = web_driver_wait
+#         self.prepare_for_class = prepare_for_class
 
 
 class BaseTest:

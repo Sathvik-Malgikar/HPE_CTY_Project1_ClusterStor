@@ -6,7 +6,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 import locators
 from selenium.webdriver.common.by import By
-import files
 import autoGUIutils
 
 
@@ -532,7 +531,7 @@ class HigherActions:
         ElementaryActions.send_keys_to_focused(file_to_be_searched)
         autoGUIutils.press_enter()
         # Retrieve file elements from the search results
-        file_elements = ElementaryActions.wait_for_elements(locators.file_selector(files.file_to_be_searched))
+        file_elements = ElementaryActions.wait_for_elements(locators.file_selector(file_to_be_searched))
         # Extract file names from file elements
         file_names = [element.text for element in file_elements]
         # Write file names to a text file
