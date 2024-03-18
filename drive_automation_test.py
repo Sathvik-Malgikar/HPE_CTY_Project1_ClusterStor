@@ -195,28 +195,17 @@ class TestfileActions(BaseTest):
     def test_rename_file(self):
         old_file_name = files.file_name
         new_file_name = files.renamed_file_name
-        self.helper.select_item(old_file_name, True)
-        self.helper.rename_selected_item(new_file_name)
-        self.button_clicker.click_on_ok_button()
-        result = self.higher_actions.rename_verification(old_file_name, new_file_name)
+        result = self.higher_actions.rename_action(old_file_name,new_file_name)
         assert result, "Rename failed"
     
         
     def test_get_filenames(self):
-        file_name_divs = self.driver.find_elements(By.CSS_SELECTOR , 
-            "div.KL4NAf")
-        sleep(4)
-        assert len(file_name_divs) > 0
+        no_of_files = self.higher_actions.get_file_names_action() 
+        assert no_of_files > 0
     
     def test_upload_file(self):
         # this file is present in User folder
-        self.button_clicker.click_on_new_button()
-        upload_button = self.helper.wait_for_element(locators.new_menu_button_locator("File upload"))
-        upload_button.click()
-        sleep(2)
-        autoGUIutils.type_into_dialogue_box(files.FILE_TO_UPLOAD)
-        # this is utility solely because prerequisites aso reuses this function
-        self.higher_actions.deal_duplicate_and_await_upload()
+        self.higher_actions.upload_file_action(files.FILE_TO_UPLOAD)
         assert self.helper.wait_for_element(locators.file_selector(files.FILE_TO_UPLOAD))
 
 
@@ -235,17 +224,7 @@ class TestfileActions(BaseTest):
 
 
     def test_copy_file(self):
-        self.helper.select_item(files.file_name_for_copy,show_more_needed=True)
-        self.button_clicker.context_click()
-        sleep(5)
-
-        make_a_copy_element = self.helper.wait_to_click(locators.make_a_copy_element_locator)
-        make_a_copy_element.click()
-
-        sleep(5)
-        self.driver.refresh()
-        sleep(7)
-        copied_file_element = self.helper.wait_for_element(locators.copied_file_locator)
+        copied_file_element = self.higher_actions.copy_file_action(files.file_name_for_copy)
         assert copied_file_element is not None
 
 
@@ -254,36 +233,15 @@ class TestfileActions(BaseTest):
         
 
         def test_search_for_file_by_name(self):
-            ButtonClicker.click_on_search_in_drive()
-            ElementaryActions.send_keys_to_focused(files.file_to_be_searched)
-            autoGUIutils.press_enter()
-             # Retrieve file elements from the search results
-            file_elements = ElementaryActions.wait_for_elements(locators.file_selector(files.file_to_be_searched))
-            # Extract file names from file elements
-            file_names = [element.text for element in file_elements]
-            # Write file names to a text file
-            with open("file_names.txt", "w") as file:
-                for name in file_names:
-                    file.write(name + "\n")
+            self.higher_actions.search_by_name_action(files.file_to_be_searched)
 
             # file_elements = self.higher_actions.search_file_by_name(files.file_to_be_searched)
             # assert (file_elements==[] or file_elements.count(self.files.file_to_be_searched) == len(file_elements))
 
             
         def test_search_for_file_by_type(self):
-            self.button_clicker.navigate_to("My Drive")
-            self.button_clicker.click_on_type_button()
-            self.button_clicker.click_on_the_required_type()
-            file_elements = self.driver.find_elements_by_css_selector("div.KL4NAf") 
-            # Extract file names from file elements
-            file_names = [element.text for element in file_elements]
-            sleep(4)
-            # Write file names to a text file
-            with open("file_names_by_type.txt", "w") as file:
-                for name in file_names:
-                    file.write(name + "\n")
-            assert len(file_names) > 0
-
+            no_of_files = self.higher_actions.search_by_type_action()
+            assert no_of_files > 0
 
 
     class Move:
@@ -293,9 +251,7 @@ class TestfileActions(BaseTest):
 
             filename=files.file_move_name
             destination_folder=files.destination_folder_name
-            self.higher_actions.move_action(filename,destination_folder,show_more=True)
-            self.higher_actions.verify_file_in_destination(filename,destination_folder)  
-            self.button_clicker.navigate_to("My Drive")
+            self.higher_actions.move_action(filename,destination_folder)
             assert not self.helper.wait_for_element(locators.file_selector(filename)) 
 
         def test_move_multiple_files(self):
@@ -329,10 +285,8 @@ class TestfileActions(BaseTest):
 
         def test_remove_file(self):
             file_name = files.file_to_be_deleted
-            self.helper.select_item(file_name,True)
-            self.button_clicker.click_action_bar_button("Move to trash")  
-            sleep(6)
-            assert not self.helper.wait_for_element(locators.file_selector(file_name)) 
+            self.higher_actions.remove_file_action(file_name)
+        
 
 
 
@@ -346,8 +300,9 @@ class TestfileActions(BaseTest):
             sleep(2)
             for file in files.fileCollection:
                 try:
-                    self.helper.select_item(file, True)
-                    self.button_clicker.click_action_bar_button("Move to trash")
+                    self.higher_actions.remove_file_action(file)
+                    # self.helper.select_item(file, True)
+                    # self.button_clicker.click_action_bar_button("Move to trash")
                     #assert not file_actions.helper.wait_for_element(locators.file_selector(file))  
                 except FileNotFoundError as e:
                     assert False, repr(e)
@@ -358,23 +313,8 @@ class TestfileActions(BaseTest):
 
 
         def test_delete_file_permanently(self):
-            self.driver.refresh()
-            sleep(5)    
-            self.helper.select_item( files.delete_forever_file_name,False)
-            self.button_clicker.click_action_bar_button("Move to trash")
-            self.button_clicker.navigate_to("Trash")
-            
-            deleted_file_locator = locators.file_selector(files.delete_forever_file_name)
-            self.helper.wait_for_element(deleted_file_locator)
-            
-            self.helper.select_item(files.delete_forever_file_name, show_more_needed=False)    
-            self.button_clicker.click_action_bar_button("Delete forever")
-            sleep(2)    
-            try:
-                delete_confirm_btn_element = self.helper.wait_for_element(locators.delete_confirm_button_locator) 
-                self.button_clicker.click_element(delete_confirm_btn_element) 
-                sleep(3)
-            except:
+            result = self.higher_actions.delete_permanently_action(files.delete_forever_file_name)
+            if(result == False):
                 assert False, "Error occured"
             else:
                 assert True, f"{files.delete_forever_file_name} is permanently deleted"
@@ -386,12 +326,7 @@ class TestfileActions(BaseTest):
 
         def test_undo_delete_action(self):
             file_name_to_retrieve = files.file_to_be_restored
-            self.button_clicker.navigate_to("Trash")
-            sleep(4)
-            self.helper.select_item(file_name_to_retrieve, show_more_needed=False)
-            self.button_clicker.click_action_bar_button("Restore from trash")
-            restoration_successful = self.higher_actions.verify_restoration(file_name_to_retrieve)
-            sleep(4)
+            restoration_successful = self.higher_actions.undo_delete_action(file_name_to_retrieve)
             assert restoration_successful == True, f"Failed to restore file '{file_name_to_retrieve}'"
 
 class TestfolderActions(BaseTest):
@@ -403,13 +338,7 @@ class TestfolderActions(BaseTest):
     def test_rename_folder(self):
         old_folder_name = files.folder_name
         new_folder_name = files.renamed_folder_name
-        self.button_clicker.navigate_to("Home")
-        self.button_clicker.click_on_folders_button
-        self.helper.select_item(old_folder_name,True)
-        self.helper.rename_selected_item(new_folder_name)
-        self.button_clicker.click_on_ok_button()
-
-        result = self.higher_actions.rename_verification(old_folder_name, new_folder_name)
+        result = self.higher_actions.test_rename_folder(old_folder_name,new_folder_name)
         assert result, "Rename failed"
         
 
@@ -420,16 +349,7 @@ class TestfolderActions(BaseTest):
 
     def test_create_folder(self):
         folder_name=files.create_folder_name
-        self.button_clicker.click_on_new_button()
-            
-        action_button = self.helper.wait_to_click(locators.new_menu_button_locator("New folder"))
-        action_button.click()
-        sleep(2)
-
-        autoGUIutils.type_into_dialogue_box(folder_name)
-        
-        driver.refresh()
-    
+        self.higher_actions.create_folder_action(folder_name)
         assert self.helper.wait_for_element(locators.file_selector(folder_name))!=None
         sleep(3)
   
@@ -440,9 +360,5 @@ class TestfolderActions(BaseTest):
 
     def test_remove_folder(self):
         folder_to_be_removed=files.folder_name_to_be_removed
-        self.button_clicker.navigate_to("Home")
-        self.button_clicker.click_on_folders_button()
-        self.helper.select_item(folder_to_be_removed, True)
-        self.button_clicker.click_action_bar_button("Move to trash")   
-        sleep(4)
+        self.higher_actions.remove_folder_action(folder_to_be_removed)
         assert not self.helper.wait_for_element(locators.file_selector(folder_to_be_removed)) 
