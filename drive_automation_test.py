@@ -11,7 +11,6 @@ import locators
 import files
 from library_functions import ElementaryActions
 from library_functions import ButtonClicker
-from library_functions import Helper
 from library_functions import HigherActions
 import autoGUIutils
 import os
@@ -23,7 +22,6 @@ class BaseTest:
     def setup_class(cls):
         cls.driver = Chrome(service=ChromeService(executable_path="./chromedriver.exe"))
         cls.web_driver_wait = WebDriverWait(cls.driver, 10)
-        cls.helper =  Helper(cls.driver, cls.web_driver_wait)
         cls.button_clicker = ButtonClicker(cls.driver, cls.web_driver_wait)
         cls.higher_actions =  HigherActions(cls.driver, cls.web_driver_wait)
         cls.elementary_actions =  ElementaryActions(cls.driver, cls.web_driver_wait )
@@ -70,7 +68,7 @@ class BaseTest:
     def teardown_class(cls):
          # TEARDOWN START ###
         user_profile_button_element = cls.elementary_actions.wait_for_element(locators.user_profile_button_locator)
-        cls.button_clicker.click_element(user_profile_button_element)
+        cls.elementary_actions.click_element(user_profile_button_element)
         sleep(2)
         autoGUIutils.n_tabs_shift_focus(5)
         autoGUIutils.press_enter()
@@ -117,7 +115,7 @@ class TestMiscellaneousActions(BaseTest):
     def test_share_via_link(self ):
         self.button_clicker.navigate_to("Home")
         sleep(2)
-        self.helper.select_item(files.share_file, False)
+        self.higher_actions.select_item(files.share_file, False)
         sleep(3)
         share_button = self.elementary_actions.wait_for_element(locators.action_bar_button_selector("Share"))
         share_button.click()
@@ -129,13 +127,13 @@ class TestMiscellaneousActions(BaseTest):
         assert True
 
     def test_view_file_info(self):
-        self.helper.select_item(files.view_info_file_name, False)
+        self.higher_actions.select_item(files.view_info_file_name, False)
         autoGUIutils.view_shortcut()
         element = self.elementary_actions.wait_to_click(locators.file_info_dialog_locator)
         if not element:
             assert False, f"File info dialog for {files.view_info_file_name} is not visible"
         else:
-            self.button_clicker.click_element(element)
+            self.elementary_actions.click_element(element)
 
 
 class TestfileActions(BaseTest):
@@ -163,7 +161,7 @@ class TestfileActions(BaseTest):
     """
 
     def test_download_file(self):
-        self.helper.select_item(files.renamed_file_name, True)
+        self.higher_actions.select_item(files.renamed_file_name, True)
         download_button = self.elementary_actions.wait_for_element(locators.action_bar_button_selector("Download"))
         download_button.click()
         sleep(6)
@@ -229,7 +227,7 @@ class TestfileActions(BaseTest):
             for file in files.fileCollection:
                 try:
                     self.higher_actions.remove_file_action(file)
-                    # self.helper.select_item(file, True)
+                    # self.higher_actions.select_item(file, True)
                     # self.button_clicker.click_action_bar_button("Move to trash")
                     # assert not file_actions.elementary_actions.wait_for_element(locators.file_selector(file))
                 except FileNotFoundError as e:
