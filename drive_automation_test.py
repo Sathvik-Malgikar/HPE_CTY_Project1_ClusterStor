@@ -6,7 +6,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver import Chrome,ChromeService
+from selenium.webdriver import Chrome
 import locators
 import files
 from library_functions import ElementaryActions
@@ -16,19 +16,18 @@ import autoGUIutils
 import os
 
 not_first_sign_in = False
-
 class BaseTest:
     @classmethod
     def setup_class(cls):
-        cls.driver = Chrome(service=ChromeService(executable_path="./chromedriver.exe"))
+        cls.driver = Chrome(executable_path="./chromedriver.exe")
         cls.web_driver_wait = WebDriverWait(cls.driver, 10)
         cls.button_clicker = ButtonClicker(cls.driver, cls.web_driver_wait)
         cls.higher_actions =  HigherActions(cls.driver, cls.web_driver_wait)
         cls.elementary_actions =  ElementaryActions(cls.driver, cls.web_driver_wait )
         
-        global not_first_sign_in
+        #global not_first_sign_in
         # SETUP START
-
+        
         cls.driver.get("https://www.google.com/intl/en-US/drive/")
         cls.driver.maximize_window()
         sleep(0.8)
@@ -46,23 +45,23 @@ class BaseTest:
 
         # LOGIC FOR HANDLING SECOND TIME LOGIN'S , ONE EXTRA CLICK .
 
-        if not_first_sign_in:
-            account_div = cls.elementary_actions.wait_to_click(locators.sign_in_account_locator)
-            account_div.click()
-            sleep(5)
-        else:
-            autoGUIutils.zoom_out()  # SET ZOOM LEVEL ONCE AND FOR ALL
-            cls.elementary_actions.send_keys_to_focused(account_email_id)
-            cls.elementary_actions.send_keys_to_focused(Keys.ENTER)
-            cls.elementary_actions.wait_for_element(locators.welcome_span)
-            sleep(3)  # to deal with input animation
-
-        not_first_sign_in = True
+        # if not_first_sign_in:
+        #account_div = cls.elementary_actions.wait_to_click(locators.sign_in_account_locator)
+        #account_div.click()
+        #sleep(5)
+        # else:
+        #autoGUIutils.zoom_out()  # SET ZOOM LEVEL ONCE AND FOR ALL
+        cls.elementary_actions.send_keys_to_focused(account_email_id)
+        cls.elementary_actions.send_keys_to_focused(Keys.ENTER)
+        cls.elementary_actions.wait_for_element(locators.welcome_span)
+        sleep(3)  # to deal with input animation
+        # not_first_sign_in = True
         cls.elementary_actions.send_keys_to_focused(account_pwd)
         cls.elementary_actions.send_keys_to_focused(Keys.ENTER)
         sleep(5)
         cls.web_driver_wait.until(EC.title_is("Home - Google Drive"))
         sleep(5)
+
     
     @classmethod
     def teardown_class(cls):
@@ -75,6 +74,7 @@ class BaseTest:
         cls.driver.close()
         before_signin = cls.driver.window_handles[-1]
         cls.driver.switch_to.window(before_signin)
+        cls.driver.quit()
         # TEARDOWN END ###
     
     
@@ -140,6 +140,15 @@ class TestfileActions(BaseTest):
     """
     Test function to rename a file in the Google Drive web GUI.
     """
+    @classmethod
+    def setup_class(cls):
+        super(cls, TestfileActions).setup_class()#FIRST SUPER CLASS
+        #THEN SUBCLASSS SETUP
+    
+    @classmethod
+    def teardown_class(cls):
+        #FIRST SUBCLASS TEARDOWN LOGIC
+        super(cls, TestfileActions).teardown_class()#THEN SUPERCLASS TEARDOWN
 
     def test_rename_file(self):
         old_file_name = files.file_name
@@ -171,7 +180,7 @@ class TestfileActions(BaseTest):
         copied_file_element = self.higher_actions.copy_file_action(files.file_name_for_copy)
         assert copied_file_element is not None
 
-    class Search:
+    class TestSearch:
         def test_search_for_file_by_name(self):
             self.higher_actions.search_by_name_action(files.file_to_be_searched)
 
@@ -179,7 +188,7 @@ class TestfileActions(BaseTest):
             no_of_files = self.higher_actions.search_by_type_action()
             assert no_of_files > 0
 
-    class Move:
+    class TestMove:
         def test_move_file(self):
             filename = files.file_move_name
             destination_folder = files.destination_folder_name
@@ -207,7 +216,7 @@ class TestfileActions(BaseTest):
                     # Continue to next move even if current move fails
                     continue
 
-    class Delete:
+    class TestDelete:
 
         """
         Test function to remove a file from the Google Drive web GUI.
@@ -258,6 +267,15 @@ class TestfolderActions(BaseTest):
     """
     Test function to rename a folder in the Google Drive web GUI.
     """
+    @classmethod
+    def setup_class(cls):
+        super(cls, TestfolderActions).setup_class()#FIRST SUPER CLASS
+        #THEN SUBCLASSS SETUP
+    
+    @classmethod
+    def teardown_class(cls):
+        #FIRST SUBCLASS TEARDOWN LOGIC
+        super(cls, TestfolderActions).teardown_class()#THEN SUPERCLASS TEARDOWN
 
     def test_rename_folder(self):
         old_folder_name = files.folder_name
