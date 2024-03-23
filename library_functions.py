@@ -260,7 +260,6 @@ class ButtonClicker:
     helper (Helper): An instance of the Helper class for performing helper actions.
 """
 
-
 class HigherActions :
     def __init__(self, driver : Chrome, web_driver_wait : WebDriverWait):
         self.driver = driver

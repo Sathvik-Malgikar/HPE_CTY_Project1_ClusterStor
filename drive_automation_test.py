@@ -6,11 +6,13 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver import Chrome,ChromeService
+# from selenium.webdriver.chrome.service import Service
+from selenium.webdriver import Chrome, ChromeOptions
+from selenium.webdriver.chrome.service import Service as ChromeService
 import locators
 import files
 from library_functions import ElementaryActions
-from library_functions import ButtonClicker
+from library_functions import ButtonClicker 
 from library_functions import HigherActions
 import autoGUIutils
 import os
@@ -20,7 +22,12 @@ not_first_sign_in = False
 class BaseTest:
     @classmethod
     def setup_class(cls):
-        cls.driver = Chrome(service=ChromeService(executable_path="./chromedriver.exe"))
+        options = ChromeOptions()
+        options.add_argument("--disable-extensions")
+        options.add_argument("--disable-popup-blocking")
+        options.add_argument("--start-maximized")
+        cls.driver = Chrome(options=options, executable_path="./chromedriver.exe")
+        # cls.driver = Chrome(service=ChromeService(executable_path="./chromedriver.exe"))
         cls.web_driver_wait = WebDriverWait(cls.driver, 10)
         cls.button_clicker = ButtonClicker(cls.driver, cls.web_driver_wait)
         cls.higher_actions =  HigherActions(cls.driver, cls.web_driver_wait)
@@ -36,13 +43,25 @@ class BaseTest:
         signin_ele = cls.elementary_actions.wait_to_click(locators.sign_in_link)
         signin_ele.click()
         sleep(1.3)
-        # opened by clicking sign-in anchor tag
-        sign_in_tab = cls.driver.window_handles[-1]
-        cls.driver.switch_to.window(sign_in_tab)
+    # Switch to the sign-in window explicitly based on URL or title
+        for window_handle in cls.driver.window_handles:
+            cls.driver.switch_to.window(window_handle)
+            if "accounts.google.com" in cls.driver.current_url or "Sign in" in cls.driver.title:
+                break
         parser = configparser.ConfigParser()
         parser.read("config.ini")
         account_email_id = parser.get("Account Credentials", "email")
         account_pwd = parser.get("Account Credentials", "password")
+
+
+        
+        # opened by clicking sign-in anchor tag
+        # sign_in_tab = cls.driver.window_handles[-1]
+        # cls.driver.switch_to.window(sign_in_tab)
+        # parser = configparser.ConfigParser()
+        # parser.read("config.ini")
+        # account_email_id = parser.get("Account Credentials", "email")
+        # account_pwd = parser.get("Account Credentials", "password")
 
         # LOGIC FOR HANDLING SECOND TIME LOGIN'S , ONE EXTRA CLICK .
 
@@ -140,6 +159,15 @@ class TestfileActions(BaseTest):
     """
     Test function to rename a file in the Google Drive web GUI.
     """
+    @classmethod
+    def setup_class(cls):
+        super(TestfileActions, cls).setup_class()#FIRST SUPER CLASS
+        #THEN SUBCLASSS SETUP
+    
+    @classmethod
+    def teardown_class(cls):
+        #FIRST SUBCLASS TEARDOWN LOGIC
+        super(TestfileActions, cls).teardown_class()#THEN SUPERCLASS TEARDOWN
 
     def test_rename_file(self):
         old_file_name = files.file_name
@@ -171,7 +199,17 @@ class TestfileActions(BaseTest):
         copied_file_element = self.higher_actions.copy_file_action(files.file_name_for_copy)
         assert copied_file_element is not None
 
-    class Search:
+    class TestSearch:
+        @classmethod
+        def setup_class(cls):
+            super(TestfileActions, cls).setup_class()#FIRST SUPER CLASS
+        #THEN SUBCLASSS SETUP
+    
+        @classmethod
+        def teardown_class(cls):
+        #FIRST SUBCLASS TEARDOWN LOGIC
+            super(TestfileActions, cls).teardown_class()#THEN SUPERCLASS TEARDOWN
+
         def test_search_for_file_by_name(self):
             self.higher_actions.search_by_name_action(files.file_to_be_searched)
 
@@ -179,7 +217,16 @@ class TestfileActions(BaseTest):
             no_of_files = self.higher_actions.search_by_type_action()
             assert no_of_files > 0
 
-    class Move:
+    class TestMove:
+        @classmethod
+        def setup_class(cls):
+            super(TestfileActions, cls).setup_class()#FIRST SUPER CLASS
+        #THEN SUBCLASSS SETUP
+    
+        @classmethod
+        def teardown_class(cls):
+        #FIRST SUBCLASS TEARDOWN LOGIC
+            super(TestfileActions, cls).teardown_class()#THEN SUPERCLASS TEARDOWN
         def test_move_file(self):
             filename = files.file_move_name
             destination_folder = files.destination_folder_name
@@ -207,11 +254,20 @@ class TestfileActions(BaseTest):
                     # Continue to next move even if current move fails
                     continue
 
-    class Delete:
+    class TestDelete:
 
         """
         Test function to remove a file from the Google Drive web GUI.
         """
+        @classmethod
+        def setup_class(cls):
+            super(TestfileActions, cls).setup_class()#FIRST SUPER CLASS
+        #THEN SUBCLASSS SETUP
+    
+        @classmethod
+        def teardown_class(cls):
+        #FIRST SUBCLASS TEARDOWN LOGIC
+            super(TestfileActions, cls).teardown_class()#THEN SUPERCLASS TEARDOWN
 
         def test_remove_file(self):
             file_name = files.file_to_be_deleted
@@ -258,6 +314,15 @@ class TestfolderActions(BaseTest):
     """
     Test function to rename a folder in the Google Drive web GUI.
     """
+    @classmethod
+    def setup_class(cls):
+        super(cls, TestfolderActions).setup_class()#FIRST SUPER CLASS
+        #THEN SUBCLASSS SETUP
+    
+    @classmethod
+    def teardown_class(cls):
+        #FIRST SUBCLASS TEARDOWN LOGIC
+        super(cls, TestfolderActions).teardown_class()#THEN SUPERCLASS TEARDOWN
 
     def test_rename_folder(self):
         old_folder_name = files.folder_name
