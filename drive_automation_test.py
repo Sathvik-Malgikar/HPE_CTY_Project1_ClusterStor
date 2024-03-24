@@ -142,13 +142,13 @@ class TestfileActions(BaseTest):
     """
     @classmethod
     def setup_class(cls):
-        super(cls, TestfileActions).setup_class()#FIRST SUPER CLASS
+        super().setup_class()#FIRST SUPER CLASS
         #THEN SUBCLASSS SETUP
     
     @classmethod
     def teardown_class(cls):
         #FIRST SUBCLASS TEARDOWN LOGIC
-        super(cls, TestfileActions).teardown_class()#THEN SUPERCLASS TEARDOWN
+        super().teardown_class()#THEN SUPERCLASS TEARDOWN
 
     def test_rename_file(self):
         old_file_name = files.file_name
@@ -180,7 +180,18 @@ class TestfileActions(BaseTest):
         copied_file_element = self.higher_actions.copy_file_action(files.file_name_for_copy)
         assert copied_file_element is not None
 
-    class TestSearch:
+    class TestSearch(BaseTest):
+        @classmethod
+        def setup_class(cls):
+            super().setup_class()  # Call setup_class from BaseTest
+            # Additional setup for TestSearch class
+        
+        @classmethod
+        def teardown_class(cls):
+            # Additional teardown for TestSearch class
+            super().teardown_class() 
+
+        
         def test_search_for_file_by_name(self):
             self.higher_actions.search_by_name_action(files.file_to_be_searched)
 
@@ -280,7 +291,7 @@ class TestfolderActions(BaseTest):
     def test_rename_folder(self):
         old_folder_name = files.folder_name
         new_folder_name = files.renamed_folder_name
-        result = self.higher_actions.test_rename_folder(old_folder_name, new_folder_name)
+        result = self.higher_actions.rename_folder(old_folder_name, new_folder_name)
         assert result, "Rename failed"
 
     """

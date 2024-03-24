@@ -5,6 +5,7 @@ import selenium.common.exceptions as EXC
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 import locators
+from selenium.common.exceptions import NoSuchElementException
 from webbrowser import Chrome
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.by import By
@@ -281,12 +282,16 @@ class HigherActions :
     def select_item(self, item_name, show_more_needed):
         # show_more_needed is to ensure backwards compatibility
         action_chain = ActionChains(self.driver)
-        if (show_more_needed):  # old testcases do not have show_more param, so by default True,
+        # if (show_more_needed):  # old testcases do not have show_more param, so by default True,
             # newer testcases can explicitly mention if show more button is to be clicked or not before looking for file
-            show_more_button = self.elementary_actions.wait_to_click(
-                locators.show_more_files
-            )
-            show_more_button.click()
+        try:
+            show_more_button = self.driver.find_element(*locators.show_more_files)
+            if show_more_button.is_displayed():
+                show_more_button.click()
+                sleep(2)  # Adjust sleep time as needed
+        except NoSuchElementException:
+            pass
+        # Hand
         sleep(5)
         file_selector = locators.file_selector(item_name)
         file_element = self.elementary_actions.wait_for_element(file_selector)
@@ -430,7 +435,7 @@ class HigherActions :
         self.select_item(old_file_name, True)
         self.elementary_actions.rename_selected_item(new_file_name)
         self.button_clicker.click_on_ok_button()
-        result = self.higher_actions.rename_verification(old_file_name, new_file_name)
+        result = self.rename_verification(old_file_name, new_file_name)
         return result
 
     """Get the number of file names.
