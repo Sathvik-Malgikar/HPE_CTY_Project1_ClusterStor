@@ -5,7 +5,7 @@ renamed_file_name = "renamed_cty.pdf"
 file_to_be_deleted = "test.txt"
 file_to_be_restored = "test.txt"
 
-folder_name = "Applied crypto"
+folder_name = "Before Rename"
 renamed_folder_name = "After_rename"
 
 
