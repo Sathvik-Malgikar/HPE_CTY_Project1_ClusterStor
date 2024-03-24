@@ -156,7 +156,7 @@ class TestfileActions(BaseTest):
     def setup_class(cls):
         super(cls, TestfileActions).setup_class()#FIRST SUPER CLASS
         #THEN SUBCLASSS SETUP
-    
+
     @classmethod
     def teardown_class(cls):
         #FIRST SUBCLASS TEARDOWN LOGIC
@@ -192,95 +192,81 @@ class TestfileActions(BaseTest):
         copied_file_element = self.higher_actions.copy_file_action(files.file_name_for_copy)
         assert copied_file_element is not None
 
-    class TestSearch:
-        def test_search_for_file_by_name(self):
-            self.higher_actions.search_by_name_action(files.file_to_be_searched)
-
-        def test_search_for_file_by_type(self):
-            no_of_files = self.higher_actions.search_by_type_action()
-            assert no_of_files > 0
-
-    class TestMove:
-        def test_move_file(self):
-            filename = files.file_move_name
-            destination_folder = files.destination_folder_name
-            self.higher_actions.move_action(filename, destination_folder)
-            assert not self.elementary_actions.wait_for_element(locators.file_selector(filename))
-
-        def test_move_multiple_files(self):
-            file_destination_pairs = [
-                ("test.txt", "After_rename"),
-                ("test2.txt", "After_rename"),
-                ("test3.txt", "F1"),
-            ]
-            show_more_needed = True
-            for idx, (filename, destination_folder) in enumerate(file_destination_pairs):
-                try:
-                    self.higher_actions.move_action(filename, destination_folder, show_more_needed)
-                    self.higher_actions.verify_file_in_destination(filename, destination_folder)
-                    self.button_clicker.navigate_to("My Drive")
-                    assert not self.elementary_actions.wait_for_element(locators.file_selector(filename))
-
-                    if idx == 0:
-                        show_more_needed = False
-                except Exception as e:
-                    print(f"Move operation failed for file '{filename}' to folder '{destination_folder}': {e}")
-                    # Continue to next move even if current move fails
-                    continue
-
-    class TestDelete:
-
-        """
-        Test function to remove a file from the Google Drive web GUI.
-        """
-        @classmethod
-        def setup_class(cls):
-            super(TestfileActions, cls).setup_class()#FIRST SUPER CLASS
-        #THEN SUBCLASSS SETUP
     
-        @classmethod
-        def teardown_class(cls):
-        #FIRST SUBCLASS TEARDOWN LOGIC
-            super(TestfileActions, cls).teardown_class()#THEN SUPERCLASS TEARDOWN
+    def test_search_for_file_by_name(self):
+        self.higher_actions.search_by_name_action(files.file_to_be_searched)
 
-        def test_remove_file(self):
-            file_name = files.file_to_be_deleted
-            self.higher_actions.remove_file_action(file_name)
-            
-        """
-        ## Test function to remove multiple files in the Google Drive web GUI.
-        """
+    def test_search_for_file_by_type(self):
+        no_of_files = self.higher_actions.search_by_type_action()
+        assert no_of_files > 0
+    
+    
+    def test_move_file(self):
+        filename = files.file_move_name
+        destination_folder = files.destination_folder_name
+        self.higher_actions.move_action(filename, destination_folder, True)
+        assert not self.elementary_actions.wait_for_element(locators.file_selector(filename))
 
-        def test_remove_multiple_files(self):
-            self.button_clicker.navigate_to("Home")
-            sleep(2)
-            for file in files.fileCollection:
-                try:
-                    self.higher_actions.remove_file_action(file)
-                    # self.higher_actions.select_item(file, True)
-                    # self.button_clicker.click_action_bar_button("Move to trash")
-                    # assert not file_actions.elementary_actions.wait_for_element(locators.file_selector(file))
-                except FileNotFoundError as e:
-                    assert False, repr(e)
+    def test_move_multiple_files(self):
+        file_destination_pairs = [
+            ("test.txt", "After_rename"),
+            ("test2.txt", "After_rename"),
+            ("test3.txt", "F1"),
+        ]
+        show_more_needed = True
+        for idx, (filename, destination_folder) in enumerate(file_destination_pairs):
+            try:
+                self.parent.higher_actions.move_action(filename, destination_folder, show_more_needed)
+                self.parent.higher_actions.verify_file_in_destination(filename, destination_folder)
+                self.parent.button_clicker.navigate_to("My Drive")
+                assert not self.elementary_actions.wait_for_element(locators.file_selector(filename))
 
-                finally:
-                    self.driver.refresh()
+                if idx == 0:
+                    show_more_needed = False
+            except Exception as e:
+                print(f"Move operation failed for file '{filename}' to folder '{destination_folder}': {e}")
+                # Continue to next move even if current move fails
+                continue
 
-        def test_delete_file_permanently(self):
-            result = self.higher_actions.delete_permanently_action(files.delete_forever_file_name)
-            if (result is False):
-                assert False, "Error occured"
-            else:
-                assert True, f"{files.delete_forever_file_name} is permanently deleted"
+                                
+    def test_remove_file(self):
+        file_name = files.file_to_be_deleted
+        self.higher_actions.remove_file_action(file_name)
+        
+    """
+    ## Test function to remove multiple files in the Google Drive web GUI.
+    """
 
-        """
-        Test function to undo delete action in the Google Drive web GUI.
-        """
+    def test_remove_multiple_files(self):
+        self.button_clicker.navigate_to("Home")
+        sleep(2)
+        for file in files.fileCollection:
+            try:
+                self.higher_actions.remove_file_action(file)
+                # self.higher_actions.select_item(file, True)
+                # self.button_clicker.click_action_bar_button("Move to trash")
+                # assert not file_actions.elementary_actions.wait_for_element(locators.file_selector(file))
+            except FileNotFoundError as e:
+                assert False, repr(e)
 
-        def test_undo_delete_action(self):
-            file_name_to_retrieve = files.file_to_be_restored
-            restoration_successful = self.higher_actions.undo_delete_action(file_name_to_retrieve)
-            assert restoration_successful is True, f"Failed to restore file '{file_name_to_retrieve}'"
+            finally:
+                self.driver.refresh()
+
+    def test_delete_file_permanently(self):
+        result = self.higher_actions.delete_permanently_action(files.delete_forever_file_name)
+        if (result is False):
+            assert False, "Error occured"
+        else:
+            assert True, f"{files.delete_forever_file_name} is permanently deleted"
+
+    """
+    Test function to undo delete action in the Google Drive web GUI.
+    """
+
+    def test_undo_delete_action(self):
+        file_name_to_retrieve = files.file_to_be_restored
+        restoration_successful = self.higher_actions.undo_delete_action(file_name_to_retrieve)
+        assert restoration_successful is True, f"Failed to restore file '{file_name_to_retrieve}'"
 
 
 class TestfolderActions(BaseTest):
@@ -301,7 +287,7 @@ class TestfolderActions(BaseTest):
     def test_rename_folder(self):
         old_folder_name = files.folder_name
         new_folder_name = files.renamed_folder_name
-        result = self.higher_actions.test_rename_folder(old_folder_name, new_folder_name)
+        result = self.higher_actions.rename_folder_action(old_folder_name, new_folder_name)
         assert result, "Rename failed"
 
     """
