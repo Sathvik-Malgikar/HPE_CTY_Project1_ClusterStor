@@ -48,6 +48,24 @@ class ElementaryActions:
         except TimeoutException:
             print(f"Timeout waiting for element with locator {locator}")
             return None
+        
+    def wait_for_elements(self, locator):
+        """
+        Wait for elements matching the locator to be present in the DOM.
+        
+        Args:
+            locator: A tuple containing the locator strategy and value (e.g., (By.ID, 'element_id')).
+            timeout: Maximum time to wait for the elements (default is 10 seconds).
+        
+        Returns:
+            A list of matching elements, or an empty list if no elements are found within the timeout.
+        """
+        try:
+            elements = self.web_driver_wait.until(EC.presence_of_all_elements_located(locator))
+            return elements
+        except Exception as e:
+            print(f"An error occurred while waiting for elements: {e}")
+            return []
 
     """Double-click on a given element.
 
@@ -260,7 +278,6 @@ class ButtonClicker:
     button_clicker (ButtonClicker): An instance of the ButtonClicker class for performing button-clicking actions.
     helper (Helper): An instance of the Helper class for performing helper actions.
 """
-
 
 class HigherActions :
     def __init__(self, driver : Chrome, web_driver_wait : WebDriverWait):
@@ -504,13 +521,19 @@ class HigherActions :
         self.elementary_actions.send_keys_to_focused(file_to_be_searched)
         autoGUIutils.press_enter()
         # Retrieve file elements from the search results
-        file_elements = self.driver.wait_for_elements(locators.file_selector(file_to_be_searched))
+        file_elements = self.elementary_actions.wait_for_elements(locators.file_selector(file_to_be_searched))
         # Extract file names from file elements
-        file_names = [element.text for element in file_elements]
+        if file_elements:
+        # Extract file names from file elements
+            file_names = [element.text for element in file_elements]
+        
         # Write file names to a text file
-        with open("file_names.txt", "w") as file:
-            for name in file_names:
-                file.write(name + "\n")
+            with open("file_names.txt", "w") as file:
+                for name in file_names:
+                    file.write(name + "\n")
+        else:
+            print("No matching file elements found.")
+
 
     """Search for files by their type.
 
