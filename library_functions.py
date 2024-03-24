@@ -3,11 +3,12 @@ import pyautogui
 from selenium.webdriver.common.action_chains import ActionChains
 import selenium.common.exceptions as EXC
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
 import locators
 from webbrowser import Chrome
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.by import By
+
 import autoGUIutils
 
 
@@ -295,15 +296,19 @@ class HigherActions :
         Raises:
         FileNotFoundError: If the item with the specified name is not found.
     """
-    def select_item(self, item_name, show_more_needed):
+    def select_item(self, item_name):
         # show_more_needed is to ensure backwards compatibility
         action_chain = ActionChains(self.driver)
-        if (show_more_needed):  # old testcases do not have show_more param, so by default True,
+        # if (show_more_needed):  # old testcases do not have show_more param, so by default True,
             # newer testcases can explicitly mention if show more button is to be clicked or not before looking for file
-            show_more_button = self.elementary_actions.wait_to_click(
-                locators.show_more_files
-            )
-            show_more_button.click()
+        try:
+            show_more_button = self.driver.find_element(*locators.show_more_files)
+            if show_more_button.is_displayed():
+                show_more_button.click()
+                sleep(2)  # Adjust sleep time as needed
+        except NoSuchElementException:
+            pass
+        # Hand
         sleep(5)
         file_selector = locators.file_selector(item_name)
         file_element = self.elementary_actions.wait_for_element(file_selector)
@@ -312,7 +317,6 @@ class HigherActions :
             action_chain.perform()
         else:
             raise FileNotFoundError
-
     """Verify search results against expected file list.
 
         Parameters:
@@ -426,7 +430,7 @@ class HigherActions :
     """
 
     def move_action(self, move_file_name, destination_folder_name, show_more):
-        self.select_item(move_file_name, show_more_needed=show_more)
+        self.select_item(move_file_name)
         sleep(2)
         file_element = self.elementary_actions.wait_for_element(locators.file_selector(move_file_name))
         destination_folder_element = self.elementary_actions.wait_for_element(locators.file_selector(destination_folder_name))
@@ -444,7 +448,7 @@ class HigherActions :
     """
 
     def rename_action(self, old_file_name, new_file_name):
-        self.select_item(old_file_name, True)
+        self.select_item(old_file_name)
         self.elementary_actions.rename_selected_item(new_file_name)
         self.button_clicker.click_on_ok_button()
         result = self.rename_verification(old_file_name, new_file_name)
@@ -489,7 +493,7 @@ class HigherActions :
     """
 
     def copy_file_action(self, file_name_for_copy):
-        self.select_item(file_name_for_copy, show_more_needed=True)
+        self.select_item(file_name_for_copy)
         self.elementary_actions.context_click()
         sleep(5)
 
@@ -560,7 +564,7 @@ class HigherActions :
     """
 
     def remove_file_action(self, file_name):
-        self.select_item(file_name, True)
+        self.select_item(file_name)
         self.button_clicker.click_action_bar_button("Move to trash")
         sleep(6)
         assert not self.elementary_actions.wait_for_element(locators.file_selector(file_name))
@@ -577,14 +581,14 @@ class HigherActions :
     def delete_permanently_action(self, delete_forever_file_name):
         self.driver.refresh()
         sleep(5)
-        self.select_item(delete_forever_file_name, False)
+        self.select_item(delete_forever_file_name)
         self.button_clicker.click_action_bar_button("Move to trash")
         self.button_clicker.navigate_to("Trash")
 
         deleted_file_locator = locators.file_selector(delete_forever_file_name)
         self.elementary_actions.wait_for_element(deleted_file_locator)
 
-        self.select_item(delete_forever_file_name, show_more_needed=False)
+        self.select_item(delete_forever_file_name)
         self.button_clicker.click_action_bar_button("Delete forever")
         sleep(2)
         try:
@@ -607,7 +611,7 @@ class HigherActions :
     def undo_delete_action(self, file_name_to_retrieve):
         self.button_clicker.navigate_to("Trash")
         sleep(4)
-        self.select_item(file_name_to_retrieve, show_more_needed=False)
+        self.select_item(file_name_to_retrieve)
         self.button_clicker.click_action_bar_button("Restore from trash")
         restoration_successful = self.verify_restoration(file_name_to_retrieve)
         sleep(4)
@@ -625,8 +629,8 @@ class HigherActions :
 
     def rename_folder_action(self, old_folder_name, new_folder_name):
         self.button_clicker.navigate_to("Home")
-        self.button_clicker.click_on_folders_button
-        self.select_item(old_folder_name, True)
+        self.button_clicker.click_on_folders_button()
+        self.select_item(old_folder_name)
         self.elementary_actions.rename_selected_item(new_folder_name)
         self.button_clicker.click_on_ok_button()
         result = self.rename_verification(old_folder_name, new_folder_name)
@@ -661,6 +665,6 @@ class HigherActions :
     def remove_folder_action(self, folder_to_be_removed):
         self.button_clicker.navigate_to("Home")
         self.button_clicker.click_on_folders_button()
-        self.select_item(folder_to_be_removed, True)
+        self.select_item(folder_to_be_removed)
         self.button_clicker.click_action_bar_button("Move to trash")
         sleep(4)

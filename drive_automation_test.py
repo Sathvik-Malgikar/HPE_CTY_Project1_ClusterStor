@@ -127,7 +127,7 @@ class TestMiscellaneousActions(BaseTest):
     def test_share_via_link(self ):
         self.button_clicker.navigate_to("Home")
         sleep(2)
-        self.higher_actions.select_item(files.share_file, False)
+        self.higher_actions.select_item(files.share_file)
         sleep(3)
         share_button = self.elementary_actions.wait_for_element(locators.action_bar_button_selector("Share"))
         share_button.click()
@@ -139,7 +139,7 @@ class TestMiscellaneousActions(BaseTest):
         assert True
 
     def test_view_file_info(self):
-        self.higher_actions.select_item(files.view_info_file_name, False)
+        self.higher_actions.select_item(files.view_info_file_name)
         autoGUIutils.view_shortcut()
         element = self.elementary_actions.wait_to_click(locators.file_info_dialog_locator)
         if not element:
@@ -182,7 +182,7 @@ class TestfileActions(BaseTest):
     """
 
     def test_download_file(self):
-        self.higher_actions.select_item(files.renamed_file_name, True)
+        self.higher_actions.select_item(files.renamed_file_name)
         download_button = self.elementary_actions.wait_for_element(locators.action_bar_button_selector("Download"))
         download_button.click()
         sleep(6)
@@ -243,9 +243,6 @@ class TestfileActions(BaseTest):
         for file in files.fileCollection:
             try:
                 self.higher_actions.remove_file_action(file)
-                # self.higher_actions.select_item(file, True)
-                # self.button_clicker.click_action_bar_button("Move to trash")
-                # assert not file_actions.elementary_actions.wait_for_element(locators.file_selector(file))
             except FileNotFoundError as e:
                 assert False, repr(e)
 
