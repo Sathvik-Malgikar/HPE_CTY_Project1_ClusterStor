@@ -19,7 +19,7 @@ not_first_sign_in = False
 class BaseTest:
     @classmethod
     def setup_class(cls):
-        cls.driver = Chrome(executable_path="./chromedriver.exe")
+        cls.driver = Chrome()
         cls.web_driver_wait = WebDriverWait(cls.driver, 10)
         #cls.higher_actions = ButtonClicker(cls.driver, cls.web_driver_wait)
         

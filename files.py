@@ -32,4 +32,4 @@ file_to_be_searched_by_type = "I_PES1UG21CS542_Sathvik Sudhir Malgikar_A1.pdf"
 
 folder_name_to_be_removed = "SVM"
 
-fileCollection = ['test1.txt', 'test2.txt']
+fileCollection = ['move1.txt', 'move2.txt']
