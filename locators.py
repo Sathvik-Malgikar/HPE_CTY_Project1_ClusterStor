@@ -20,7 +20,7 @@ file_name_containerdiv = (By.CSS_SELECTOR, "div.KL4NAf")
 
 ok_button_locator = (By.CSS_SELECTOR, "button[name='ok'].h-De-Vb.h-De-Y[tabindex='0']")
 
-show_more_files = (By.CSS_SELECTOR, 'button.UywwFc-d.UywwFc-d-Qu-dgl2Hf')
+show_more_files = (By.CSS_SELECTOR, "span:contains('Show more files')")
 
 
 def file_selector(file_name): return (

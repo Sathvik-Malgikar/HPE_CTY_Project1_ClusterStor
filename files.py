@@ -9,7 +9,7 @@ folder_name = "Before Rename"
 renamed_folder_name = "After_rename"
 
 
-file_move_name = "test2.txt"
+file_move_name = "CC-1-slides.pdf"
 destination_folder_name = "After_rename"
 
 
