@@ -9,7 +9,7 @@ folder_name = "Before Rename"
 renamed_folder_name = "After_rename"
 
 
-file_move_name = "one_move.txt"
+file_move_name = "test2.txt"
 destination_folder_name = "Destination Folder"
 
 

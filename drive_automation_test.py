@@ -44,25 +44,6 @@ class BaseTest:
         parser.read("config.ini")
         account_email_id = parser.get("Account Credentials", "email")
         account_pwd = parser.get("Account Credentials", "password")
-
-
-        
-        # opened by clicking sign-in anchor tag
-        # sign_in_tab = cls.driver.window_handles[-1]
-        # cls.driver.switch_to.window(sign_in_tab)
-        # parser = configparser.ConfigParser()
-        # parser.read("config.ini")
-        # account_email_id = parser.get("Account Credentials", "email")
-        # account_pwd = parser.get("Account Credentials", "password")
-
-        # LOGIC FOR HANDLING SECOND TIME LOGIN'S , ONE EXTRA CLICK .
-
-        # if not_first_sign_in:
-        #account_div = cls.elementary_actions.wait_to_click(locators.sign_in_account_locator)
-        #account_div.click()
-        #sleep(5)
-        # else:
-        #autoGUIutils.zoom_out()  # SET ZOOM LEVEL ONCE AND FOR ALL
         cls.elementary_actions.send_keys_to_focused(account_email_id)
         cls.elementary_actions.send_keys_to_focused(Keys.ENTER)
         cls.elementary_actions.wait_for_element(locators.welcome_span)
@@ -104,7 +85,7 @@ class TestMiscellaneousActions(BaseTest):
     
     
     def test_prerequisites(self):
-        rawfilenames = [files.file_name_for_copy, files.file_to_be_deleted, files.file_name, files.file_move_name, files.view_info_file_name, *files.fileCollection, files.share_file, files.delete_forever_file_name]
+        rawfilenames = [files.file_name_for_copy, files.file_name, files.file_move_name, files.view_info_file_name, *files.fileCollection, files.share_file, files.delete_forever_file_name]
         file_list_to_upload = " ".join(list(map(lambda a: f'"{a}"', rawfilenames)))
         self.button_clicker.click_on_new_button()
         upload_button = self.elementary_actions.wait_to_click(locators.new_menu_button_locator("File upload"))
@@ -145,7 +126,7 @@ class TestMiscellaneousActions(BaseTest):
         if not element:
             assert False, f"File info dialog for {files.view_info_file_name} is not visible"
         else:
-            self.elementary_actions.click_element(element)
+            self.higher_actions.click_element(element)
 
 
 class TestfileActions(BaseTest):
@@ -186,35 +167,23 @@ class TestfileActions(BaseTest):
         download_button = self.elementary_actions.wait_for_element(locators.action_bar_button_selector("Download"))
         download_button.click()
         sleep(6)
-        assert files.renamed_file_name + ".pdf" in os.listdir(r"C:\Users\Sathvik Malgikar\Downloads")
+        assert files.renamed_file_name + ".pdf" in os.listdir(r"C:\Users\Adithi Murthy\Downloads")
 
     def test_copy_file(self):
         copied_file_element = self.higher_actions.copy_file_action(files.file_name_for_copy)
         assert copied_file_element is not None
-
-    class TestSearch(BaseTest):
-        @classmethod
-        def setup_class(cls):
-            super().setup_class()  # Call setup_class from BaseTest
-            # Additional setup for TestSearch class
         
-        @classmethod
-        def teardown_class(cls):
-            # Additional teardown for TestSearch class
-            super().teardown_class() 
-
-        
-        def test_search_for_file_by_name(self):
-            self.higher_actions.search_by_name_action(files.file_to_be_searched)
+    def test_search_for_file_by_name(self):
+        self.higher_actions.search_by_name_action(files.file_to_be_searched)
 
     def test_search_for_file_by_type(self):
         no_of_files = self.higher_actions.search_by_type_action()
         assert no_of_files > 0
-    
-    
+       
     def test_move_file(self):
         filename = files.file_move_name
         destination_folder = files.destination_folder_name
+        self.button_clicker.navigate_to("Home")
         self.higher_actions.move_action(filename, destination_folder, True)
         assert not self.elementary_actions.wait_for_element(locators.file_selector(filename))
 
@@ -295,7 +264,7 @@ class TestfolderActions(BaseTest):
     def test_rename_folder(self):
         old_folder_name = files.folder_name
         new_folder_name = files.renamed_folder_name
-        result = self.higher_actions.rename_folder(old_folder_name, new_folder_name)
+        result = self.higher_actions.rename_folder_action(old_folder_name, new_folder_name)
         assert result, "Rename failed"
 
     """
