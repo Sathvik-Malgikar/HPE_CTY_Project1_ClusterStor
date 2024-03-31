@@ -26,7 +26,7 @@ import autoGUIutils
 
 
 class ElementaryActions:
-    def __init__(self, driver : Chrome, web_driver_wait : WebDriverWait):
+    def __init__(self, driver, web_driver_wait):
         self.driver = driver
         self.web_driver_wait = web_driver_wait
 
@@ -202,19 +202,20 @@ class ElementaryActions:
 """
 
 
-class ButtonClicker:
+class ButtonClicker(ElementaryActions):
     
-    def __init__(self, driver, web_driver_wait):
-        self.driver = driver
-        self.web_driver_wait = web_driver_wait
-        self.elementary_actions = ElementaryActions(self.driver, self.web_driver_wait)
+    def __init__(self,driver,web_driver_wait):
+
+        super().__init__(driver,web_driver_wait)
+        #self.web_driver_wait = web_driver_wait
+        #self = ElementaryActions(self.driver, self.web_driver_wait)
 
     """Click on a button in the action bar.
         Parameters:
         button_name (str): The name of the button to be clicked.
     """
     def click_action_bar_button(self, button_name):
-        button_element = self.elementary_actions.wait_to_click(locators.action_bar_button_selector(button_name))
+        button_element = self.wait_to_click(locators.action_bar_button_selector(button_name))
         button_element.click()
 
    
@@ -223,36 +224,36 @@ class ButtonClicker:
         Parameters: None
     """
     def click_on_ok_button(self):
-        ok_button = self.elementary_actions.wait_to_click(locators.ok_button_locator)
+        ok_button = self.wait_to_click(locators.ok_button_locator)
         ok_button.click()
         sleep(3)
 
     """Click on the Type button."""
     def click_on_type_button(self):
-        type_button = self.elementary_actions.wait_to_click(locators.type_button_locator)
+        type_button = self.wait_to_click(locators.type_button_locator)
         type_button.click()
 
     """Click on the required type."""
     def click_on_the_required_type(self):
-        required_type = self.elementary_actions.wait_to_click(locators.type_of_file_locator)
+        required_type = self.wait_to_click(locators.type_of_file_locator)
         required_type.click()
         sleep(6)
 
     """Click on the Folders button."""
     def click_on_folders_button(self):
-        folders_button = self.elementary_actions.wait_to_click(locators.folders_button_locator)
+        folders_button = self.wait_to_click(locators.folders_button_locator)
         folders_button.click()
         sleep(5)
 
     """Click on the Search in Drive bar."""
     def click_on_search_in_drive(self):
-        search_bar = self.elementary_actions.wait_to_click(locators.search_bar_locator)
+        search_bar = self.wait_to_click(locators.search_bar_locator)
         search_bar.click()
         sleep(5)
 
     """Click on the New button."""
     def click_on_new_button(self):
-        new_button = self.elementary_actions.wait_to_click(locators.new_button_selector)
+        new_button = self.wait_to_click(locators.new_button_selector)
         new_button.click()
         sleep(2)
     
@@ -279,7 +280,7 @@ class ButtonClicker:
     
 
     def navigate_to(self, button_name):
-        button_element = self.elementary_actions.wait_to_click(locators.left_menu_page_selector(button_name))
+        button_element = self.wait_to_click(locators.left_menu_page_selector(button_name))
         button_element.click()
 
 
@@ -296,12 +297,14 @@ class ButtonClicker:
     helper (Helper): An instance of the Helper class for performing helper actions.
 """
 
-class HigherActions :
-    def __init__(self, driver : Chrome, web_driver_wait : WebDriverWait):
-        self.driver = driver
-        self.web_driver_wait = web_driver_wait
-        self.button_clicker = ButtonClicker(self.driver,self.web_driver_wait)
-        self.elementary_actions = ElementaryActions(self.driver,self.web_driver_wait)
+class HigherActions(ButtonClicker) :
+    def __init__(self, driver, web_driver_wait):
+         
+        super().__init__(driver,web_driver_wait)
+    #     self.driver = driver
+    #     self.web_driver_wait = web_driver_wait
+    #     self.button_clicker = ButtonClicker(self.driver,self.web_driver_wait)
+    #     self.elementary_actions = ElementaryActions(self.driver,self.web_driver_wait)
 
     
     """Select an item by its name.
@@ -326,7 +329,7 @@ class HigherActions :
         # Hand
         sleep(5)
         file_selector = locators.file_selector(item_name)
-        file_element = self.elementary_actions.wait_for_element(file_selector)
+        file_element = self.wait_for_element(file_selector)
         if file_element:
             action_chain.move_to_element(file_element).click()
             action_chain.perform()
@@ -343,11 +346,11 @@ class HigherActions :
     def verify_search_results(self, expected_file_list):  # TODO return one boolean
         flag = True
         for expected_file in expected_file_list:
-            file_element = self.elementary_actions.wait_to_click(locators.file_selector(expected_file))  # TODO Check this once
+            file_element = self.wait_to_click(locators.file_selector(expected_file))  # TODO Check this once
             if not file_element:
                 flag = False
                 break
-            self.elementary_actions.double_click_element(file_element)  # TODO ask saad whether opening is needed
+            self.double_click_element(file_element)  # TODO ask saad whether opening is needed
             sleep(3)
             autoGUIutils.go_back_esc()
         return flag
@@ -363,10 +366,10 @@ class HigherActions :
         """
     def rename_verification(self, old_file_name, new_file_name):
         # Verify that the old file doesn't exist
-        old_file_element = self.elementary_actions.wait_for_element(locators.file_selector(old_file_name))
+        old_file_element = self.wait_for_element(locators.file_selector(old_file_name))
         assert old_file_element is None, f"Old file '{old_file_name}' still exists after rename operation."
         # Verify the existence of the new file
-        renamed_file_element = self.elementary_actions.wait_for_element(locators.file_selector(new_file_name))
+        renamed_file_element = self.wait_for_element(locators.file_selector(new_file_name))
         assert renamed_file_element is not None, f"New file '{new_file_name}' not found after rename operation."
         # return tru if bot conditions are satisfied
         return True
@@ -375,7 +378,7 @@ class HigherActions :
         # try block to deal with situation of file being there already
         try:
             # to see if the warning of file being alreay ent shows up
-            self.elementary_actions.wait_for_element(locators.file_already_present_text)
+            self.wait_for_element(locators.file_already_present_text)
         except EXC.NoSuchElementException:
 
             print("file not already in google drive, uploading as new file")
@@ -404,13 +407,13 @@ class HigherActions :
     def verify_file_in_destination(self, moved_file_name, destination_folder):
         try:
             # Double click the destination folder
-            destination_folder_element = self.elementary_actions.wait_for_element(locators.file_selector(destination_folder))
-            self.elementary_actions.double_click_element(destination_folder_element)
+            destination_folder_element = self.wait_for_element(locators.file_selector(destination_folder))
+            self.double_click_element(destination_folder_element)
             sleep(4)
         except EXC.StaleElementReferenceException:
             print("StaleElementReferenceException occurred. Retrying...")  # TODO either actually retry or remove "retrying"
         # Verify file presence in the destination folder
-        assert self.elementary_actions.wait_for_element(locators.file_selector(moved_file_name)) is not None, "File has not been moved successfully to the destination folder"
+        assert self.wait_for_element(locators.file_selector(moved_file_name)) is not None, "File has not been moved successfully to the destination folder"
 
     """Verify the restoration of a file.
 
@@ -422,11 +425,11 @@ class HigherActions :
     """
     def verify_restoration(self, file_name):  # REDO this function
         # self.button_clicker.navigate_to("Home")
-        self.button_clicker.click_on_search_in_drive()
+        self.click_on_search_in_drive()
         sleep(2)
-        self.elementary_actions.send_keys_to_focused(file_name)
+        self.send_keys_to_focused(file_name)
         sleep(2)
-        file_element = self.elementary_actions.wait_for_element(locators.file_selector(file_name))
+        file_element = self.wait_for_element(locators.file_selector(file_name))
         if file_element:
             return True
         else:
@@ -447,9 +450,9 @@ class HigherActions :
     def move_action(self, move_file_name, destination_folder_name, show_more):
         self.select_item(move_file_name)
         sleep(2)
-        file_element = self.elementary_actions.wait_for_element(locators.file_selector(move_file_name))
-        destination_folder_element = self.elementary_actions.wait_for_element(locators.file_selector(destination_folder_name))
-        self.elementary_actions.drag_and_drop_element(file_element, destination_folder_element)
+        file_element = self.wait_for_element(locators.file_selector(move_file_name))
+        destination_folder_element = self.wait_for_element(locators.file_selector(destination_folder_name))
+        self.drag_and_drop_element(file_element, destination_folder_element)
         sleep(3)
 
     """Rename a file.
@@ -464,8 +467,8 @@ class HigherActions :
 
     def rename_action(self, old_file_name, new_file_name):
         self.select_item(old_file_name)
-        self.elementary_actions.rename_selected_item(new_file_name)
-        self.button_clicker.click_on_ok_button()
+        self.rename_selected_item(new_file_name)
+        self.click_on_ok_button()
         result = self.rename_verification(old_file_name, new_file_name)
         return result
 
@@ -490,13 +493,14 @@ class HigherActions :
     """
 
     def upload_file_action(self, file_to_upload):
-        self.button_clicker.click_on_new_button()
-        upload_button = self.elementary_actions.wait_for_element(locators.new_menu_button_locator("File upload"))
+        self.click_on_new_button()
+        upload_button = self.wait_for_element(locators.new_menu_button_locator("File upload"))
         upload_button.click()
         sleep(2)
         autoGUIutils.type_into_dialogue_box(file_to_upload)
         # this is utility solely because prerequisites aso reuses this function
         self.deal_duplicate_and_await_upload()
+        sleep(4)
 
     """Copy a file.
 
@@ -509,16 +513,16 @@ class HigherActions :
 
     def copy_file_action(self, file_name_for_copy):
         self.select_item(file_name_for_copy)
-        self.elementary_actions.context_click()
+        self.context_click()
         sleep(5)
 
-        make_a_copy_element = self.elementary_actions.wait_to_click(locators.make_a_copy_element_locator)
+        make_a_copy_element = self.wait_to_click(locators.make_a_copy_element_locator)
         make_a_copy_element.click()
 
         sleep(5)
         self.driver.refresh()
         sleep(7)
-        copied_file_element = self.elementary_actions.wait_for_element(locators.copied_file_locator)
+        copied_file_element = self.wait_for_element(locators.copied_file_locator)
         return copied_file_element
 
     """Search for a file by its name.
@@ -531,11 +535,11 @@ class HigherActions :
     """
 
     def search_by_name_action(self, file_to_be_searched):
-        self.button_clicker.click_on_search_in_drive()
-        self.elementary_actions.send_keys_to_focused(file_to_be_searched)
+        self.click_on_search_in_drive()
+        self.send_keys_to_focused(file_to_be_searched)
         autoGUIutils.press_enter()
         # Retrieve file elements from the search results
-        file_elements = self.elementary_actions.wait_for_elements(locators.file_selector(file_to_be_searched))
+        file_elements = self.wait_for_elements(locators.file_selector(file_to_be_searched))
         # Extract file names from file elements
         if file_elements:
         # Extract file names from file elements
@@ -556,9 +560,9 @@ class HigherActions :
     """
 
     def search_by_type_action(self):
-        self.button_clicker.navigate_to("My Drive")
-        self.button_clicker.click_on_type_button()
-        self.button_clicker.click_on_the_required_type()
+        self.navigate_to("My Drive")
+        self.click_on_type_button()
+        self.click_on_the_required_type()
         file_elements = self.driver.find_elements_by_css_selector("div.KL4NAf")
         # Extract file names from file elements
         file_names = [element.text for element in file_elements]
@@ -580,9 +584,9 @@ class HigherActions :
 
     def remove_file_action(self, file_name):
         self.select_item(file_name)
-        self.button_clicker.click_action_bar_button("Move to trash")
+        self.click_action_bar_button("Move to trash")
         sleep(6)
-        assert not self.elementary_actions.wait_for_element(locators.file_selector(file_name))
+        assert not self.wait_for_element(locators.file_selector(file_name))
 
     """Permanently delete a file.
 
@@ -600,18 +604,18 @@ class HigherActions :
         sleep(5)
         self.button_clicker.navigate_to("Trash")
         self.select_item(delete_forever_file_name)
-        self.button_clicker.click_action_bar_button("Move to trash")
-        
+        self.click_action_bar_button("Move to trash")
+        self.navigate_to("Trash")
 
         deleted_file_locator = locators.file_selector(delete_forever_file_name)
-        self.elementary_actions.wait_for_element(deleted_file_locator)
+        self.wait_for_element(deleted_file_locator)
 
         self.select_item(delete_forever_file_name)
-        self.button_clicker.click_action_bar_button("Delete forever")
+        self.click_action_bar_button("Delete forever")
         sleep(2)
         try:
-            delete_confirm_btn_element = self.elementary_actions.wait_for_element(locators.delete_confirm_button_locator)
-            self.elementary_actions.click_element(delete_confirm_btn_element)
+            delete_confirm_btn_element = self.wait_for_element(locators.delete_confirm_button_locator)
+            self.click_element(delete_confirm_btn_element)
             sleep(3)
         except Exception:
             return False
@@ -627,10 +631,10 @@ class HigherActions :
     """
 
     def undo_delete_action(self, file_name_to_retrieve):
-        self.button_clicker.navigate_to("Trash")
+        self.navigate_to("Trash")
         sleep(4)
         self.select_item(file_name_to_retrieve)
-        self.button_clicker.click_action_bar_button("Restore from trash")
+        self.click_action_bar_button("Restore from trash")
         restoration_successful = self.verify_restoration(file_name_to_retrieve)
         sleep(4)
         return restoration_successful
@@ -646,11 +650,11 @@ class HigherActions :
     """
 
     def rename_folder_action(self, old_folder_name, new_folder_name):
-        self.button_clicker.navigate_to("Home")
-        self.button_clicker.click_on_folders_button()
+        self.navigate_to("Home")
+        self.click_on_folders_button()
         self.select_item(old_folder_name)
-        self.elementary_actions.rename_selected_item(new_folder_name)
-        self.button_clicker.click_on_ok_button()
+        self.rename_selected_item(new_folder_name)
+        self.click_on_ok_button()
         result = self.rename_verification(old_folder_name, new_folder_name)
         return result
 
@@ -664,8 +668,8 @@ class HigherActions :
     """
 
     def create_folder_action(self, folder_name):
-        self.button_clicker.click_on_new_button()
-        action_button = self.elementary_actions.wait_to_click(locators.new_menu_button_locator("New folder"))
+        self.click_on_new_button()
+        action_button = self.wait_to_click(locators.new_menu_button_locator("New folder"))
         action_button.click()
         sleep(2)
         autoGUIutils.type_into_dialogue_box(folder_name)
@@ -681,16 +685,8 @@ class HigherActions :
     """
 
     def remove_folder_action(self, folder_to_be_removed):
-        self.button_clicker.navigate_to("Home")
-        self.button_clicker.click_on_folders_button()
+        self.navigate_to("Home")
+        self.click_on_folders_button()
         self.select_item(folder_to_be_removed)
-        self.button_clicker.click_action_bar_button("Move to trash")
-        sleep(4)
-
-    def create_shortcut_of_a_file(self, file_name):
-        self.button_clicker.navigate_to("Home")
-        self.select_item(file_name)
-        # keyboard shortcut to add shortcut : Shift + z
-        pyautogui.hotkey('shift', 'z')
-        self.button_clicker.click_on_shortcut_folder_button()
-        self.button_clicker.click_on_add_button()
+        self.click_action_bar_button("Move to trash")
+        sleep(4) 
