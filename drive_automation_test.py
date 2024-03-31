@@ -15,18 +15,13 @@ from library_functions import HigherActions
 import autoGUIutils
 import os
 
-not_first_sign_in = False
+# not_first_sign_in = False
 class BaseTest:
     @classmethod
     def setup_class(cls):
+        # global not_first_sign_in
         cls.driver = Chrome()
         cls.web_driver_wait = WebDriverWait(cls.driver, 10)
-        #cls.higher_actions = ButtonClicker(cls.driver, cls.web_driver_wait)
-        
-        #cls.higher_actions =  ElementaryActions(cls.driver, cls.web_driver_wait )
-        
-        #global not_first_sign_in
-        # SETUP START
         
         cls.driver.get("https://www.google.com/intl/en-US/drive/")
         cls.driver.maximize_window()
@@ -44,11 +39,7 @@ class BaseTest:
         parser.read("config.ini")
         account_email_id = parser.get("Account Credentials", "email")
         account_pwd = parser.get("Account Credentials", "password")
-
-        
-        
-        
-        
+     
         # opened by clicking sign-in anchor tag
         # sign_in_tab = cls.driver.window_handles[-1]
         # cls.driver.switch_to.window(sign_in_tab)
@@ -74,35 +65,6 @@ class BaseTest:
         cls.higher_actions.send_keys_to_focused(Keys.ENTER)
         sleep(5)
         #cls.web_driver_wait.until(EC.title_is("Home - Google Drive"))
-        sleep(5)
-
-        rawfilenames = [files.file_name_for_copy, files.file_to_be_deleted, files.file_name, files.file_move_name, files.view_info_file_name, *files.fileCollection, files.share_file, files.delete_forever_file_name]
-        file_list_to_upload = " ".join(list(map(lambda a: f'"{a}"', rawfilenames)))
-        cls.higher_actions.click_on_new_button()
-        upload_button = cls.higher_actions.wait_to_click(locators.new_menu_button_locator("File upload"))
-        upload_button.click()
-        sleep(2)
-        autoGUIutils.type_into_dialogue_box(file_list_to_upload)
-        sleep(3)
-        cls.higher_actions.deal_duplicate_and_await_upload()
-        cls.driver.refresh()
-        sleep(5)
-        # to create SVM prerequisite folder
-        cls.higher_actions.click_on_new_button()
-        action_button = cls.higher_actions.wait_to_click(locators.new_menu_button_locator("New folder"))
-        action_button.click()
-        sleep(2)
-        autoGUIutils.type_into_dialogue_box(files.folder_name_to_be_removed)
-        cls.driver.refresh()
-        sleep(4)
-
-        cls.higher_actions.click_on_new_button()
-        action_button = cls.higher_actions.wait_to_click(locators.new_menu_button_locator("New folder"))
-        action_button.click()
-        sleep(2)
-        autoGUIutils.type_into_dialogue_box(files.folder_name)
-        cls.driver.refresh()
-        sleep(4)
 
     @classmethod
     def teardown_class(cls):
@@ -124,11 +86,25 @@ class TestMiscellaneousActions(BaseTest):
     @classmethod
     def setup_class(cls):
         super(cls, TestMiscellaneousActions).setup_class()#FIRST SUPER CLASS
-        #THEN SUBCLASSS SETUP
+        prereqs = [files.view_info_file_name, files.share_file]
+        file_list_to_upload = " ".join(list(map(lambda a: f'"{a}"', prereqs)))
+        cls.higher_actions.click_on_new_button()
+        upload_button = cls.higher_actions.wait_to_click(locators.new_menu_button_locator("File upload"))
+        upload_button.click()
+        sleep(2)
+        autoGUIutils.type_into_dialogue_box(file_list_to_upload)
+        sleep(3)
+        cls.higher_actions.deal_duplicate_and_await_upload()
+        cls.driver.refresh()
+        sleep(5)
     
     @classmethod
     def teardown_class(cls):
         #FIRST SUBCLASS TEARDOWN LOGIC
+        files_to_clean = [files.share_file , files.view_info_file_name]
+        for filename in files_to_clean:
+            cls.higher_actions.remove_file_action(filename)
+
         super(cls, TestMiscellaneousActions).teardown_class()#THEN SUPERCLASS TEARDOWN
     
     
@@ -194,11 +170,27 @@ class TestfileActions(BaseTest):
     @classmethod
     def setup_class(cls):
         super(cls,TestfileActions).setup_class()#FIRST SUPER CLASS
-        #THEN SUBCLASSS SETUP
-
+        #THEN SUBCLASS SETUP
+        prereqs = [files.file_name, files.file_name_for_copy, files.file_to_be_searched , files.file_move_name , files.file_to_be_deleted , *files.fileCollection , files.delete_forever_file_name]
+        file_list_to_upload = " ".join(list(map(lambda a: f'"{a}"', prereqs)))
+        cls.higher_actions.click_on_new_button()
+        upload_button = cls.higher_actions.wait_to_click(locators.new_menu_button_locator("File upload"))
+        upload_button.click()
+        sleep(2)
+        autoGUIutils.type_into_dialogue_box(file_list_to_upload)
+        sleep(3)
+        cls.higher_actions.deal_duplicate_and_await_upload()
+        cls.driver.refresh()
+        sleep(5)
+        
+       
     @classmethod
     def teardown_class(cls):
         #FIRST SUBCLASS TEARDOWN LOGIC
+        files_to_clean = [files.renamed_file_name, files.FILE_TO_UPLOAD, files.file_name_for_copy, files.expected_copied_file_name, files.file_to_be_searched, files.file_to_be_restored]
+        for filename in files_to_clean:
+            cls.higher_actions.remove_file_action(filename)
+        
         super(cls,TestfileActions).teardown_class()#THEN SUPERCLASS TEARDOWN
 
     def test_rename_file(self):
@@ -231,16 +223,6 @@ class TestfileActions(BaseTest):
         copied_file_element = self.higher_actions.copy_file_action(files.file_name_for_copy)
         assert copied_file_element is not None
 
-# class TestSearch(TestfileActions):
-#     @classmethod
-#     def setup_class(cls):
-#         super().setup_class()#FIRST SUPER CLASS
-#         #THEN SUBCLASSS SETUP
-
-#     @classmethod
-#     def teardown_class(cls):
-#         #FIRST SUBCLASS TEARDOWN LOGIC
-#         super().teardown_class()#THEN SUPERCLASS TEARDOWN
 
     def test_search_for_file_by_name(self):
         self.higher_actions.search_by_name_action(files.file_to_be_searched)
@@ -277,16 +259,7 @@ class TestfileActions(BaseTest):
                 # Continue to next move even if current move fails
                 continue
 
-# class TestDelete(TestfileActions):
-#     @classmethod
-#     def setup_class(cls):
-#         super(cls,TestDelete).setup_class()#FIRST SUPER CLASS
-#         #THEN SUBCLASSS SETUP
 
-#     @classmethod
-#     def teardown_class(cls):
-#         #FIRST SUBCLASS TEARDOWN LOGIC
-#         super(cls,TestDelete).teardown_class()#THEN SUPERCLASS TEARDOWN
                                 
     def test_remove_file(self):
         file_name = files.file_to_be_deleted
@@ -337,11 +310,27 @@ class TestfolderActions(BaseTest):
     @classmethod
     def setup_class(cls):
         super(cls, TestfolderActions).setup_class()#FIRST SUPER CLASS
-        #THEN SUBCLASSS SETUP
+        #THEN SUBCLASS SETUP
+        folders_to_create = [files.folder_name, files.folder_name_to_be_removed]
+        
+        for folder_name in folders_to_create:
+            cls.higher_actions.click_on_new_button()
+            action_button = cls.higher_actions.wait_to_click(locators.new_menu_button_locator("New folder"))
+            action_button.click()
+            sleep(2)
+            autoGUIutils.type_into_dialogue_box(folder_name)
+            cls.driver.refresh()
+            sleep(4)
+
+       
     
     @classmethod
     def teardown_class(cls):
         #FIRST SUBCLASS TEARDOWN LOGIC
+        folders_to_clean = [files.renamed_folder_name , files.create_folder_name]
+        for foldername in folders_to_clean:
+            cls.higher_actions.remove_file_action(foldername) # remove_file_action works for both file and folder
+        
         super(cls, TestfolderActions).teardown_class()#THEN SUPERCLASS TEARDOWN
 
     def test_rename_folder(self):
