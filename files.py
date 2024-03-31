@@ -1,5 +1,5 @@
 file_name = "cty_ppt.pdf"
-renamed_file_name = "renamed_cty.pdf"
+renamed_file_name = "renamed_cty"
 
 
 file_to_be_deleted = "test.txt"
@@ -9,8 +9,8 @@ folder_name = "Before Rename"
 renamed_folder_name = "After_rename"
 
 
-file_move_name = "CC-1-slides.pdf"
-destination_folder_name = "After_rename"
+file_move_name = "test2.txt"
+destination_folder_name = "Destination Folder"
 
 
 file_name_for_copy = 'test.txt'

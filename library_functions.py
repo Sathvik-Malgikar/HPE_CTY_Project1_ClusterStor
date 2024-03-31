@@ -256,12 +256,28 @@ class ButtonClicker(ElementaryActions):
         new_button = self.wait_to_click(locators.new_button_selector)
         new_button.click()
         sleep(2)
-        
+    
+
+    def click_on_add_button(self):
+        # add_button = self.elementary_actions.wait_to_click(locators.add_button_locator)
+        # add_button.click()
+        # sleep(2)
+        autoGUIutils.press_tab()
+        autoGUIutils.press_tab()
+        autoGUIutils.press_tab()
+        autoGUIutils.press_tab()
+        autoGUIutils.press_enter()
+
+    def click_on_shortcut_folder_button(self):
+        autoGUIutils.press_tab()
+        autoGUIutils.press_enter()
+
     """Navigate to a specific page(available on the left menu.
 
         Parameters:
         button_name (str): The name of the button representing the page to navigate to.
     """
+    
 
     def navigate_to(self, button_name):
         button_element = self.wait_to_click(locators.left_menu_page_selector(button_name))
@@ -303,8 +319,6 @@ class HigherActions(ButtonClicker) :
     def select_item(self, item_name):
         # show_more_needed is to ensure backwards compatibility
         action_chain = ActionChains(self.driver)
-        # if (show_more_needed):  # old testcases do not have show_more param, so by default True,
-            # newer testcases can explicitly mention if show more button is to be clicked or not before looking for file
         try:
             show_more_button = self.driver.find_element(*locators.show_more_files)
             if show_more_button.is_displayed():
@@ -583,9 +597,12 @@ class HigherActions(ButtonClicker) :
         bool: True if the file has been permanently deleted, False otherwise.
     """
 
+    
+
     def delete_permanently_action(self, delete_forever_file_name):
         self.driver.refresh()
         sleep(5)
+        self.button_clicker.navigate_to("Trash")
         self.select_item(delete_forever_file_name)
         self.click_action_bar_button("Move to trash")
         self.navigate_to("Trash")

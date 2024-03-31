@@ -252,6 +252,7 @@ class TestfileActions(BaseTest):
     def test_move_file(self):
         filename = files.file_move_name
         destination_folder = files.destination_folder_name
+        self.button_clicker.navigate_to("Home")
         self.higher_actions.move_action(filename, destination_folder, True)
         assert not self.higher_actions.wait_for_element(locators.file_selector(filename))
 
