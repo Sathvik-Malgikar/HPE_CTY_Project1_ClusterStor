@@ -9,8 +9,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver import Chrome
 import locators
 import files
-from library_functions import ElementaryActions
-from library_functions import ButtonClicker 
 from library_functions import HigherActions
 import autoGUIutils
 import os
@@ -21,10 +19,6 @@ class BaseTest:
     def setup_class(cls):
         cls.driver = Chrome(executable_path="./chromedriver.exe")
         cls.web_driver_wait = WebDriverWait(cls.driver, 10)
-        #cls.higher_actions = ButtonClicker(cls.driver, cls.web_driver_wait)
-        
-        #cls.higher_actions =  ElementaryActions(cls.driver, cls.web_driver_wait )
-        
         #global not_first_sign_in
         # SETUP START
         
@@ -44,27 +38,6 @@ class BaseTest:
         parser.read("config.ini")
         account_email_id = parser.get("Account Credentials", "email")
         account_pwd = parser.get("Account Credentials", "password")
-
-        
-        
-        
-        
-        # opened by clicking sign-in anchor tag
-        # sign_in_tab = cls.driver.window_handles[-1]
-        # cls.driver.switch_to.window(sign_in_tab)
-        # parser = configparser.ConfigParser()
-        # parser.read("config.ini")
-        # account_email_id = parser.get("Account Credentials", "email")
-        # account_pwd = parser.get("Account Credentials", "password")
-
-        # LOGIC FOR HANDLING SECOND TIME LOGIN'S , ONE EXTRA CLICK .
-
-        # if not_first_sign_in:
-        #account_div = cls.higher_actions.wait_to_click(locators.sign_in_account_locator)
-        #account_div.click()
-        #sleep(5)
-        # else:
-        #autoGUIutils.zoom_out()  # SET ZOOM LEVEL ONCE AND FOR ALL
         cls.higher_actions.send_keys_to_focused(account_email_id)
         cls.higher_actions.send_keys_to_focused(Keys.ENTER)
         cls.higher_actions.wait_for_element(locators.welcome_span)
@@ -76,33 +49,33 @@ class BaseTest:
         #cls.web_driver_wait.until(EC.title_is("Home - Google Drive"))
         sleep(5)
 
-        rawfilenames = [files.file_name_for_copy, files.file_to_be_deleted, files.file_name, files.file_move_name, files.view_info_file_name, *files.fileCollection, files.share_file, files.delete_forever_file_name]
-        file_list_to_upload = " ".join(list(map(lambda a: f'"{a}"', rawfilenames)))
-        cls.higher_actions.click_on_new_button()
-        upload_button = cls.higher_actions.wait_to_click(locators.new_menu_button_locator("File upload"))
-        upload_button.click()
-        sleep(2)
-        autoGUIutils.type_into_dialogue_box(file_list_to_upload)
-        sleep(3)
-        cls.higher_actions.deal_duplicate_and_await_upload()
-        cls.driver.refresh()
-        sleep(5)
-        # to create SVM prerequisite folder
-        cls.higher_actions.click_on_new_button()
-        action_button = cls.higher_actions.wait_to_click(locators.new_menu_button_locator("New folder"))
-        action_button.click()
-        sleep(2)
-        autoGUIutils.type_into_dialogue_box(files.folder_name_to_be_removed)
-        cls.driver.refresh()
-        sleep(4)
+        # rawfilenames = [files.file_name_for_copy, files.file_to_be_deleted, files.file_name, files.file_move_name, files.view_info_file_name, *files.fileCollection, files.share_file, files.delete_forever_file_name]
+        # file_list_to_upload = " ".join(list(map(lambda a: f'"{a}"', rawfilenames)))
+        # cls.higher_actions.click_on_new_button()
+        # upload_button = cls.higher_actions.wait_to_click(locators.new_menu_button_locator("File upload"))
+        # upload_button.click()
+        # sleep(2)
+        # autoGUIutils.type_into_dialogue_box(file_list_to_upload)
+        # sleep(3)
+        # cls.higher_actions.deal_duplicate_and_await_upload()
+        # cls.driver.refresh()
+        # sleep(5)
+        # # to create SVM prerequisite folder
+        # cls.higher_actions.click_on_new_button()
+        # action_button = cls.higher_actions.wait_to_click(locators.new_menu_button_locator("New folder"))
+        # action_button.click()
+        # sleep(2)
+        # autoGUIutils.type_into_dialogue_box(files.folder_name_to_be_removed)
+        # cls.driver.refresh()
+        # sleep(4)
 
-        cls.higher_actions.click_on_new_button()
-        action_button = cls.higher_actions.wait_to_click(locators.new_menu_button_locator("New folder"))
-        action_button.click()
-        sleep(2)
-        autoGUIutils.type_into_dialogue_box(files.folder_name)
-        cls.driver.refresh()
-        sleep(4)
+        # cls.higher_actions.click_on_new_button()
+        # action_button = cls.higher_actions.wait_to_click(locators.new_menu_button_locator("New folder"))
+        # action_button.click()
+        # sleep(2)
+        # autoGUIutils.type_into_dialogue_box(files.folder_name)
+        # cls.driver.refresh()
+        # sleep(4)
 
     @classmethod
     def teardown_class(cls):
@@ -132,36 +105,34 @@ class TestMiscellaneousActions(BaseTest):
         super(cls, TestMiscellaneousActions).teardown_class()#THEN SUPERCLASS TEARDOWN
     
     
-    # def test_prerequisites(self):
-    #     rawfilenames = [files.file_name_for_copy, files.file_to_be_deleted, files.file_name, files.file_move_name, files.view_info_file_name, *files.fileCollection, files.share_file, files.delete_forever_file_name]
-    #     file_list_to_upload = " ".join(list(map(lambda a: f'"{a}"', rawfilenames)))
-    #     self.higher_actions.click_on_new_button()
-    #     upload_button = self.higher_actions.wait_to_click(locators.new_menu_button_locator("File upload"))
-    #     upload_button.click()
-    #     sleep(2)
-    #     autoGUIutils.type_into_dialogue_box(file_list_to_upload)
-    #     sleep(3)
-    #     self.higher_actions.deal_duplicate_and_await_upload()
-    #     self.driver.refresh()
-    #     sleep(5)
-    #     # to create SVM prerequisite folder
-    #     self.higher_actions.click_on_new_button()
-    #     action_button = self.higher_actions.wait_to_click(locators.new_menu_button_locator("New folder"))
-    #     action_button.click()
-    #     sleep(2)
-    #     autoGUIutils.type_into_dialogue_box(files.folder_name_to_be_removed)
-    #     self.driver.refresh()
-    #     sleep(4)
-
-    #     self.higher_actions.click_on_new_button()
-    #     action_button = self.higher_actions.wait_to_click(locators.new_menu_button_locator("New folder"))
-    #     action_button.click()
-    #     sleep(2)
-    #     autoGUIutils.type_into_dialogue_box(files.folder_name)
-    #     self.driver.refresh()
-    #     sleep(4)
-
-    #     assert True
+    def test_prerequisites(self):
+        rawfilenames = [files.file_name_for_copy, files.file_to_be_deleted, files.file_name, files.file_move_name, files.view_info_file_name, *files.fileCollection, files.share_file, files.delete_forever_file_name, *files.portCollection]
+        file_list_to_upload = " ".join(list(map(lambda a: f'"{a}"', rawfilenames)))
+        self.higher_actions.click_on_new_button()
+        upload_button = self.higher_actions.wait_to_click(locators.new_menu_button_locator("File upload"))
+        upload_button.click()
+        sleep(2)
+        autoGUIutils.type_into_dialogue_box(file_list_to_upload)
+        sleep(3)
+        self.higher_actions.deal_duplicate_and_await_upload()
+        self.driver.refresh()
+        sleep(5)
+        # to create SVM prerequisite folder
+        self.higher_actions.click_on_new_button()
+        action_button = self.higher_actions.wait_to_click(locators.new_menu_button_locator("New folder"))
+        action_button.click()
+        sleep(2)
+        autoGUIutils.type_into_dialogue_box(files.folder_name_to_be_removed)
+        self.driver.refresh()
+        sleep(4)
+        self.higher_actions.click_on_new_button()
+        action_button = self.higher_actions.wait_to_click(locators.new_menu_button_locator("New folder"))
+        action_button.click()
+        sleep(2)
+        autoGUIutils.type_into_dialogue_box(files.folder_name)
+        self.driver.refresh()
+        sleep(4)
+        assert True
       
     def test_share_via_link(self ):
         self.higher_actions.navigate_to("Home")
@@ -185,6 +156,12 @@ class TestMiscellaneousActions(BaseTest):
             assert False, f"File info dialog for {files.view_info_file_name} is not visible"
         else:
             self.higher_actions.click_element(element)
+
+    def test_verify_tootip_text(self):
+        verification_result = self.higher_actions.verify_button_tooltips(files.button_names_and_tooltips)
+        if verification_result:
+            assert True
+
 
 
 class TestfileActions(BaseTest):
@@ -214,7 +191,7 @@ class TestfileActions(BaseTest):
     def test_upload_file(self):
         # this file is present in User folder
         self.higher_actions.upload_file_action(files.FILE_TO_UPLOAD)
-        assert self.higher_actions.wait_for_element(locators.file_selector(files.FILE_TO_UPLOAD))
+        assert self.higher_actions.wait_for_element(locators.file_selector(files.FILE_TO_UPLOAD)) is not None
 
     """
     ## Test function to download a file in the Google Drive web GUI.
@@ -225,7 +202,7 @@ class TestfileActions(BaseTest):
         download_button = self.higher_actions.wait_for_element(locators.action_bar_button_selector("Download"))
         download_button.click()
         sleep(6)
-        assert files.file_name_for_copy  in os.listdir(r"C:\Users\Shravani\Downloads")
+        assert files.file_name_for_copy  in os.listdir(r"C:\Users\adith\Downloads")
 
     def test_copy_file(self):
         copied_file_element = self.higher_actions.copy_file_action(files.file_name_for_copy)
@@ -252,15 +229,15 @@ class TestfileActions(BaseTest):
     def test_move_file(self):
         filename = files.file_move_name
         destination_folder = files.destination_folder_name
-        self.button_clicker.navigate_to("Home")
+        self.higher_actions.navigate_to("Home")
         self.higher_actions.move_action(filename, destination_folder, True)
         assert not self.higher_actions.wait_for_element(locators.file_selector(filename))
 
     def test_move_multiple_files(self):
         file_destination_pairs = [
-            ("test.txt", "After_rename"),
-            ("test2.txt", "After_rename"),
-            ("test3.txt", "F1"),
+            ("port1.txt", "SVM"),
+            ("port2.txt", "SVM"),
+            ("port3.txt", "Before Rename"),
         ]
         show_more_needed = True
         for idx, (filename, destination_folder) in enumerate(file_destination_pairs):
@@ -290,6 +267,7 @@ class TestfileActions(BaseTest):
                                 
     def test_remove_file(self):
         file_name = files.file_to_be_deleted
+        self.higher_actions.navigate_to("Home")
         self.higher_actions.remove_file_action(file_name)
         
     """ 

@@ -535,7 +535,9 @@ class HigherActions(ButtonClicker) :
     """
 
     def search_by_name_action(self, file_to_be_searched):
+        self.navigate_to("My Drive")
         self.click_on_search_in_drive()
+        sleep(2)
         self.send_keys_to_focused(file_to_be_searched)
         autoGUIutils.press_enter()
         # Retrieve file elements from the search results
@@ -602,9 +604,9 @@ class HigherActions(ButtonClicker) :
     def delete_permanently_action(self, delete_forever_file_name):
         self.driver.refresh()
         sleep(5)
-        self.button_clicker.navigate_to("Trash")
-        self.select_item(delete_forever_file_name)
-        self.click_action_bar_button("Move to trash")
+        self.navigate_to("Home")
+
+        self.remove_file_action(delete_forever_file_name)
         self.navigate_to("Trash")
 
         deleted_file_locator = locators.file_selector(delete_forever_file_name)
@@ -690,3 +692,39 @@ class HigherActions(ButtonClicker) :
         self.select_item(folder_to_be_removed)
         self.click_action_bar_button("Move to trash")
         sleep(4) 
+
+    def verify_button_tooltips(self, button_names_and_tooltips):
+        """
+        Verify the tooltip text of buttons like "Home", "My Drive", etc.
+
+        Parameters:
+        button_names_and_tooltips (dict): A dictionary containing button names as keys and expected tooltip text as values.
+
+        Returns:
+        bool: True if all buttons are present and their tooltips match the expected text, False otherwise.
+        """
+        # Initialize flag to track verification status
+        all_buttons_present = True
+        self.navigate_to("Home")
+
+        # Loop through each button name and expected tooltip text
+        for button_name, expected_tooltip_text in button_names_and_tooltips.items():
+            try:
+                # Hover over the button to trigger the tooltip
+                button_element = self.wait_for_element(locators.left_menu_page_selector(button_name))
+                action_chain = ActionChains(self.driver)
+                action_chain.move_to_element(button_element).perform()
+                sleep(2)  # Add a short delay to allow the tooltip to appear
+
+                # Get the actual tooltip text
+                actual_tooltip_text = button_element.get_attribute('title')
+
+                # Check if the actual tooltip text matches the expected tooltip text
+                if actual_tooltip_text != expected_tooltip_text:
+                    print(f"Tooltip text for button '{button_name}' does not match. Expected: '{expected_tooltip_text}', Actual: '{actual_tooltip_text}'")
+                    all_buttons_present = False
+            except NoSuchElementException:
+                print(f"Button '{button_name}' not found.")
+                all_buttons_present = False
+
+        return all_buttons_present

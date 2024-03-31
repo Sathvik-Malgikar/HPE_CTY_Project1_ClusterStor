@@ -2,7 +2,7 @@ file_name = "cty_ppt.pdf"
 renamed_file_name = "renamed_cty"
 
 
-file_to_be_deleted = "test.txt"
+file_to_be_deleted = "deletion_file.txt"
 file_to_be_restored = "test.txt"
 
 folder_name = "Before Rename"
@@ -33,3 +33,7 @@ file_to_be_searched_by_type = "I_PES1UG21CS542_Sathvik Sudhir Malgikar_A1.pdf"
 folder_name_to_be_removed = "SVM"
 
 fileCollection = ['move1.txt', 'move2.txt']
+
+button_names_and_tooltips = {"Home": "Home", "My Drive": "My Drive", "Computers": "Computers", "Shared with me": "Items shared with me", "Recent": "Recent items", "Starred": "Starred items", "Spam": "Spam", "Trash": "Trashed items", "Storage": "Storage"} 
+
+portCollection = ['port1.txt', 'port2.txt', 'port3.txt']
