@@ -165,6 +165,11 @@ class TestMiscellaneousActions(BaseTest):
             autoGUIutils.go_back_esc()
             assert True
 
+    def test_verify_tootip_text(self):
+        verification_result = self.higher_actions.verify_button_tooltips(files.button_names_and_tooltips)
+        if verification_result:
+            assert True
+
 
 class TestfileActions(BaseTest):
     """
