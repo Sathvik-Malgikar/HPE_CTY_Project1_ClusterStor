@@ -161,6 +161,9 @@ class TestMiscellaneousActions(BaseTest):
             assert False, f"File info dialog for {files.view_info_file_name} is not visible"
         else:
             self.higher_actions.click_element(element)
+            sleep(3)
+            autoGUIutils.go_back_esc()
+            assert True
 
 
 class TestfileActions(BaseTest):
@@ -171,7 +174,7 @@ class TestfileActions(BaseTest):
     def setup_class(cls):
         super(cls,TestfileActions).setup_class()#FIRST SUPER CLASS
         #THEN SUBCLASS SETUP
-        prereqs = [files.file_name, files.file_name_for_copy, files.file_to_be_searched , files.file_move_name , files.file_to_be_deleted , *files.fileCollection , files.delete_forever_file_name]
+        prereqs = [files.file_name, files.file_name_for_copy, files.file_move_name , files.file_to_be_deleted , *files.fileCollection , files.delete_forever_file_name]
         file_list_to_upload = " ".join(list(map(lambda a: f'"{a}"', prereqs)))
         cls.higher_actions.click_on_new_button()
         upload_button = cls.higher_actions.wait_to_click(locators.new_menu_button_locator("File upload"))
@@ -257,7 +260,7 @@ class TestfileActions(BaseTest):
             except Exception as e:
                 print(f"Move operation failed for file '{filename}' to folder '{destination_folder}': {e}")
                 # Continue to next move even if current move fails
-                continue
+                assert False
 
 
                                 

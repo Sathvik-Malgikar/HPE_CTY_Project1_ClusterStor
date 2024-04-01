@@ -311,13 +311,12 @@ class HigherActions(ButtonClicker) :
 
         Parameters:
         item_name (str): Name of the item to be selected.
-        show_more_needed (bool): Flag indicating whether to click the "Show More" button.
+        
 
         Raises:
         FileNotFoundError: If the item with the specified name is not found.
     """
     def select_item(self, item_name):
-        # show_more_needed is to ensure backwards compatibility
         action_chain = ActionChains(self.driver)
         try:
             show_more_button = self.driver.find_element(*locators.show_more_files)
