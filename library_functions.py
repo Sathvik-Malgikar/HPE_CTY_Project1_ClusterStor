@@ -534,6 +534,7 @@ class HigherActions(ButtonClicker) :
     """
 
     def search_by_name_action(self, file_to_be_searched):
+        self.navigate_to("My Drive")
         self.click_on_search_in_drive()
         self.send_keys_to_focused(file_to_be_searched)
         autoGUIutils.press_enter()
