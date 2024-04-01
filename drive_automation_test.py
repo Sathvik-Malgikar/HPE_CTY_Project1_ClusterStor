@@ -225,7 +225,7 @@ class TestfileActions(BaseTest):
         download_button = self.higher_actions.wait_for_element(locators.action_bar_button_selector("Download"))
         download_button.click()
         sleep(6)
-        assert files.file_name_for_copy  in os.listdir(r"C:\Users\Shravani\Downloads")
+        assert files.file_name_for_copy  in os.listdir(os.path.join('C:\\Users', os.getlogin(), 'Downloads'))
 
     def test_copy_file(self):
         copied_file_element = self.higher_actions.copy_file_action(files.file_name_for_copy)
