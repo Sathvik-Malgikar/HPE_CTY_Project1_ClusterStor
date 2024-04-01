@@ -9,8 +9,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver import Chrome
 import locators
 import files
-from library_functions import ElementaryActions
-from library_functions import ButtonClicker 
+# from library_functions import ElementaryActions
+# from library_functions import ButtonClicker 
 from library_functions import HigherActions
 import autoGUIutils
 import os
@@ -107,37 +107,6 @@ class TestMiscellaneousActions(BaseTest):
 
         super(cls, TestMiscellaneousActions).teardown_class()#THEN SUPERCLASS TEARDOWN
     
-    
-    # def test_prerequisites(self):
-    #     rawfilenames = [files.file_name_for_copy, files.file_to_be_deleted, files.file_name, files.file_move_name, files.view_info_file_name, *files.fileCollection, files.share_file, files.delete_forever_file_name]
-    #     file_list_to_upload = " ".join(list(map(lambda a: f'"{a}"', rawfilenames)))
-    #     self.higher_actions.click_on_new_button()
-    #     upload_button = self.higher_actions.wait_to_click(locators.new_menu_button_locator("File upload"))
-    #     upload_button.click()
-    #     sleep(2)
-    #     autoGUIutils.type_into_dialogue_box(file_list_to_upload)
-    #     sleep(3)
-    #     self.higher_actions.deal_duplicate_and_await_upload()
-    #     self.driver.refresh()
-    #     sleep(5)
-    #     # to create SVM prerequisite folder
-    #     self.higher_actions.click_on_new_button()
-    #     action_button = self.higher_actions.wait_to_click(locators.new_menu_button_locator("New folder"))
-    #     action_button.click()
-    #     sleep(2)
-    #     autoGUIutils.type_into_dialogue_box(files.folder_name_to_be_removed)
-    #     self.driver.refresh()
-    #     sleep(4)
-
-    #     self.higher_actions.click_on_new_button()
-    #     action_button = self.higher_actions.wait_to_click(locators.new_menu_button_locator("New folder"))
-    #     action_button.click()
-    #     sleep(2)
-    #     autoGUIutils.type_into_dialogue_box(files.folder_name)
-    #     self.driver.refresh()
-    #     sleep(4)
-
-    #     assert True
       
     def test_share_via_link(self ):
         self.higher_actions.navigate_to("Home")
@@ -165,7 +134,7 @@ class TestMiscellaneousActions(BaseTest):
             autoGUIutils.go_back_esc()
             assert True
 
-    def test_verify_tootip_text(self):
+    def test_verify_tooltip_text(self):
         verification_result = self.higher_actions.verify_button_tooltips(files.button_names_and_tooltips)
         if verification_result:
             assert True
