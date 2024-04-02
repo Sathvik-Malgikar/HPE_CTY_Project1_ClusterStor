@@ -14,6 +14,7 @@ import files
 from library_functions import HigherActions
 import autoGUIutils
 import os
+import hashlib
 
 # not_first_sign_in = False
 class BaseTest:
@@ -183,8 +184,21 @@ class TestfileActions(BaseTest):
     def test_upload_file(self):
         # this file is present in User folder
         self.higher_actions.upload_file_action(files.FILE_TO_UPLOAD)
-        assert self.higher_actions.wait_for_element(locators.file_selector(files.FILE_TO_UPLOAD))
-
+        self.higher_actions.wait_for_element(locators.file_selector(files.FILE_TO_UPLOAD))
+        ground_truth_hash=None
+        with open(os.path.join('C:\\Users', os.getlogin(), files.FILE_TO_UPLOAD), "rb") as ground_truth_file:
+            
+            ground_truth_hash = hashlib.file_digest(ground_truth_file,"md5").hexdigest()
+        self.higher_actions.select_item(files.FILE_TO_UPLOAD)
+        download_button = self.higher_actions.wait_for_element(locators.action_bar_button_selector("Download"))
+        download_button.click()
+        sleep(6)
+        downloaded_file_hash=None
+        with open(os.path.join('C:\\Users', os.getlogin(), "Downloads" ,files.FILE_TO_UPLOAD), "rb") as downloaded_file:
+            
+            downloaded_file_hash = hashlib.file_digest(downloaded_file,"md5").hexdigest()
+        assert downloaded_file_hash == ground_truth_hash
+        
     """
     ## Test function to download a file in the Google Drive web GUI.
     """

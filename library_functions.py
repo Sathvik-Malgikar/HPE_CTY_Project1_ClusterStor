@@ -495,7 +495,7 @@ class HigherActions(ButtonClicker) :
         self.click_on_new_button()
         upload_button = self.wait_for_element(locators.new_menu_button_locator("File upload"))
         upload_button.click()
-        sleep(2)
+        sleep(3)
         autoGUIutils.type_into_dialogue_box(file_to_upload)
         # this is utility solely because prerequisites aso reuses this function
         self.deal_duplicate_and_await_upload()

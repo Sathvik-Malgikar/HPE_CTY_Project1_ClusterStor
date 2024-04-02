@@ -19,9 +19,9 @@ Usage:
     type_into_dialogue_box(FILE_TO_UPLOAD)
 """
 
-def type_into_dialogue_box(FILE_TO_UPLOAD):
+def type_into_dialogue_box(stringvalue):
     # types into dialogue box
-    pyautogui.typewrite(FILE_TO_UPLOAD)
+    pyautogui.typewrite(stringvalue)
     sleep(1)
     pyautogui.press("enter")
     sleep(3)
