@@ -164,18 +164,29 @@ class TestMiscellaneousActions(BaseTest):
     #     assert True
       
     def test_share_via_link(self ):
-        self.higher_actions.navigate_to("Home")
-        sleep(2)
-        self.higher_actions.select_item(files.share_file)
-        sleep(3)
-        share_button = self.higher_actions.wait_for_element(locators.action_bar_button_selector("Share"))
-        share_button.click()
-        sleep(5)
+        self.higher_actions.open_share_window(files.share_file)
         autoGUIutils.n_tabs_shift_focus(3)
         autoGUIutils.press_enter()
         sleep(0.4)
         autoGUIutils.go_back_esc()
         assert True
+
+    def test_share_file_to_friend(self):
+        self.higher_actions.open_share_window(files.share_file)
+        autoGUIutils.type_into_dialogue_box(files.email)
+        sleep(2)
+        autoGUIutils.press_enter()
+        autoGUIutils.n_tabs_shift_focus(3)
+        sleep(2)
+        autoGUIutils.type_into_dialogue_box("short notes")
+        autoGUIutils.n_tabs_shift_focus(3)
+        autoGUIutils.press_enter
+        self.driver.refresh()
+        # self.higher_actions.select_item(files.share_file)
+        # access_info_element = self.higher_actions.wait_for_element(locators.access_info_selector)
+        # access_info_text=access_info_element.text
+        # expected_text = "Shared with sravnihm2021"
+        # assert expected_text in access_info_text, f"Expected '{expected_text}' but got '{access_info_text}'"    
 
     def test_view_file_info(self):
         self.higher_actions.select_item(files.view_info_file_name)

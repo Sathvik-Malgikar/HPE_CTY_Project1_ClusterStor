@@ -5,11 +5,11 @@ renamed_file_name = "renamed_cty.pdf"
 file_to_be_deleted = "test.txt"
 file_to_be_restored = "test.txt"
 
-folder_name = "Before Rename"
+folder_name = "Applied crypto"
 renamed_folder_name = "After_rename"
 
 
-file_move_name = "CC-1-slides.pdf"
+file_move_name = "test2.txt"
 destination_folder_name = "After_rename"
 
 
@@ -32,4 +32,6 @@ file_to_be_searched_by_type = "I_PES1UG21CS542_Sathvik Sudhir Malgikar_A1.pdf"
 
 folder_name_to_be_removed = "SVM"
 
-fileCollection = ['test1.txt', 'test2.txt']
+fileCollection = ['move1.txt', 'move2.txt']
+
+email="sravnihm2021@gmail.com"

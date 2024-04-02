@@ -357,7 +357,7 @@ class HigherActions(ButtonClicker) :
         # Verify the existence of the new file
         renamed_file_element = self.wait_for_element(locators.file_selector(new_file_name))
         assert renamed_file_element is not None, f"New file '{new_file_name}' not found after rename operation."
-        # return tru if bot conditions are satisfied
+        # return true if both conditions are satisfied
         return True
 
     def deal_duplicate_and_await_upload(self):
@@ -673,3 +673,13 @@ class HigherActions(ButtonClicker) :
         self.select_item(folder_to_be_removed)
         self.click_action_bar_button("Move to trash")
         sleep(4) 
+
+
+    def open_share_window(self,file_to_be_shared):
+        self.navigate_to("Home")
+        sleep(2)
+        self.select_item(file_to_be_shared)
+        sleep(3)
+        share_button = self.wait_for_element(locators.action_bar_button_selector("Share"))
+        share_button.click()
+        sleep(5)

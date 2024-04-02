@@ -6,7 +6,8 @@ welcome_span = (By.XPATH, "//span[contains(text(), 'Welcome')]")
 sign_in_link = (By.LINK_TEXT, "Sign in")
 
 new_button_selector = (By.CSS_SELECTOR, "button.brbsPe.Ss7qXc.a-qb-d")
-
+send_button_selector = (By.CSS_SELECTOR,"button:contains('Send')")
+access_info_selector = (By.CLASS_NAME, "ZvUowc")
 def new_menu_button_locator (button_text):
     return (
     By.CSS_SELECTOR, f"div[data-tooltip='{button_text}'].a-v-T")
