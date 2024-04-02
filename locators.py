@@ -21,7 +21,7 @@ file_name_containerdiv = (By.CSS_SELECTOR, "div.KL4NAf")
 
 ok_button_locator = (By.CSS_SELECTOR, "button[name='ok'].h-De-Vb.h-De-Y[tabindex='0']")
 
-show_more_files = (By.CSS_SELECTOR, "span:contains('Show more files')")
+show_more_files = ( By.XPATH, "//span[contains(text(), 'Show more files')]")
 
 
 def file_selector(file_name): return (
@@ -72,3 +72,13 @@ move_to_trash_button_locator = (By.CSS_SELECTOR, 'div[aria-label="Move to trash"
 
 
 sign_in_account_locator= (By.CSS_SELECTOR , "div[data-authuser='-1']")
+
+
+add_button_locator = (By.CSS_SELECTOR, 'button.VfPpkd-LgbsSe.VfPpkd-LgbsSe-OWXEXe-k8QpJ.VfPpkd-LgbsSe-OWXEXe-dgl2Hf.nCP5yc.AjY5Oe.DuMIQc.LQeN7.xFWpbf.CZCFtc-bMElCd.sj692e.RCmsv.jbArdc.oWBWHf.MKuq5e-LgbsSe')
+
+# all_locations_button_locator = (By.CSS_SELECTOR, '#all_locations')
+
+all_locations_button_locator = (By.CSS_SELECTOR, 'button.VfPpkd-AznF2e.VfPpkd-AznF2e-OWXEXe-jJNx8e-QBLLGd.WbUJNb.FEsNhd.VCOGmd.u4B0v[role="tab"][aria-selected="false"][id="all_locations"]')
+
+shortcut_folder_button_locator = (By.CSS_SELECTOR, 'td[aria-label="ShortcutFolder"]')
+

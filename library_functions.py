@@ -256,12 +256,28 @@ class ButtonClicker(ElementaryActions):
         new_button = self.wait_to_click(locators.new_button_selector)
         new_button.click()
         sleep(2)
-        
+    
+
+    def click_on_add_button(self):
+        # add_button = self.elementary_actions.wait_to_click(locators.add_button_locator)
+        # add_button.click()
+        # sleep(2)
+        autoGUIutils.press_tab()
+        autoGUIutils.press_tab()
+        autoGUIutils.press_tab()
+        autoGUIutils.press_tab()
+        autoGUIutils.press_enter()
+
+    def click_on_shortcut_folder_button(self):
+        autoGUIutils.press_tab()
+        autoGUIutils.press_enter()
+
     """Navigate to a specific page(available on the left menu.
 
         Parameters:
         button_name (str): The name of the button representing the page to navigate to.
     """
+    
 
     def navigate_to(self, button_name):
         button_element = self.wait_to_click(locators.left_menu_page_selector(button_name))
@@ -295,16 +311,13 @@ class HigherActions(ButtonClicker) :
 
         Parameters:
         item_name (str): Name of the item to be selected.
-        show_more_needed (bool): Flag indicating whether to click the "Show More" button.
+        
 
         Raises:
         FileNotFoundError: If the item with the specified name is not found.
     """
     def select_item(self, item_name):
-        # show_more_needed is to ensure backwards compatibility
         action_chain = ActionChains(self.driver)
-        # if (show_more_needed):  # old testcases do not have show_more param, so by default True,
-            # newer testcases can explicitly mention if show more button is to be clicked or not before looking for file
         try:
             show_more_button = self.driver.find_element(*locators.show_more_files)
             if show_more_button.is_displayed():
@@ -521,6 +534,7 @@ class HigherActions(ButtonClicker) :
     """
 
     def search_by_name_action(self, file_to_be_searched):
+        self.navigate_to("My Drive")
         self.click_on_search_in_drive()
         self.send_keys_to_focused(file_to_be_searched)
         autoGUIutils.press_enter()
@@ -571,7 +585,7 @@ class HigherActions(ButtonClicker) :
     def remove_file_action(self, file_name):
         self.select_item(file_name)
         self.click_action_bar_button("Move to trash")
-        sleep(6)
+        sleep(3.5)
         assert not self.wait_for_element(locators.file_selector(file_name))
 
     """Permanently delete a file.
@@ -583,9 +597,12 @@ class HigherActions(ButtonClicker) :
         bool: True if the file has been permanently deleted, False otherwise.
     """
 
+    
+
     def delete_permanently_action(self, delete_forever_file_name):
         self.driver.refresh()
         sleep(5)
+        self.button_clicker.navigate_to("Trash")
         self.select_item(delete_forever_file_name)
         self.click_action_bar_button("Move to trash")
         self.navigate_to("Trash")
@@ -673,6 +690,42 @@ class HigherActions(ButtonClicker) :
         self.select_item(folder_to_be_removed)
         self.click_action_bar_button("Move to trash")
         sleep(4) 
+        
+    def verify_button_tooltips(self, button_names_and_tooltips):
+        """
+        Verify the tooltip text of buttons like "Home", "My Drive" etc.
+
+        Parameters:
+        button_names_and_tooltips (dict): A dictionary containing button names as keys and expected tooltip text as values.
+
+        Returns:
+        bool: True if all buttons are present and their tooltips match the expected text, False otherwise.
+        """
+        # Initialize flag to track verification status
+        all_buttons_present = True
+        self.navigate_to("Home")
+
+        # Loop through each button name and expected tooltip text
+        for button_name, expected_tooltip_text in button_names_and_tooltips.items():
+            try:
+                # Hover over the button to trigger the tooltip
+                button_element = self.wait_for_element(locators.left_menu_page_selector(button_name))
+                action_chain = ActionChains(self.driver)
+                action_chain.move_to_element(button_element).perform()
+                sleep(2)  # Add a short delay to allow the tooltip to appear
+
+                # Get the actual tooltip text
+                actual_tooltip_text = button_element.get_attribute('title')
+
+                # Check if the actual tooltip text matches the expected tooltip text
+                if actual_tooltip_text != expected_tooltip_text:
+                    print(f"Tooltip text for button '{button_name}' does not match. Expected: '{expected_tooltip_text}', Actual: '{actual_tooltip_text}'")
+                    all_buttons_present = False
+            except NoSuchElementException:
+                print(f"Button '{button_name}' not found.")
+                all_buttons_present = False
+
+        return all_buttons_present
 
 
     def open_share_window(self,file_to_be_shared):
