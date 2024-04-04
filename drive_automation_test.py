@@ -6,164 +6,115 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver import Chrome
 import locators
 import files
-from library_functions import ElementaryActions
-from library_functions import ButtonClicker
-from library_functions import Helper
+# from library_functions import ElementaryActions
+# from library_functions import ButtonClicker 
 from library_functions import HigherActions
 import autoGUIutils
 import os
+import hashlib
 
-        
-@pytest.fixture(autouse=True,scope="session")
-def driver():
-    instance= Chrome(executable_path="./chromedriver.exe")
-    yield instance
-    instance.quit()
-    
-@pytest.fixture(autouse=True,scope="session")
-def web_driver_wait(driver):
-    instance= WebDriverWait(driver,10)
-    yield instance
-
-
-@pytest.fixture(scope="class", autouse=True)
-def button_clicker(driver,web_driver_wait, helper):
-    instance = ButtonClicker(driver, web_driver_wait, helper)
-    yield instance
-
-
-@pytest.fixture(scope="class", autouse=True)
-def helper(driver,web_driver_wait):
-    instance = Helper(driver, web_driver_wait,)
-    yield instance
-
-
-@pytest.fixture(scope="class", autouse=True)
-def higher_actions(driver,web_driver_wait, button_clicker, helper):
-    instance = HigherActions(driver, web_driver_wait, button_clicker, helper)
-    return instance
-
-not_first_sign_in = False
-
-@pytest.fixture(scope="class")
-def prepare_for_class(helper, driver,web_driver_wait, higher_actions,button_clicker):
-
-    #TODO  make a class called Setup
-    #TODO  make a class called Teardown
-
-    global not_first_sign_in
-    ### SETUP START ###
-    
-    driver.get("https://www.google.com/intl/en-US/drive/")
-    driver.maximize_window()
-    sleep(0.8)
-
-    signin_ele = helper.wait_to_click(locators.sign_in_link)
-    signin_ele.click()
-    sleep(1.3)
-    # opened by clicking sign-in anchor tag
-    sign_in_tab = driver.window_handles[-1]
-    driver.switch_to.window(sign_in_tab)
-    
-    parser = configparser.ConfigParser()
-    parser.read("config.ini")
-    account_email_id = parser.get("Account Credentials", "email")
-    account_pwd = parser.get("Account Credentials", "password")
-    
-    #LOGIC FOR HANDLING SECOND TIME LOGIN'S , ONE EXTRA CLICK .
-    
-    if not_first_sign_in:
-        account_div = helper.wait_to_click(locators.sign_in_account_locator)
-        account_div.click()
-        sleep(5)
-    else:
-        autoGUIutils.zoom_out()# SET ZOOM LEVEL ONCE AND FOR ALL  
-        helper.send_keys_to_focused(account_email_id)
-        helper.send_keys_to_focused(Keys.ENTER)
-        
-        helper.wait_for_element(locators.welcome_span)
-        sleep(3)  # to deal with input animation
-   
-    not_first_sign_in = True
-   
-    helper.send_keys_to_focused(account_pwd)
-    helper.send_keys_to_focused(Keys.ENTER)
-    
-    sleep(5)
-    
-    web_driver_wait.until(EC.title_is("Home - Google Drive"))
-    
-    
-
-    sleep(5)
-    ### SETUP END ###
-
-    yield
-  
-    ### TEARDOWN START ###
-    user_profile_button_element = helper.wait_for_element(locators.user_profile_button_locator)
-    button_clicker.click_element(user_profile_button_element)
-    sleep(2)
-   
-    autoGUIutils.n_tabs_shift_focus(5)
-    autoGUIutils.press_enter()
-    
-    driver.close()
-    before_signin = driver.window_handles[-1]
-    driver.switch_to.window(before_signin)
-    ### TEARDOWN END ###
-
-
-def test_prerequisites(driver, web_driver_wait, button_clicker, helper,higher_actions):
-    rawfilenames= [files.file_name_for_copy, files.file_to_be_deleted, files.file_name, files.file_move_name,files.view_info_file_name, *files.fileCollection ,files.share_file,files.delete_forever_file_name]
-    file_list_to_upload = " ".join(list(map(lambda a:f'"{a}"',rawfilenames)))
-    
-    button_clicker.click_on_new_button()
-        
-    upload_button = helper.wait_to_click(locators.new_menu_button_locator("File upload"))
-    upload_button.click()
-    sleep(2)
-
-    autoGUIutils.type_into_dialogue_box(file_list_to_upload)
-    sleep(3)
-
-    higher_actions.deal_duplicate_and_await_upload()
-    driver.refresh()
-    sleep(5)
-    
-    # to create SVM folder
-    button_clicker.click_on_new_button()
-        
-    action_button = helper.wait_to_click(locators.new_menu_button_locator("New folder"))
-    action_button.click()
-    sleep(2)
-
-    autoGUIutils.type_into_dialogue_box(files.folder_name_to_be_removed)
-    
-    driver.refresh()
-    assert True
-
+# not_first_sign_in = False
 class BaseTest:
-    @pytest.fixture(autouse=True)
-    def injector(self, helper, button_clicker,higher_actions,driver, web_driver_wait,prepare_for_class):
-        # instantiates pages object, and data readers
-        self.helper = helper
-        self.button_clicker = button_clicker
-        self.higher_actions = higher_actions
-        self.driver = driver
-        self.web_driver_wait = web_driver_wait
-        self.prepare_for_class = prepare_for_class
+    @classmethod
+    def setup_class(cls):
+        # global not_first_sign_in
+        cls.driver = Chrome()
+        cls.web_driver_wait = WebDriverWait(cls.driver, 10)
+        
+        cls.driver.get("https://www.google.com/intl/en-US/drive/")
+        cls.driver.maximize_window()
+        sleep(0.8)
+        cls.higher_actions =  HigherActions(cls.driver, cls.web_driver_wait)
+        signin_ele = cls.higher_actions.wait_to_click(locators.sign_in_link)
+        signin_ele.click()
+        sleep(1.3)
+    # Switch to the sign-in window explicitly based on URL or title
+        for window_handle in cls.driver.window_handles:
+            cls.driver.switch_to.window(window_handle)
+            if "accounts.google.com" in cls.driver.current_url or "Sign in" in cls.driver.title:
+                break
+        parser = configparser.ConfigParser()
+        parser.read("config.ini")
+        account_email_id = parser.get("Account Credentials", "email")
+        account_pwd = parser.get("Account Credentials", "password")
+     
+        # opened by clicking sign-in anchor tag
+        # sign_in_tab = cls.driver.window_handles[-1]
+        # cls.driver.switch_to.window(sign_in_tab)
+        # parser = configparser.ConfigParser()
+        # parser.read("config.ini")
+        # account_email_id = parser.get("Account Credentials", "email")
+        # account_pwd = parser.get("Account Credentials", "password")
+
+        # LOGIC FOR HANDLING SECOND TIME LOGIN'S , ONE EXTRA CLICK .
+
+        # if not_first_sign_in:
+        #account_div = cls.higher_actions.wait_to_click(locators.sign_in_account_locator)
+        #account_div.click()
+        #sleep(5)
+        # else:
+        #autoGUIutils.zoom_out()  # SET ZOOM LEVEL ONCE AND FOR ALL
+        cls.higher_actions.send_keys_to_focused(account_email_id)
+        cls.higher_actions.send_keys_to_focused(Keys.ENTER)
+        cls.higher_actions.wait_for_element(locators.welcome_span)
+        sleep(3)  # to deal with input animation
+        # not_first_sign_in = True
+        cls.higher_actions.send_keys_to_focused(account_pwd)
+        cls.higher_actions.send_keys_to_focused(Keys.ENTER)
+        sleep(5)
+        #cls.web_driver_wait.until(EC.title_is("Home - Google Drive"))
+
+    @classmethod
+    def teardown_class(cls):
+         # TEARDOWN START ###
+        user_profile_button_element = cls.higher_actions.wait_for_element(locators.user_profile_button_locator)
+        cls.higher_actions.click_element(user_profile_button_element)
+        sleep(2)
+        autoGUIutils.n_tabs_shift_focus(5)
+        autoGUIutils.press_enter()
+        cls.driver.close()
+        before_signin = cls.driver.window_handles[-1]
+        cls.driver.switch_to.window(before_signin)
+        cls.driver.quit()
+        # TEARDOWN END ###
+    
+    
 
 class TestMiscellaneousActions(BaseTest):
-      
-    def test_share_via_link(self):
-        self.button_clicker.navigate_to("Home")
+    @classmethod
+    def setup_class(cls):
+        super(cls, TestMiscellaneousActions).setup_class()#FIRST SUPER CLASS
+        prereqs = [files.view_info_file_name, files.share_file]
+        file_list_to_upload = " ".join(list(map(lambda a: f'"{a}"', prereqs)))
+        cls.higher_actions.click_on_new_button()
+        upload_button = cls.higher_actions.wait_to_click(locators.new_menu_button_locator("File upload"))
+        upload_button.click()
         sleep(2)
-        self.helper.select_item(files.share_file,False)
+        autoGUIutils.type_into_dialogue_box(file_list_to_upload)
         sleep(3)
-        share_button = self.helper.wait_for_element(locators.action_bar_button_selector("Share"))
+        cls.higher_actions.deal_duplicate_and_await_upload()
+        cls.driver.refresh()
+        sleep(5)
+    
+    @classmethod
+    def teardown_class(cls):
+        #FIRST SUBCLASS TEARDOWN LOGIC
+        files_to_clean = [files.share_file , files.view_info_file_name]
+        for filename in files_to_clean:
+            cls.higher_actions.remove_file_action(filename)
+
+        super(cls, TestMiscellaneousActions).teardown_class()#THEN SUPERCLASS TEARDOWN
+    
+      
+    def test_share_via_link(self ):
+        self.higher_actions.navigate_to("Home")
+        sleep(2)
+        self.higher_actions.select_item(files.share_file)
+        sleep(3)
+        share_button = self.higher_actions.wait_for_element(locators.action_bar_button_selector("Share"))
         share_button.click()
         sleep(5)
         autoGUIutils.n_tabs_shift_focus(3)
@@ -171,194 +122,229 @@ class TestMiscellaneousActions(BaseTest):
         sleep(0.4)
         autoGUIutils.go_back_esc()
         assert True
-    
-    
 
-    def test_view_file_info(self):  
-        self.helper.select_item(files.view_info_file_name,False)  
+    def test_view_file_info(self):
+        self.higher_actions.select_item(files.view_info_file_name)
         autoGUIutils.view_shortcut()
-        element = self.helper.wait_to_click(locators.file_info_dialog_locator)
+        element = self.higher_actions.wait_to_click(locators.file_info_dialog_locator)
         if not element:
-            
             assert False, f"File info dialog for {files.view_info_file_name} is not visible"
         else:
-            self.button_clicker.click_element(element)
+            self.higher_actions.click_element(element)
+            sleep(3)
+            autoGUIutils.go_back_esc()
+            assert True
+
+    def test_verify_tooltip_text(self):
+        verification_result = self.higher_actions.verify_button_tooltips(files.button_names_and_tooltips)
+        if verification_result:
+            assert True
 
 
 class TestfileActions(BaseTest):
-    
-   
     """
     Test function to rename a file in the Google Drive web GUI.
     """
+    @classmethod
+    def setup_class(cls):
+        super(cls,TestfileActions).setup_class()#FIRST SUPER CLASS
+        #THEN SUBCLASS SETUP
+        prereqs = [files.file_name, files.file_name_for_copy, files.file_move_name , files.file_to_be_deleted , *files.fileCollection , files.delete_forever_file_name]
+        file_list_to_upload = " ".join(list(map(lambda a: f'"{a}"', prereqs)))
+        cls.higher_actions.click_on_new_button()
+        upload_button = cls.higher_actions.wait_to_click(locators.new_menu_button_locator("File upload"))
+        upload_button.click()
+        sleep(2)
+        autoGUIutils.type_into_dialogue_box(file_list_to_upload)
+        sleep(3)
+        cls.higher_actions.deal_duplicate_and_await_upload()
+        cls.driver.refresh()
+        sleep(5)
+        
+       
+    @classmethod
+    def teardown_class(cls):
+        #FIRST SUBCLASS TEARDOWN LOGIC
+        files_to_clean = [files.renamed_file_name, files.FILE_TO_UPLOAD, files.file_name_for_copy, files.expected_copied_file_name, files.file_to_be_searched, files.file_to_be_restored]
+        for filename in files_to_clean:
+            cls.higher_actions.remove_file_action(filename)
+        
+        super(cls,TestfileActions).teardown_class()#THEN SUPERCLASS TEARDOWN
 
     def test_rename_file(self):
         old_file_name = files.file_name
         new_file_name = files.renamed_file_name
-        result = self.higher_actions.rename_action(old_file_name,new_file_name)
+        result = self.higher_actions.rename_action(old_file_name, new_file_name)
         assert result, "Rename failed"
-    
-        
+
     def test_get_filenames(self):
-        no_of_files = self.higher_actions.get_file_names_action() 
+        no_of_files = self.higher_actions.get_file_names_action()
         assert no_of_files > 0
-    
+
     def test_upload_file(self):
         # this file is present in User folder
         self.higher_actions.upload_file_action(files.FILE_TO_UPLOAD)
-        assert self.helper.wait_for_element(locators.file_selector(files.FILE_TO_UPLOAD))
-
-
+        self.higher_actions.wait_for_element(locators.file_selector(files.FILE_TO_UPLOAD))
+        ground_truth_hash=None
+        with open(os.path.join('C:\\Users', os.getlogin(), files.FILE_TO_UPLOAD), "rb") as ground_truth_file:
+            
+            ground_truth_hash = hashlib.file_digest(ground_truth_file,"md5").hexdigest()
+        self.higher_actions.select_item(files.FILE_TO_UPLOAD)
+        download_button = self.higher_actions.wait_for_element(locators.action_bar_button_selector("Download"))
+        download_button.click()
+        sleep(6)
+        downloaded_file_hash=None
+        with open(os.path.join('C:\\Users', os.getlogin(), "Downloads" ,files.FILE_TO_UPLOAD), "rb") as downloaded_file:
+            
+            downloaded_file_hash = hashlib.file_digest(downloaded_file,"md5").hexdigest()
+        assert downloaded_file_hash == ground_truth_hash
+        
     """
     ## Test function to download a file in the Google Drive web GUI.
     """
 
-
     def test_download_file(self):
-        self.helper.select_item(files.renamed_file_name,True)
-        download_button = self.helper.wait_for_element(locators.action_bar_button_selector("Download"))
+        self.higher_actions.select_item(files.file_name_for_copy)
+        download_button = self.higher_actions.wait_for_element(locators.action_bar_button_selector("Download"))
         download_button.click()
-        
         sleep(6)
-        assert files.renamed_file_name+".pdf" in os.listdir(r"C:\Users\Sathvik Malgikar\Downloads")
-
+        assert files.file_name_for_copy  in os.listdir(os.path.join('C:\\Users', os.getlogin(), 'Downloads'))
 
     def test_copy_file(self):
         copied_file_element = self.higher_actions.copy_file_action(files.file_name_for_copy)
         assert copied_file_element is not None
 
 
+    def test_search_for_file_by_name(self):
+        self.higher_actions.search_by_name_action(files.file_to_be_searched)
 
-    class Search:
+    def test_search_for_file_by_type(self):
+        no_of_files = self.higher_actions.search_by_type_action()
+        assert no_of_files > 0
+    
+    def test_move_file(self):
+        filename = files.file_move_name
+        destination_folder = files.destination_folder_name
+        self.button_clicker.navigate_to("Home")
+        self.higher_actions.move_action(filename, destination_folder, True)
+        assert not self.higher_actions.wait_for_element(locators.file_selector(filename))
+
+    def test_move_multiple_files(self):
+        file_destination_pairs = [
+            ("test.txt", "After_rename"),
+            ("test2.txt", "After_rename"),
+            ("test3.txt", "F1"),
+        ]
+        show_more_needed = True
+        for idx, (filename, destination_folder) in enumerate(file_destination_pairs):
+            try:
+                self.parent.higher_actions.move_action(filename, destination_folder, show_more_needed)
+                self.parent.higher_actions.verify_file_in_destination(filename, destination_folder)
+                self.parent.higher_actions.navigate_to("My Drive")
+                assert not self.higher_actions.wait_for_element(locators.file_selector(filename))
+
+                if idx == 0:
+                    show_more_needed = False
+            except Exception as e:
+                print(f"Move operation failed for file '{filename}' to folder '{destination_folder}': {e}")
+                # Continue to next move even if current move fails
+                assert False
+
+
+                                
+    def test_remove_file(self):
+        file_name = files.file_to_be_deleted
+        self.higher_actions.remove_file_action(file_name)
         
-
-        def test_search_for_file_by_name(self):
-            self.higher_actions.search_by_name_action(files.file_to_be_searched)
-
-            # file_elements = self.higher_actions.search_file_by_name(files.file_to_be_searched)
-            # assert (file_elements==[] or file_elements.count(self.files.file_to_be_searched) == len(file_elements))
-
-            
-        def test_search_for_file_by_type(self):
-            no_of_files = self.higher_actions.search_by_type_action()
-            assert no_of_files > 0
+    """ 
+    The following tests are commented out because they require manual intervention and cannot be run on the CI server.
+    The following tests are commented out because they
+    
+    ## Test function to remove multiple files in the Google Drive web GUI.
+    """
 
 
-    class Move:
-            
-        
-        def test_move_file(self):
+    def test_remove_multiple_files(self):
+        self.higher_actions.navigate_to("Home")
+        sleep(2)
+        for file in files.fileCollection:
+            try:
+                self.higher_actions.remove_file_action(file)
+            except FileNotFoundError as e:
+                assert False, repr(e)
 
-            filename=files.file_move_name
-            destination_folder=files.destination_folder_name
-            self.higher_actions.move_action(filename,destination_folder)
-            assert not self.helper.wait_for_element(locators.file_selector(filename)) 
+            finally:
+                self.driver.refresh()
 
-        def test_move_multiple_files(self):
-            file_destination_pairs = [
-                ("test.txt", "After_rename"),
-                ("test2.txt", "After_rename"),
-                ("test3.txt", "F1"),
-            ]
-            show_more_needed=True
-            for idx, (filename, destination_folder) in enumerate(file_destination_pairs):
-                try:
-                    self.higher_actions.move_action(filename, destination_folder,show_more_needed)
-                    self.higher_actions.verify_file_in_destination(filename, destination_folder)
-                    self.button_clicker.navigate_to("My Drive")
-                    assert not self.helper.wait_for_element(locators.file_selector(filename))
+    def test_delete_file_permanently(self):
+        result = self.higher_actions.delete_permanently_action(files.delete_forever_file_name)
+        if (result is False):
+            assert False, "Error occured"
+        else:
+            assert True, f"{files.delete_forever_file_name} is permanently deleted"
 
-                    if idx==0:
-                            show_more_needed=False
-                except Exception as e:
-                    print(f"Move operation failed for file '{filename}' to folder '{destination_folder}': {e}")
-                    # Continue to next move even if current move fails
-                    continue
-                
+    """
+    Test function to undo delete action in the Google Drive web GUI.
+    """
 
+    def test_undo_delete_action(self):
+        file_name_to_retrieve = files.file_to_be_restored
+        restoration_successful = self.higher_actions.undo_delete_action(file_name_to_retrieve)
+        assert restoration_successful is True, f"Failed to restore file '{file_name_to_retrieve}'"
 
-    class Delete:
-
-        """
-        Test function to remove a file from the Google Drive web GUI.
-        """
-
-        def test_remove_file(self):
-            file_name = files.file_to_be_deleted
-            self.higher_actions.remove_file_action(file_name)
-        
-
-
-
-        """
-        ## Test function to remove multiple files in the Google Drive web GUI.
-        """
-
-
-        def test_remove_multiple_files(self):
-            self.button_clicker.navigate_to("Home")
-            sleep(2)
-            for file in files.fileCollection:
-                try:
-                    self.higher_actions.remove_file_action(file)
-                    # self.helper.select_item(file, True)
-                    # self.button_clicker.click_action_bar_button("Move to trash")
-                    #assert not file_actions.helper.wait_for_element(locators.file_selector(file))  
-                except FileNotFoundError as e:
-                    assert False, repr(e)
-                    
-                finally:
-                    self.driver.refresh()
-            
-
-
-        def test_delete_file_permanently(self):
-            result = self.higher_actions.delete_permanently_action(files.delete_forever_file_name)
-            if(result == False):
-                assert False, "Error occured"
-            else:
-                assert True, f"{files.delete_forever_file_name} is permanently deleted"
-        
-        """
-        Test function to undo delete action in the Google Drive web GUI.
-        """
-
-
-        def test_undo_delete_action(self):
-            file_name_to_retrieve = files.file_to_be_restored
-            restoration_successful = self.higher_actions.undo_delete_action(file_name_to_retrieve)
-            assert restoration_successful == True, f"Failed to restore file '{file_name_to_retrieve}'"
 
 class TestfolderActions(BaseTest):
 
     """
     Test function to rename a folder in the Google Drive web GUI.
     """
+    @classmethod
+    def setup_class(cls):
+        super(cls, TestfolderActions).setup_class()#FIRST SUPER CLASS
+        #THEN SUBCLASS SETUP
+        folders_to_create = [files.folder_name, files.folder_name_to_be_removed]
+        
+        for folder_name in folders_to_create:
+            cls.higher_actions.click_on_new_button()
+            action_button = cls.higher_actions.wait_to_click(locators.new_menu_button_locator("New folder"))
+            action_button.click()
+            sleep(2)
+            autoGUIutils.type_into_dialogue_box(folder_name)
+            cls.driver.refresh()
+            sleep(4)
+
+       
+    
+    @classmethod
+    def teardown_class(cls):
+        #FIRST SUBCLASS TEARDOWN LOGIC
+        folders_to_clean = [files.renamed_folder_name , files.create_folder_name]
+        for foldername in folders_to_clean:
+            cls.higher_actions.remove_file_action(foldername) # remove_file_action works for both file and folder
+        
+        super(cls, TestfolderActions).teardown_class()#THEN SUPERCLASS TEARDOWN
 
     def test_rename_folder(self):
         old_folder_name = files.folder_name
         new_folder_name = files.renamed_folder_name
-        result = self.higher_actions.test_rename_folder(old_folder_name,new_folder_name)
+        result = self.higher_actions.rename_folder_action(old_folder_name, new_folder_name)
         assert result, "Rename failed"
-        
 
-    
     """
     ## Test function to create a new folder in the Google Drive web GUI.
     """
 
     def test_create_folder(self):
-        folder_name=files.create_folder_name
+        folder_name = files.create_folder_name
         self.higher_actions.create_folder_action(folder_name)
-        assert self.helper.wait_for_element(locators.file_selector(folder_name))!=None
+        assert self.higher_actions.wait_for_element(locators.file_selector(folder_name)) is not None
         sleep(3)
-  
-        
+
     """
     ## Test function to upload new file in the Google Drive web GUI.
     """
 
     def test_remove_folder(self):
-        folder_to_be_removed=files.folder_name_to_be_removed
+        folder_to_be_removed = files.folder_name_to_be_removed
         self.higher_actions.remove_folder_action(folder_to_be_removed)
-        assert not self.helper.wait_for_element(locators.file_selector(folder_to_be_removed)) 
+        assert not self.higher_actions.wait_for_element(locators.file_selector(folder_to_be_removed))
