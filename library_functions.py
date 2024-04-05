@@ -695,7 +695,7 @@ class HigherActions(ButtonClicker) :
 
     def verify_button_tooltips(self, button_names_and_tooltips):
         """
-        Verify the tooltip text of buttons like "Home", "My Drive", etc.
+        Verify the tooltip text of buttons like "Home", "My Drive" etc.
 
         Parameters:
         button_names_and_tooltips (dict): A dictionary containing button names as keys and expected tooltip text as values.
