@@ -36,8 +36,17 @@ class TestfileActions(BaseTest):
     def test_rename_file(self):
         old_file_name = files.file_name
         new_file_name = files.renamed_file_name
-        result = self.higher_actions.rename_action(old_file_name, new_file_name)
+        self.higher_actions.rename_action(old_file_name, new_file_name)
+        result = self.higher_actions.rename_verification(old_file_name, new_file_name)
         assert result, "Rename failed"
+
+    def test_undo_rename_file(self):
+        old_file_name = files.undo_rename
+        new_file_name = files.renamed_undo_rename
+        self.higher_actions.undo_rename_action(old_file_name, new_file_name)
+        result = self.higher_actions.rename_verification(old_file_name, new_file_name)
+        assert not result, "Undo rename failed"
+
 
     def test_get_filenames(self):
         no_of_files = self.higher_actions.get_file_names_action()

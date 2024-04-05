@@ -18,7 +18,6 @@ import autoGUIutils
     This class provides methods to perform basic actions such as waiting for elements,
     double-clicking on elements, dragging and dropping elements, sending keys to elements,
     and performing context clicks.
-
     Parameters:
     driver (WebDriver): The Selenium WebDriver instance.
     web_driver_wait (WebDriverWait): The Selenium WebDriverWait instance for waiting on elements.
@@ -26,10 +25,9 @@ import autoGUIutils
 
 parser = configparser.ConfigParser()
 parser.read("config.ini")
-small_delay = parser.get("Delay Parameters", "small_delay")
-medium_delay = parser.get("Delay Parameters", "medium_delay")
-large_delay = parser.get("Delay Parameters", "large_delay")
-
+small_delay = float(parser.get("Delay Parameters", "small_delay"))
+medium_delay = float(parser.get("Delay Parameters", "medium_delay"))
+large_delay = float(parser.get("Delay Parameters", "large_delay"))
 
 class ElementaryActions:
     def __init__(self, driver, web_driver_wait):
@@ -483,8 +481,15 @@ class HigherActions(ButtonClicker) :
         self.select_item(old_file_name)
         self.rename_selected_item(new_file_name)
         self.click_on_ok_button()
+        
+    
+    def undo_rename_action(self, old_file_name, new_file_name):
+        self.rename_action(old_file_name, new_file_name)
+        # press control+z 
+        pyautogui.hotkey('ctrl', 'z')
         result = self.rename_verification(old_file_name, new_file_name)
         return result
+
 
     """Get the number of file names.
 
@@ -742,3 +747,34 @@ class HigherActions(ButtonClicker) :
                 all_buttons_present = False
 
         return all_buttons_present
+    
+
+    def verify_file_tooltips(self):
+        self.navigate_to("Home")
+        # Initialize flag to track verification status
+        all_files_verified = True
+
+        # Get the list of file names
+        file_name_divs = self.driver.find_elements(By.CSS_SELECTOR, "div.KL4NAf")
+        file_names = [file_name_div.text for file_name_div in file_name_divs]
+
+        # Loop through each file name
+        for file_name in file_names:
+            try:
+                # Select the file to trigger the tooltip
+                self.select_item(file_name)
+                sleep(small_delay)  # Add a short delay to allow the tooltip to appear
+
+                # Get the actual tooltip text
+                file_element = self.wait_for_element(locators.file_selector(file_name))
+                actual_tooltip_text = file_element.get_attribute('title')
+
+                # Check if the tooltip text is present
+                if not actual_tooltip_text:
+                    print(f"Tooltip text for file '{file_name}' is not present.")
+                    all_files_verified = False
+            except NoSuchElementException:
+                print(f"File '{file_name}' not found.")
+                all_files_verified = False
+
+        return all_files_verified

@@ -4,6 +4,7 @@ import files
 
 welcome_span = (By.XPATH, "//span[contains(text(), 'Welcome')]")
 sign_in_link = (By.LINK_TEXT, "Sign in")
+password_input = (By.CSS_SELECTOR, "input[name='Passwd']")
 
 new_button_selector = (By.CSS_SELECTOR, "button.brbsPe.Ss7qXc.a-qb-d")
 
@@ -80,4 +81,3 @@ add_button_locator = (By.CSS_SELECTOR, 'button.VfPpkd-LgbsSe.VfPpkd-LgbsSe-OWXEX
 all_locations_button_locator = (By.CSS_SELECTOR, 'button.VfPpkd-AznF2e.VfPpkd-AznF2e-OWXEXe-jJNx8e-QBLLGd.WbUJNb.FEsNhd.VCOGmd.u4B0v[role="tab"][aria-selected="false"][id="all_locations"]')
 
 shortcut_folder_button_locator = (By.CSS_SELECTOR, 'td[aria-label="ShortcutFolder"]')
-

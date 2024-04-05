@@ -18,11 +18,10 @@ class BaseTest:
         
         cls.driver.get("https://www.google.com/intl/en-US/drive/")
         cls.driver.maximize_window()
-    
+        sleep(3)
         cls.higher_actions =  HigherActions(cls.driver, cls.web_driver_wait)
         signin_ele = cls.higher_actions.wait_to_click(locators.sign_in_link)
         signin_ele.click()
-        sleep(1.3)
     # Switch to the sign-in window explicitly based on URL or title
         for window_handle in cls.driver.window_handles:
             cls.driver.switch_to.window(window_handle)
@@ -36,7 +35,8 @@ class BaseTest:
         cls.higher_actions.send_keys_to_focused(account_email_id)
         cls.higher_actions.send_keys_to_focused(Keys.ENTER)
         cls.higher_actions.wait_for_element(locators.welcome_span)
-        # deal with input animation ? removed
+        # deal with input animation 
+        sleep(3)
         # not_first_sign_in = True
         cls.higher_actions.send_keys_to_focused(account_pwd)
         cls.higher_actions.send_keys_to_focused(Keys.ENTER)

@@ -6,10 +6,10 @@ import os
 
 parser = configparser.ConfigParser()
 parser.read("config.ini")
-very_small_delay = parser.get("Delay Parameters", "very_small_delay")
-small_delay = parser.get("Delay Parameters", "small_delay")
-medium_delay = parser.get("Delay Parameters", "medium_delay")
-large_delay = parser.get("Delay Parameters", "large_delay")
+very_small_delay = float(parser.get("Delay Parameters", "very_small_delay"))
+small_delay = int(parser.get("Delay Parameters", "small_delay"))
+medium_delay = float(parser.get("Delay Parameters", "medium_delay"))
+large_delay = int(parser.get("Delay Parameters", "large_delay"))
 
 """
 Utility function to type text into a dialogue box in the GUI.

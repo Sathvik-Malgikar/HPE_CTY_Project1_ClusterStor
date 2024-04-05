@@ -53,3 +53,9 @@ class TestMiscellaneousActions(BaseTest):
         verification_result = self.higher_actions.verify_button_tooltips(files.button_names_and_tooltips)
         if verification_result:
             assert True
+
+    def test_verify_file_tooltip(self):
+        verification_result = self.higher_actions.verify_file_tooltips()
+        if verification_result:
+            assert True
+
