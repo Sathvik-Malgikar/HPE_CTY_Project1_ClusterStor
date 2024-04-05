@@ -14,7 +14,7 @@ class TestfileActions(BaseTest):
     def setup_class(cls):
         super(cls,TestfileActions).setup_class()#FIRST SUPER CLASS
         #THEN SUBCLASS SETUP
-        prereqs = [files.file_name, files.file_name_for_copy, files.file_move_name , files.file_to_be_deleted , *files.fileCollection , files.delete_forever_file_name]
+        prereqs = [files.file_name, files.file_name_for_copy, files.file_move_name , files.file_to_be_deleted , *files.fileCollection , files.delete_forever_file_name, files.undo_rename]
         file_list_to_upload = " ".join(list(map(lambda a: f'"{a}"', prereqs)))
         cls.higher_actions.click_on_new_button()
         upload_button = cls.higher_actions.wait_to_click(locators.new_menu_button_locator("File upload"))
@@ -27,7 +27,7 @@ class TestfileActions(BaseTest):
     @classmethod
     def teardown_class(cls):
         #FIRST SUBCLASS TEARDOWN LOGIC
-        files_to_clean = [files.renamed_file_name, files.FILE_TO_UPLOAD, files.file_name_for_copy, files.expected_copied_file_name, files.file_to_be_searched, files.file_to_be_restored]
+        files_to_clean = [files.renamed_file_name, files.FILE_TO_UPLOAD, files.file_name_for_copy, files.expected_copied_file_name, files.file_to_be_searched, files.file_to_be_restored, files.renamed_undo_rename]
         for filename in files_to_clean:
             cls.higher_actions.remove_file_action(filename)
         
@@ -44,9 +44,9 @@ class TestfileActions(BaseTest):
         old_file_name = files.undo_rename
         new_file_name = files.renamed_undo_rename
         self.higher_actions.undo_rename_action(old_file_name, new_file_name)
-        result = self.higher_actions.rename_verification(old_file_name, new_file_name)
-        assert not result, "Undo rename failed"
-
+        result = self.higher_actions.undo_rename_verification(old_file_name, new_file_name)
+        assert result, "Undo Rename failed"
+        
 
     def test_get_filenames(self):
         no_of_files = self.higher_actions.get_file_names_action()

@@ -491,8 +491,18 @@ class HigherActions(ButtonClicker) :
         self.rename_action(old_file_name, new_file_name)
         # press control+z 
         pyautogui.hotkey('ctrl', 'z')
-        result = self.rename_verification(old_file_name, new_file_name)
+        result = self.undo_rename_verification(old_file_name, new_file_name)
         return result
+    
+    def undo_rename_verification(self, old_file_name, new_file_name):
+        # Verify that the new file doesn't exist
+        old_file_element = self.wait_for_element(locators.file_selector(new_file_name))
+        assert old_file_element is None, f"Old file '{old_file_name}' still exists after rename operation."
+        # Verify the existence of the old file
+        renamed_file_element = self.wait_for_element(locators.file_selector(old_file_name))
+        assert renamed_file_element is not None, f"New file '{new_file_name}' not found after rename operation."
+        # return true if both conditions are satisfied
+        return True
 
 
     """Get the number of file names.

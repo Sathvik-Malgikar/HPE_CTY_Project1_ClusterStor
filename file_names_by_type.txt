@@ -1,1 +1,10 @@
+abc.txt
+Copy of test.txt
+deletion_file.txt
+move1.txt
+move2.txt
 renamed_cty.pdf
+Screenshot (177).png
+test.txt
+test2.txt
+undo_rename.txt

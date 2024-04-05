@@ -37,3 +37,6 @@ fileCollection = ['move1.txt', 'move2.txt']
 button_names_and_tooltips = {"Home": "Home", "My Drive": "My Drive", "Computers": "Computers", "Shared with me": "Items shared with me", "Recent": "Recent items", "Starred": "Starred items", "Spam": "Spam", "Trash": "Trashed items", "Storage": "Storage"} 
 
 portCollection = ['port1.txt', 'port2.txt', 'port3.txt']
+
+undo_rename = "undo_rename.txt"
+renamed_undo_rename = "renamed_undo_rename.txt"
