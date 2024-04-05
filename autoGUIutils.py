@@ -1,5 +1,15 @@
 import pyautogui
 from time import sleep
+import configparser
+import time
+import os
+
+parser = configparser.ConfigParser()
+parser.read("config.ini")
+very_small_delay = parser.get("Delay Parameters", "very_small_delay")
+small_delay = parser.get("Delay Parameters", "small_delay")
+medium_delay = parser.get("Delay Parameters", "medium_delay")
+large_delay = parser.get("Delay Parameters", "large_delay")
 
 """
 Utility function to type text into a dialogue box in the GUI.
@@ -19,39 +29,38 @@ Usage:
     type_into_dialogue_box(FILE_TO_UPLOAD)
 """
 
-def type_into_dialogue_box(FILE_TO_UPLOAD):
+def type_into_dialogue_box(stringvalue):
     # types into dialogue box
-    pyautogui.typewrite(FILE_TO_UPLOAD)
-    sleep(1)
+    pyautogui.typewrite(stringvalue)
+    sleep(small_delay)
     pyautogui.press("enter")
-    sleep(3)
+    sleep(medium_delay)
 
 def go_back_esc():
     # types into dialogue box
     pyautogui.press("esc")
-    sleep(4)
+    sleep(medium_delay)
 
 def press_tab():
     # types into dialogue box
     pyautogui.press("tab")
-    sleep(1)
+    sleep(small_delay)
   
 def n_tabs_shift_focus(n):
+    sleep(medium_delay)
     for i in range(n):
         press_tab()
-        sleep(0.4)
+        sleep(very_small_delay)
             
 def press_enter():
     # types into dialogue box
     pyautogui.press("enter")
-    sleep(2)
+    sleep(small_delay)
     
 def view_shortcut():
     # types into dialogue box
     pyautogui.typewrite("gd")
-    sleep(2)
-
-    
+    sleep(small_delay)
     
     
 def zoom_out():
@@ -59,3 +68,12 @@ def zoom_out():
     pyautogui.press("-")
     pyautogui.press("-")
     pyautogui.keyUp("ctrl")
+    
+def wait_for_file(path, timeout=None, poll_interval=2):
+    start_time = time.time()
+    while True:
+        if os.path.exists(path):
+            return True
+        if timeout is not None and time.time() - start_time >= timeout:
+            return False
+        time.sleep(poll_interval)
