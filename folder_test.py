@@ -1,4 +1,3 @@
-from time import sleep
 import locators
 import files
 import autoGUIutils
@@ -20,10 +19,9 @@ class TestfolderActions(BaseTest):
             cls.higher_actions.click_on_new_button()
             action_button = cls.higher_actions.wait_to_click(locators.new_menu_button_locator("New folder"))
             action_button.click()
-            sleep(2)
+            
             autoGUIutils.type_into_dialogue_box(folder_name)
-            cls.driver.refresh()
-            sleep(4)
+            cls.higher_actions.refresh_and_wait_to_settle()
 
        
     
@@ -50,7 +48,7 @@ class TestfolderActions(BaseTest):
         folder_name = files.create_folder_name
         self.higher_actions.create_folder_action(folder_name)
         assert self.higher_actions.wait_for_element(locators.file_selector(folder_name)) is not None
-        sleep(3)
+        
 
     """
     ## Test function to upload new file in the Google Drive web GUI.

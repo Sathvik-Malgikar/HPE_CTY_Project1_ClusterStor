@@ -1,6 +1,8 @@
 import pyautogui
 from time import sleep
 import configparser
+import time
+import os
 
 parser = configparser.ConfigParser()
 parser.read("config.ini")
@@ -45,6 +47,7 @@ def press_tab():
     sleep(small_delay)
   
 def n_tabs_shift_focus(n):
+    sleep(medium_delay)
     for i in range(n):
         press_tab()
         sleep(very_small_delay)
@@ -58,8 +61,6 @@ def view_shortcut():
     # types into dialogue box
     pyautogui.typewrite("gd")
     sleep(small_delay)
-
-    
     
     
 def zoom_out():
@@ -67,3 +68,12 @@ def zoom_out():
     pyautogui.press("-")
     pyautogui.press("-")
     pyautogui.keyUp("ctrl")
+    
+def wait_for_file(path, timeout=None, poll_interval=2):
+    start_time = time.time()
+    while True:
+        if os.path.exists(path):
+            return True
+        if timeout is not None and time.time() - start_time >= timeout:
+            return False
+        time.sleep(poll_interval)

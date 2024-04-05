@@ -180,6 +180,17 @@ class ElementaryActions:
     def context_click(self):
         action_chain = ActionChains(self.driver)
         action_chain.context_click().perform()
+    
+    """Perform a refresh operation and wait till the page loads.
+        Parameters:None
+        Raises:
+        None
+    """
+    
+    def refresh_and_wait_to_settle(self):
+        self.driver.refresh()
+        sleep(large_delay)    
+    
 
     """Click on a specified element.
 
@@ -288,6 +299,7 @@ class ButtonClicker(ElementaryActions):
     def navigate_to(self, button_name):
         button_element = self.wait_to_click(locators.left_menu_page_selector(button_name))
         button_element.click()
+        sleep(small_delay)
 
 
 """Class for performing higher-level actions using Selenium WebDriver in Google Drive.

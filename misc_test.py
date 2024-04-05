@@ -1,4 +1,3 @@
-from time import sleep
 import locators
 import files
 import autoGUIutils
@@ -15,12 +14,9 @@ class TestMiscellaneousActions(BaseTest):
         cls.higher_actions.click_on_new_button()
         upload_button = cls.higher_actions.wait_to_click(locators.new_menu_button_locator("File upload"))
         upload_button.click()
-        sleep(2)
         autoGUIutils.type_into_dialogue_box(file_list_to_upload)
-        sleep(3)
         cls.higher_actions.deal_duplicate_and_await_upload()
-        cls.driver.refresh()
-        sleep(5)
+        cls.higher_actions.refresh_and_wait_to_settle()
     
     @classmethod
     def teardown_class(cls):
@@ -34,15 +30,11 @@ class TestMiscellaneousActions(BaseTest):
       
     def test_share_via_link(self ):
         self.higher_actions.navigate_to("Home")
-        sleep(2)
         self.higher_actions.select_item(files.share_file)
-        sleep(3)
         share_button = self.higher_actions.wait_for_element(locators.action_bar_button_selector("Share"))
         share_button.click()
-        sleep(5)
         autoGUIutils.n_tabs_shift_focus(3)
         autoGUIutils.press_enter()
-        sleep(0.4)
         autoGUIutils.go_back_esc()
         assert True
 
@@ -54,7 +46,6 @@ class TestMiscellaneousActions(BaseTest):
             assert False, f"File info dialog for {files.view_info_file_name} is not visible"
         else:
             self.higher_actions.click_element(element)
-            sleep(3)
             autoGUIutils.go_back_esc()
             assert True
 

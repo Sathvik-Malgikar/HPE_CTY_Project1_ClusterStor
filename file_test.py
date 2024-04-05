@@ -1,4 +1,3 @@
-from time import sleep
 import locators
 import files
 import autoGUIutils
@@ -20,12 +19,9 @@ class TestfileActions(BaseTest):
         cls.higher_actions.click_on_new_button()
         upload_button = cls.higher_actions.wait_to_click(locators.new_menu_button_locator("File upload"))
         upload_button.click()
-        sleep(2)
         autoGUIutils.type_into_dialogue_box(file_list_to_upload)
-        sleep(3)
         cls.higher_actions.deal_duplicate_and_await_upload()
-        cls.driver.refresh()
-        sleep(5)
+        cls.higher_actions.refresh_and_wait_to_settle()
         
        
     @classmethod
@@ -58,12 +54,17 @@ class TestfileActions(BaseTest):
         self.higher_actions.select_item(files.FILE_TO_UPLOAD)
         download_button = self.higher_actions.wait_for_element(locators.action_bar_button_selector("Download"))
         download_button.click()
-        sleep(6)
-        downloaded_file_hash=None
-        with open(os.path.join('C:\\Users', os.getlogin(), "Downloads" ,files.FILE_TO_UPLOAD), "rb") as downloaded_file:
-            
-            downloaded_file_hash = hashlib.file_digest(downloaded_file,"md5").hexdigest()
-        assert downloaded_file_hash == ground_truth_hash
+        downloaded_file_path = os.path.join('C:\\Users', os.getlogin(), "Downloads" ,files.FILE_TO_UPLOAD)
+        
+        if autoGUIutils.wait_for_file(downloaded_file_path,timeout=16):# this will skip hash checking if file not downloaded before timeout
+                
+            downloaded_file_hash=None
+            with open(downloaded_file_path, "rb") as downloaded_file:
+                
+                downloaded_file_hash = hashlib.file_digest(downloaded_file,"md5").hexdigest()
+            assert downloaded_file_hash == ground_truth_hash
+        else:
+            assert False
         
     """
     ## Test function to download a file in the Google Drive web GUI.
@@ -73,8 +74,10 @@ class TestfileActions(BaseTest):
         self.higher_actions.select_item(files.file_name_for_copy)
         download_button = self.higher_actions.wait_for_element(locators.action_bar_button_selector("Download"))
         download_button.click()
-        sleep(6)
-        assert files.file_name_for_copy  in os.listdir(os.path.join('C:\\Users', os.getlogin(), 'Downloads'))
+        file_download_directory = os.path.join('C:\\Users', os.getlogin(), 'Downloads')
+        autoGUIutils.wait_for_file(os.path.join(file_download_directory, files.file_name_for_copy),timeout=18)
+        
+        assert files.file_name_for_copy  in os.listdir(file_download_directory)
 
     def test_copy_file(self):
         copied_file_element = self.higher_actions.copy_file_action(files.file_name_for_copy)
@@ -132,7 +135,6 @@ class TestfileActions(BaseTest):
 
     def test_remove_multiple_files(self):
         self.higher_actions.navigate_to("Home")
-        sleep(2)
         for file in files.fileCollection:
             try:
                 self.higher_actions.remove_file_action(file)

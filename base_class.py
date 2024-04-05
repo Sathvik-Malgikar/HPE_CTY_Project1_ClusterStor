@@ -18,7 +18,7 @@ class BaseTest:
         
         cls.driver.get("https://www.google.com/intl/en-US/drive/")
         cls.driver.maximize_window()
-        sleep(0.8)
+    
         cls.higher_actions =  HigherActions(cls.driver, cls.web_driver_wait)
         signin_ele = cls.higher_actions.wait_to_click(locators.sign_in_link)
         signin_ele.click()
@@ -36,11 +36,10 @@ class BaseTest:
         cls.higher_actions.send_keys_to_focused(account_email_id)
         cls.higher_actions.send_keys_to_focused(Keys.ENTER)
         cls.higher_actions.wait_for_element(locators.welcome_span)
-        sleep(3)  # to deal with input animation
+        # deal with input animation ? removed
         # not_first_sign_in = True
         cls.higher_actions.send_keys_to_focused(account_pwd)
         cls.higher_actions.send_keys_to_focused(Keys.ENTER)
-        sleep(5)
         #cls.web_driver_wait.until(EC.title_is("Home - Google Drive"))
 
     @classmethod
@@ -48,7 +47,6 @@ class BaseTest:
          # TEARDOWN START ###
         user_profile_button_element = cls.higher_actions.wait_for_element(locators.user_profile_button_locator)
         cls.higher_actions.click_element(user_profile_button_element)
-        sleep(2)
         autoGUIutils.n_tabs_shift_focus(5)
         autoGUIutils.press_enter()
         cls.driver.close()
