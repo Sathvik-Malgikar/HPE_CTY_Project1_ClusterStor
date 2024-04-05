@@ -29,8 +29,12 @@ small_delay = float(parser.get("Delay Parameters", "small_delay"))
 medium_delay = float(parser.get("Delay Parameters", "medium_delay"))
 large_delay = float(parser.get("Delay Parameters", "large_delay"))
 
+small_delay = float(parser.get("Delay Parameters", "small_delay"))
+medium_delay = float(parser.get("Delay Parameters", "medium_delay"))
+large_delay = float(parser.get("Delay Parameters", "large_delay"))
+
 class ElementaryActions:
-    def __init__(self, driver, web_driver_wait):
+    def __init__(self, driver : Chrome, web_driver_wait : WebDriverWait):
         self.driver = driver
         self.web_driver_wait = web_driver_wait
 
