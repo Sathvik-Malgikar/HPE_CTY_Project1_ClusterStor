@@ -30,9 +30,9 @@ Usage:
 """
 
 def type_into_dialogue_box(stringvalue):
+    sleep(small_delay)
     # types into dialogue box
     pyautogui.typewrite(stringvalue)
-    sleep(small_delay)
     pyautogui.press("enter")
     sleep(medium_delay)
 
