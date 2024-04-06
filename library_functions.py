@@ -1,5 +1,4 @@
 from time import sleep
-from selenium.webdriver.common.keys import Keys
 import pyautogui
 import pyperclip
 from selenium.webdriver.common.action_chains import ActionChains

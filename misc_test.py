@@ -29,15 +29,20 @@ class TestMiscellaneousActions(BaseTest):
     
       
     def test_share_via_link(self ):
-        self.higher_actions.navigate_to("Home")
-        self.higher_actions.select_item(files.share_file)
-        share_button = self.higher_actions.wait_for_element(locators.action_bar_button_selector("Share"))
-        share_button.click()
+        self.higher_actions.open_share_window(files.share_file)
         autoGUIutils.n_tabs_shift_focus(3)
         autoGUIutils.press_enter()
         autoGUIutils.go_back_esc()
-        assert True
+        self.higher_actions.verify_copied_link()
 
+    def test_share_file_to_friend(self):
+        file_to_be_shared=files.share_file
+        friend_email=files.email
+        #username=files.username
+        self.higher_actions.share_link_to_friend(file_to_be_shared,friend_email)
+        res=self.higher_actions.verify_share_link_to_friend(files.share_file,friend_email)
+        assert res, f"Friend's email {friend_email} not found in list"
+        
     def test_view_file_info(self):
         self.higher_actions.select_item(files.view_info_file_name)
         autoGUIutils.view_shortcut()
