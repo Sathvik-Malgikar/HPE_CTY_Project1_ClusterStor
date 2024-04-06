@@ -35,3 +35,9 @@ folder_name_to_be_removed = "SVM"
 fileCollection = ['move1.txt', 'move2.txt']
 
 email="sravnihm2021@gmail.com"
+username="Shravani Hiremath"
+
+folder_to_be_moved="Cloud computing"
+
+undo_file_move="undo_move.pdf"
+undo_move_destination_folder="Undo move destination folder"

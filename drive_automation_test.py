@@ -114,25 +114,18 @@ class TestMiscellaneousActions(BaseTest):
         autoGUIutils.press_enter()
         sleep(0.4)
         autoGUIutils.go_back_esc()
-        assert True
+        self.higher_actions.verify_copied_link()
 
     def test_share_file_to_friend(self):
-        self.higher_actions.open_share_window(files.share_file)
-        autoGUIutils.type_into_dialogue_box(files.email)
-        sleep(2)
-        autoGUIutils.press_enter()
-        autoGUIutils.n_tabs_shift_focus(3)
-        sleep(2)
-        autoGUIutils.type_into_dialogue_box("short notes")
-        autoGUIutils.n_tabs_shift_focus(3)
-        autoGUIutils.press_enter
-        self.driver.refresh()
-        # self.higher_actions.select_item(files.share_file)
-        # access_info_element = self.higher_actions.wait_for_element(locators.access_info_selector)
-        # access_info_text=access_info_element.text
-        # expected_text = "Shared with sravnihm2021"
-        # assert expected_text in access_info_text, f"Expected '{expected_text}' but got '{access_info_text}'"    
+        file_to_be_shared=files.share_file
+        friend_email=files.email
+        #username=files.username
+        self.higher_actions.share_link_to_friend(file_to_be_shared,friend_email)
+        res=self.higher_actions.verify_share_link_to_friend(files.share_file,friend_email)
+        assert res, f"Friend's email {friend_email} not found in list"
+        
 
+        
     def test_view_file_info(self):
         self.higher_actions.select_item(files.view_info_file_name)
         autoGUIutils.view_shortcut()
@@ -159,7 +152,7 @@ class TestfileActions(BaseTest):
     def setup_class(cls):
         super(cls,TestfileActions).setup_class()#FIRST SUPER CLASS
         #THEN SUBCLASS SETUP
-        prereqs = [files.file_name, files.file_name_for_copy, files.file_move_name , files.file_to_be_deleted , *files.fileCollection , files.delete_forever_file_name]
+        prereqs = [files.file_name, files.file_name_for_copy, files.file_move_name , files.file_to_be_deleted , *files.fileCollection , files.delete_forever_file_name,files.undo_file_move]
         file_list_to_upload = " ".join(list(map(lambda a: f'"{a}"', prereqs)))
         cls.higher_actions.click_on_new_button()
         upload_button = cls.higher_actions.wait_to_click(locators.new_menu_button_locator("File upload"))
@@ -170,14 +163,19 @@ class TestfileActions(BaseTest):
         cls.higher_actions.deal_duplicate_and_await_upload()
         cls.driver.refresh()
         sleep(5)
+
+        cls.higher_actions.create_folder_action(files.undo_move_destination_folder)
         
+
        
     @classmethod
     def teardown_class(cls):
         #FIRST SUBCLASS TEARDOWN LOGIC
-        files_to_clean = [files.renamed_file_name, files.FILE_TO_UPLOAD, files.file_name_for_copy, files.expected_copied_file_name, files.file_to_be_searched, files.file_to_be_restored]
+        files_to_clean = [files.renamed_file_name, files.FILE_TO_UPLOAD, files.file_name_for_copy, files.expected_copied_file_name, files.file_to_be_searched, files.file_to_be_restored,files.undo_file_move]
         for filename in files_to_clean:
             cls.higher_actions.remove_file_action(filename)
+        
+        cls.higher_actions.remove_folder_action(files.undo_move_destination_folder)
         
         super(cls,TestfileActions).teardown_class()#THEN SUPERCLASS TEARDOWN
 
@@ -224,7 +222,14 @@ class TestfileActions(BaseTest):
         destination_folder = files.destination_folder_name
         self.button_clicker.navigate_to("Home")
         self.higher_actions.move_action(filename, destination_folder, True)
+        self.higher_actions.verify_file_in_destination(filename,destination_folder)
         assert not self.higher_actions.wait_for_element(locators.file_selector(filename))
+
+    def test_undo_move_file(self):
+        filename=files.undo_file_move
+        folder=files.undo_move_destination_folder
+        self.higher_actions.undo_move_action(filename,folder)
+        self.higher_actions.verify_undo_move_action(filename,folder)
 
     def test_move_multiple_files(self):
         file_destination_pairs = [
@@ -299,7 +304,7 @@ class TestfolderActions(BaseTest):
     def setup_class(cls):
         super(cls, TestfolderActions).setup_class()#FIRST SUPER CLASS
         #THEN SUBCLASS SETUP
-        folders_to_create = [files.folder_name, files.folder_name_to_be_removed]
+        folders_to_create = [files.renamed_folder_name ,files.destination_folder_name, files.create_folder_name,files.folder_to_be_moved]
         
         for folder_name in folders_to_create:
             cls.higher_actions.click_on_new_button()
@@ -315,7 +320,7 @@ class TestfolderActions(BaseTest):
     @classmethod
     def teardown_class(cls):
         #FIRST SUBCLASS TEARDOWN LOGIC
-        folders_to_clean = [files.renamed_folder_name , files.create_folder_name]
+        folders_to_clean = [files.renamed_folder_name , files.destination_folder_name,files.create_folder_name]
         for foldername in folders_to_clean:
             cls.higher_actions.remove_file_action(foldername) # remove_file_action works for both file and folder
         
@@ -345,3 +350,14 @@ class TestfolderActions(BaseTest):
         folder_to_be_removed = files.folder_name_to_be_removed
         self.higher_actions.remove_folder_action(folder_to_be_removed)
         assert not self.higher_actions.wait_for_element(locators.file_selector(folder_to_be_removed))
+
+    def test_move_folder(self):
+        foldername = files.folder_to_be_moved
+        destination_folder = files.destination_folder_name
+        # self.higher_actions.navigate_to("Home")
+        # self.higher_actions.click_on_folders_button()
+        self.higher_actions.move_action(foldername, destination_folder)
+        self.higher_actions.verify_file_in_destination(foldername,destination_folder)
+        self.higher_actions.navigate_to("My Drive")
+        self.driver.refresh()
+        assert not self.higher_actions.wait_for_element(locators.file_selector(foldername))

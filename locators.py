@@ -82,3 +82,14 @@ all_locations_button_locator = (By.CSS_SELECTOR, 'button.VfPpkd-AznF2e.VfPpkd-Az
 
 shortcut_folder_button_locator = (By.CSS_SELECTOR, 'td[aria-label="ShortcutFolder"]')
 
+manage_access_button_selector = (By.XPATH, "//span[text()='Manage access']")
+
+access_list=(By.XPATH, "//div[@class='fSFQ2']//div[@class='fOEalf']//div[@class='EDtwUe']")
+
+access_section=(By.XPATH,"//section[@class='ZvUowc']")
+email_selector=(By.CSS_SELECTOR, f'div.fOEalf[data-hovercard-id="{files.email}"] div.Jw4Ike')
+     
+undo_button_selector=(By.CSS_SELECTOR, "span.la-Y-A.kc-A[data-target='undo']")
+
+error_message_selector=((By.CLASS_NAME, "errorMessage"))
+

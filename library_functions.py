@@ -1,5 +1,7 @@
 from time import sleep
+from selenium.webdriver.common.keys import Keys
 import pyautogui
+import pyperclip
 from selenium.webdriver.common.action_chains import ActionChains
 import selenium.common.exceptions as EXC
 from selenium.webdriver.support import expected_conditions as EC
@@ -147,7 +149,7 @@ class ElementaryActions:
         except Exception as e:
             print(f"Error sending keys to element: {e}")
 
-    """Send keys to the currently focused element.
+    """Send keys to the currently foc               d element.
 
         Parameters:
         text (str): The text to be sent to the focused element.
@@ -410,7 +412,7 @@ class HigherActions(ButtonClicker) :
             self.double_click_element(destination_folder_element)
             sleep(4)
         except EXC.StaleElementReferenceException:
-            print("StaleElementReferenceException occurred. Retrying...")  # TODO either actually retry or remove "retrying"
+            print("StaleElementReferenceException occurred...")  # TODO either actually retry or remove "retrying"
         # Verify file presence in the destination folder
         assert self.wait_for_element(locators.file_selector(moved_file_name)) is not None, "File has not been moved successfully to the destination folder"
 
@@ -446,7 +448,7 @@ class HigherActions(ButtonClicker) :
         None
     """
 
-    def move_action(self, move_file_name, destination_folder_name, show_more):
+    def move_action(self, move_file_name, destination_folder_name):
         self.select_item(move_file_name)
         sleep(2)
         file_element = self.wait_for_element(locators.file_selector(move_file_name))
@@ -463,6 +465,31 @@ class HigherActions(ButtonClicker) :
         Returns:
         bool: True if the file has been renamed successfully, False otherwise.
     """
+    def undo_move_action(self,filename,folder):
+        self.navigate_to("My Drive")
+        self.move_action(filename,folder)
+        try:
+            undo_button=self.wait_for_element(locators.undo_button_selector)
+            undo_button.click()
+        except TimeoutException:
+            print("Undo button timed out! simulating ctrl+z ...")
+            #keyboard.press("ctrl+z")
+            pyautogui.hotkey('ctrl','z')
+        self.verify_undo_move_action(filename,folder)
+
+    def verify_undo_move_action(self,filename,folder):
+        try:
+            # Double click the destination folder
+            destination_folder_element = self.wait_for_element(locators.file_selector(folder))
+            self.double_click_element(destination_folder_element)
+            sleep(4)
+        except EXC.StaleElementReferenceException:
+            print("StaleElementReferenceException occurred...")  # TODO either actually retry or remove "retrying"
+        # Verify file presence in the destination folder
+        assert not self.wait_for_element(locators.file_selector(filename)) is not None, "File is not in the destination folder"
+        self.navigate_to("My Drive")
+        self.driver.refresh()
+        assert self.wait_for_element(locators.file_selector(filename)), "File is not present in My Drive"
 
     def rename_action(self, old_file_name, new_file_name):
         self.select_item(old_file_name)
@@ -727,6 +754,38 @@ class HigherActions(ButtonClicker) :
 
         return all_buttons_present
 
+    def verify_copied_link(self):
+        try:
+            shared_link = pyperclip.paste()
+            print(f"Retrieved shared link: {shared_link}")
+
+            try:
+                # self.driver.execute_script("window.open('');")  # Open an empty new tab
+                
+
+                # Simulate keyboard shortcuts to focus on the address bar and paste the link
+                
+                pyautogui.hotkey('ctrl','t')                
+                self.driver.switch_to.window(self.driver.window_handles[-1])  # Switch to the new tab
+                pyautogui.hotkey('ctrl','l')
+                autoGUIutils.type_into_dialogue_box(shared_link)
+
+                sleep(3)
+                try:
+                    error_message = self.driver.find_element(*locators.error_message_selector)
+                    assert not error_message.is_displayed(), "Error message is displayed"
+                except NoSuchElementException:
+                    # If the element is not found, it means error message is not displayed
+                    pass
+                self.driver.close()
+                self.driver.switch_to.window(self.driver.window_handles[-1])
+            except Exception as e:
+                print(f"Error opening link in new tab: {e}")
+                print("Continuing with test execution...")
+
+        except pyperclip.exceptions.PyperclipException:
+            print("Failed to access clipboard.")
+
 
     def open_share_window(self,file_to_be_shared):
         self.navigate_to("Home")
@@ -736,3 +795,33 @@ class HigherActions(ButtonClicker) :
         share_button = self.wait_for_element(locators.action_bar_button_selector("Share"))
         share_button.click()
         sleep(5)
+
+    def verify_share_link_to_friend(self, shared_file, email):
+        #self.select_item(shared_file)
+        self.open_share_window(shared_file)
+        try:
+            email_selector = (By.CSS_SELECTOR, f'div.fOEalf[data-hovercard-id="{email}"] div.Jw4Ike')
+            WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located(email_selector))
+            print(f"Email '{email}' found in the share window.")
+            return True
+        except TimeoutException:
+            print(f"Email '{email}' not found in the share window.")
+            return False
+
+
+    def share_link_to_friend(self,file_to_share,email):
+        self.open_share_window(file_to_share)
+        autoGUIutils.type_into_dialogue_box(email)
+        sleep(2)
+        autoGUIutils.press_enter()
+        autoGUIutils.n_tabs_shift_focus(3)
+        sleep(2)
+        autoGUIutils.type_into_dialogue_box("short notes")
+        autoGUIutils.n_tabs_shift_focus(3)
+        sleep(2)
+        autoGUIutils.press_enter()
+        sleep(2)
+        self.driver.refresh()
+        sleep(2)
+        
+
