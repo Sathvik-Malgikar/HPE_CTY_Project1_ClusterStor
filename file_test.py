@@ -14,7 +14,7 @@ class TestfileActions(BaseTest):
     def setup_class(cls):
         super(cls,TestfileActions).setup_class()#FIRST SUPER CLASS
         #THEN SUBCLASS SETUP
-        prereqs = [files.file_name, files.file_name_for_copy, files.file_move_name , files.file_to_be_deleted , *files.fileCollection , files.delete_forever_file_name, files.undo_rename]
+        prereqs = [files.file_name, files.file_name_for_copy, files.file_move_name , files.file_to_be_deleted , *files.fileCollection , files.delete_forever_file_name, files.undo_rename,files.undo_file_move]
         file_list_to_upload = " ".join(list(map(lambda a: f'"{a}"', prereqs)))
         cls.higher_actions.click_on_new_button()
         upload_button = cls.higher_actions.wait_to_click(locators.new_menu_button_locator("File upload"))
@@ -23,14 +23,15 @@ class TestfileActions(BaseTest):
         cls.higher_actions.deal_duplicate_and_await_upload()
         cls.higher_actions.refresh_and_wait_to_settle()
         
-       
+        cls.higher_actions.create_folder_action(files.undo_move_destination_folder)
+
     @classmethod
     def teardown_class(cls):
         #FIRST SUBCLASS TEARDOWN LOGIC
         files_to_clean = [files.renamed_file_name, files.FILE_TO_UPLOAD, files.file_name_for_copy, files.expected_copied_file_name, files.file_to_be_searched, files.file_to_be_restored, files.renamed_undo_rename]
         for filename in files_to_clean:
             cls.higher_actions.remove_file_action(filename)
-        
+        cls.higher_actions.remove_folder_action(files.undo_move_destination_folder)
         super(cls,TestfileActions).teardown_class()#THEN SUPERCLASS TEARDOWN
 
     def test_rename_file(self):
@@ -105,8 +106,15 @@ class TestfileActions(BaseTest):
         destination_folder = files.destination_folder_name
         self.button_clicker.navigate_to("Home")
         self.higher_actions.move_action(filename, destination_folder, True)
+        self.higher_actions.verify_file_in_destination(filename,destination_folder)
         assert not self.higher_actions.wait_for_element(locators.file_selector(filename))
 
+    def test_undo_move_file(self):
+        filename=files.undo_file_move
+        folder=files.undo_move_destination_folder
+        self.higher_actions.undo_move_action(filename,folder)
+        self.higher_actions.verify_undo_move_action(filename,folder)
+        
     def test_move_multiple_files(self):
         file_destination_pairs = [
             ("test.txt", "After_rename"),

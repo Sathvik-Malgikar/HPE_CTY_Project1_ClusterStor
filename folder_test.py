@@ -13,7 +13,7 @@ class TestfolderActions(BaseTest):
     def setup_class(cls):
         super(cls, TestfolderActions).setup_class()#FIRST SUPER CLASS
         #THEN SUBCLASS SETUP
-        folders_to_create = [files.folder_name, files.folder_name_to_be_removed]
+        folders_to_create = [files.destination_folder_name, files.create_folder_name,files.folder_to_be_moved,files.folder_name, files.folder_name_to_be_removed]
         
         for folder_name in folders_to_create:
             cls.higher_actions.click_on_new_button()
@@ -28,7 +28,7 @@ class TestfolderActions(BaseTest):
     @classmethod
     def teardown_class(cls):
         #FIRST SUBCLASS TEARDOWN LOGIC
-        folders_to_clean = [files.renamed_folder_name , files.create_folder_name]
+        folders_to_clean = [files.renamed_folder_name , files.destination_folder_name,files.create_folder_name]
         for foldername in folders_to_clean:
             cls.higher_actions.remove_file_action(foldername) # remove_file_action works for both file and folder
         
@@ -58,3 +58,14 @@ class TestfolderActions(BaseTest):
         folder_to_be_removed = files.folder_name_to_be_removed
         self.higher_actions.remove_folder_action(folder_to_be_removed)
         assert not self.higher_actions.wait_for_element(locators.file_selector(folder_to_be_removed))
+
+    def test_move_folder(self):
+        foldername = files.folder_to_be_moved
+        destination_folder = files.destination_folder_name
+        # self.higher_actions.navigate_to("Home")
+        # self.higher_actions.click_on_folders_button()
+        self.higher_actions.move_action(foldername, destination_folder)
+        self.higher_actions.verify_file_in_destination(foldername,destination_folder)
+        self.higher_actions.navigate_to("My Drive")
+        self.driver.refresh()
+        assert not self.higher_actions.wait_for_element(locators.file_selector(foldername))
