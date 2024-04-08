@@ -904,5 +904,16 @@ class HigherActions(ButtonClicker) :
         sleep(very_small_delay)
         autoGUIutils.press_enter()
         self.refresh_and_wait_to_settle()
+
+    def get_storage_used(self):
+        storage_element = self.driver.find_element(*locators.storage_selector)
+        text = storage_element.text
+        capacity = ""
+        for i in text:
+            if i=="G":
+                break
+            else:
+                capacity = capacity + i
+        return float(capacity)
         
 
