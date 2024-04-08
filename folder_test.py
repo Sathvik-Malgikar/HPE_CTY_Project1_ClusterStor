@@ -2,7 +2,7 @@ import locators
 import files
 import autoGUIutils
 
-from base_class import BaseTest
+from base_class import BaseTest,toast_testcase_name
 
 class TestfolderActions(BaseTest):
 
@@ -34,6 +34,7 @@ class TestfolderActions(BaseTest):
         
         super(cls, TestfolderActions).teardown_class()#THEN SUPERCLASS TEARDOWN
 
+    @toast_testcase_name
     def test_rename_folder(self):
         old_folder_name = files.folder_name
         new_folder_name = files.renamed_folder_name
@@ -43,7 +44,8 @@ class TestfolderActions(BaseTest):
     """
     ## Test function to create a new folder in the Google Drive web GUI.
     """
-
+    
+    @toast_testcase_name
     def test_create_folder(self):
         folder_name = files.create_folder_name
         self.higher_actions.create_folder_action(folder_name)
@@ -54,11 +56,13 @@ class TestfolderActions(BaseTest):
     ## Test function to upload new file in the Google Drive web GUI.
     """
 
+    @toast_testcase_name
     def test_remove_folder(self):
         folder_to_be_removed = files.folder_name_to_be_removed
         self.higher_actions.remove_folder_action(folder_to_be_removed)
         assert not self.higher_actions.wait_for_element(locators.file_selector(folder_to_be_removed))
 
+    @toast_testcase_name
     def test_move_folder(self):
         foldername = files.folder_to_be_moved
         destination_folder = files.destination_folder_name

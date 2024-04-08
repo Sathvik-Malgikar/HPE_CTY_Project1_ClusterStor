@@ -3,7 +3,7 @@ import files
 import autoGUIutils
 
 
-from base_class import BaseTest
+from base_class import BaseTest,toast_testcase_name
 
 class TestMiscellaneousActions(BaseTest):
     @classmethod
@@ -27,7 +27,8 @@ class TestMiscellaneousActions(BaseTest):
 
         super(cls, TestMiscellaneousActions).teardown_class()#THEN SUPERCLASS TEARDOWN
     
-      
+    
+    @toast_testcase_name
     def test_share_via_link(self ):
         self.higher_actions.open_share_window(files.share_file)
         autoGUIutils.n_tabs_shift_focus(3)
@@ -35,6 +36,7 @@ class TestMiscellaneousActions(BaseTest):
         autoGUIutils.go_back_esc()
         self.higher_actions.verify_copied_link()
 
+    @toast_testcase_name
     def test_share_file_to_friend(self):
         file_to_be_shared=files.share_file
         friend_email=files.email
@@ -42,7 +44,8 @@ class TestMiscellaneousActions(BaseTest):
         self.higher_actions.share_link_to_friend(file_to_be_shared,friend_email)
         res=self.higher_actions.verify_share_link_to_friend(files.share_file,friend_email)
         assert res, f"Friend's email {friend_email} not found in list"
-        
+    
+    @toast_testcase_name
     def test_view_file_info(self):
         self.higher_actions.select_item(files.view_info_file_name)
         autoGUIutils.view_shortcut()
@@ -54,11 +57,13 @@ class TestMiscellaneousActions(BaseTest):
             autoGUIutils.go_back_esc()
             assert True
 
+    @toast_testcase_name
     def test_verify_tooltip_text(self):
         verification_result = self.higher_actions.verify_button_tooltips(files.button_names_and_tooltips)
         if verification_result:
             assert True
 
+    @toast_testcase_name
     def test_verify_file_tooltip(self):
         verification_result = self.higher_actions.verify_file_tooltips()
         if verification_result:

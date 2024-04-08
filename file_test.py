@@ -4,7 +4,7 @@ import autoGUIutils
 import hashlib
 import os
 
-from base_class import BaseTest
+from base_class import BaseTest,toast_testcase_name
 
 class TestfileActions(BaseTest):
     """
@@ -34,6 +34,7 @@ class TestfileActions(BaseTest):
         cls.higher_actions.remove_folder_action(files.undo_move_destination_folder)
         super(cls,TestfileActions).teardown_class()#THEN SUPERCLASS TEARDOWN
 
+    @toast_testcase_name
     def test_rename_file(self):
         old_file_name = files.file_name
         new_file_name = files.renamed_file_name
@@ -41,6 +42,7 @@ class TestfileActions(BaseTest):
         result = self.higher_actions.rename_verification(old_file_name, new_file_name)
         assert result, "Rename failed"
 
+    @toast_testcase_name
     def test_undo_rename_file(self):
         old_file_name = files.undo_rename
         new_file_name = files.renamed_undo_rename
@@ -49,10 +51,12 @@ class TestfileActions(BaseTest):
         assert result, "Undo Rename failed"
         
 
+    @toast_testcase_name
     def test_get_filenames(self):
         no_of_files = self.higher_actions.get_file_names_action()
         assert no_of_files > 0
 
+    @toast_testcase_name
     def test_upload_file(self):
         # this file is present in User folder
         self.higher_actions.upload_file_action(files.FILE_TO_UPLOAD)
@@ -79,7 +83,8 @@ class TestfileActions(BaseTest):
     """
     ## Test function to download a file in the Google Drive web GUI.
     """
-
+    
+    @toast_testcase_name
     def test_download_file(self):
         self.higher_actions.select_item(files.file_name_for_copy)
         download_button = self.higher_actions.wait_for_element(locators.action_bar_button_selector("Download"))
@@ -89,18 +94,21 @@ class TestfileActions(BaseTest):
         
         assert files.file_name_for_copy  in os.listdir(file_download_directory)
 
+    @toast_testcase_name
     def test_copy_file(self):
         copied_file_element = self.higher_actions.copy_file_action(files.file_name_for_copy)
         self.higher_actions.verify_copy_file_action(copied_file_element,files.file_name_for_copy)
 
-
+    @toast_testcase_name
     def test_search_for_file_by_name(self):
         self.higher_actions.search_by_name_action(files.file_to_be_searched)
 
+    @toast_testcase_name
     def test_search_for_file_by_type(self):
         no_of_files = self.higher_actions.search_by_type_action()
         assert no_of_files > 0
     
+    @toast_testcase_name
     def test_move_file(self):
         filename = files.file_move_name
         destination_folder = files.destination_folder_name
@@ -109,12 +117,14 @@ class TestfileActions(BaseTest):
         self.higher_actions.verify_file_in_destination(filename,destination_folder)
         assert not self.higher_actions.wait_for_element(locators.file_selector(filename))
 
+    @toast_testcase_name
     def test_undo_move_file(self):
         filename=files.undo_file_move
         folder=files.undo_move_destination_folder
         self.higher_actions.undo_move_action(filename,folder)
         self.higher_actions.verify_undo_move_action(filename,folder)
-        
+    
+    @toast_testcase_name 
     def test_move_multiple_files(self):
         file_destination_pairs = [
             ("test.txt", "After_rename"),
@@ -137,7 +147,7 @@ class TestfileActions(BaseTest):
                 assert False
 
 
-                                
+    @toast_testcase_name                       
     def test_remove_file(self):
         file_name = files.file_to_be_deleted
         self.higher_actions.remove_file_action(file_name)
@@ -149,7 +159,7 @@ class TestfileActions(BaseTest):
     ## Test function to remove multiple files in the Google Drive web GUI.
     """
 
-
+    @toast_testcase_name
     def test_remove_multiple_files(self):
         self.higher_actions.navigate_to("Home")
         for file in files.fileCollection:
@@ -161,6 +171,7 @@ class TestfileActions(BaseTest):
             finally:
                 self.driver.refresh()
 
+    @toast_testcase_name
     def test_delete_file_permanently(self):
         result = self.higher_actions.delete_permanently_action(files.delete_forever_file_name)
         if (result is False):
@@ -171,7 +182,7 @@ class TestfileActions(BaseTest):
     """
     Test function to undo delete action in the Google Drive web GUI.
     """
-
+    @toast_testcase_name
     def test_undo_delete_action(self):
         file_name_to_retrieve = files.file_to_be_restored
         restoration_successful = self.higher_actions.undo_delete_action(file_name_to_retrieve)

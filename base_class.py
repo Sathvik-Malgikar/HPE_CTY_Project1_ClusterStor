@@ -7,6 +7,15 @@ import files
 import configparser
 import autoGUIutils
 from selenium.webdriver.common.keys import Keys
+from win10toast import ToastNotifier
+
+tn = ToastNotifier()
+
+def toast_testcase_name(func):
+    def wrapper(*args , **kwargs):
+        tn.show_toast(f"Now running - {func.__name__[5:]}",f"Testcase being executed : {func.__name__[5:]}\n - ClusterStor Web Interface Test Automation",duration=10)
+        return func(*args,**kwargs)
+    return wrapper
 
 
 class BaseTest:
@@ -29,8 +38,8 @@ class BaseTest:
                 break
         parser = configparser.ConfigParser()
         parser.read("config.ini")
-        account_email_id = parser.get("Account Credentials", "email")
-        account_pwd = parser.get("Account Credentials", "password")
+        account_email_id = parser.get("Account Credentials", "alt_email")
+        account_pwd = parser.get("Account Credentials", "alt_password")
      
         cls.higher_actions.send_keys_to_focused(account_email_id)
         cls.higher_actions.send_keys_to_focused(Keys.ENTER)
