@@ -865,12 +865,11 @@ class HigherActions(ButtonClicker) :
         #self.select_item(shared_file)
         self.open_share_window(shared_file)
         try:
-            email_selector = (By.CSS_SELECTOR, f'div.fOEalf[data-hovercard-id="{email}"] div.Jw4Ike')
-            WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located(email_selector))
-            print(f"Email '{email}' found in the share window.")
-            return True
+            autoGUIutils.press_tab()
+            element = self.wait_for_element(locators.email_selector)
+            if element is not None:
+                return True
         except TimeoutException:
-            print(f"Email '{email}' not found in the share window.")
             return False
 
 

@@ -81,14 +81,17 @@ add_button_locator = (By.CSS_SELECTOR, 'button.VfPpkd-LgbsSe.VfPpkd-LgbsSe-OWXEX
 
 all_locations_button_locator = (By.CSS_SELECTOR, 'button.VfPpkd-AznF2e.VfPpkd-AznF2e-OWXEXe-jJNx8e-QBLLGd.WbUJNb.FEsNhd.VCOGmd.u4B0v[role="tab"][aria-selected="false"][id="all_locations"]')
 
-shortcut_folder_button_locator = (By.CSS_SELECTOR, 'td[aria-label="ShortcutFolder"]')
+# shortcut_folder_button_locator = (By.CSS_SELECTOR, 'td[aria-label="ShortcutFolder"]')
 
-manage_access_button_selector = (By.XPATH, "//span[text()='Manage access']")
+# manage_access_button_selector = (By.XPATH, "//span[text()='Manage access']")
 
-access_list=(By.XPATH, "//div[@class='fSFQ2']//div[@class='fOEalf']//div[@class='EDtwUe']")
+# access_list=(By.XPATH, "//div[@class='fSFQ2']//div[@class='fOEalf']//div[@class='EDtwUe']")
 
-access_section=(By.XPATH,"//section[@class='ZvUowc']")
-email_selector=(By.CSS_SELECTOR, f'div.fOEalf[data-hovercard-id="{files.email}"] div.Jw4Ike')
+# access_section=(By.XPATH,"//section[@class='ZvUowc']")
+# email_selector=(By.CSS_SELECTOR, f'div.fOEalf[data-hovercard-id="{files.email}"] div.Jw4Ike')
+
+email_selector = (By.CSS_SELECTOR, 'div.AsSTTb.GND07b.TP8uyc.aQE9pc[aria-label="sravnihm2021@gmail.com"]'
+)
      
 undo_button_selector=(By.CSS_SELECTOR, "span.la-Y-A.kc-A[data-target='undo']")
 
