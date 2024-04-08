@@ -41,7 +41,7 @@ class TestMiscellaneousActions(BaseTest):
         #username=files.username
         self.higher_actions.share_link_to_friend(file_to_be_shared,friend_email)
         res=self.higher_actions.verify_share_link_to_friend(files.share_file,friend_email)
-        assert res, f"Friend's email {friend_email} not found in "
+        assert res, f"Friend's email {friend_email} not found in list"
         
     def test_view_file_info(self):
         self.higher_actions.select_item(files.view_info_file_name)

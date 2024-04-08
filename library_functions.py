@@ -30,6 +30,7 @@ small_delay = float(parser.get("Delay Parameters", "small_delay"))
 medium_delay = float(parser.get("Delay Parameters", "medium_delay"))
 large_delay = float(parser.get("Delay Parameters", "large_delay"))
 
+very_small_delay = float(parser.get("Delay Parameters", "very_small_delay"))
 small_delay = float(parser.get("Delay Parameters", "small_delay"))
 medium_delay = float(parser.get("Delay Parameters", "medium_delay"))
 large_delay = float(parser.get("Delay Parameters", "large_delay"))
@@ -498,7 +499,7 @@ class HigherActions(ButtonClicker) :
             # Double click the destination folder
             destination_folder_element = self.wait_for_element(locators.file_selector(folder))
             self.double_click_element(destination_folder_element)
-            sleep(4)
+            sleep(large_delay)
         except EXC.StaleElementReferenceException:
             print("StaleElementReferenceException occurred...")  # TODO either actually retry or remove "retrying"
         # Verify file presence in the destination folder
@@ -583,6 +584,27 @@ class HigherActions(ButtonClicker) :
         sleep(large_delay)
         copied_file_element = self.wait_for_element(locators.copied_file_locator)
         return copied_file_element
+    
+    """Verify copy file testcase results.
+
+        Parameters:
+        copied_file_element : The file element after created after copying.
+        file_name_for_copy : The name of original file.
+
+        Asserts True if both source and copied file exist otherwise False
+        
+        Returns:
+        None
+    """
+    
+    def verify_copy_file_action(self,copied_file_element,file_name_for_copy):
+        try:
+            source_file_element = self.higher_actions.select_item(file_name_for_copy)
+        except FileNotFoundError:
+            print("source file missing adter copy action")
+            source_file_element = None
+        assert copied_file_element is not None and source_file_element is not None # second term to check if source file is still present
+        
 
     """Search for a file by its name.
 
@@ -596,7 +618,7 @@ class HigherActions(ButtonClicker) :
     def search_by_name_action(self, file_to_be_searched):
         self.navigate_to("My Drive")
         self.click_on_search_in_drive()
-        sleep(2)
+        sleep(small_delay)
         self.send_keys_to_focused(file_to_be_searched)
         autoGUIutils.press_enter()
         # Retrieve file elements from the search results
@@ -834,8 +856,6 @@ class HigherActions(ButtonClicker) :
                 self.driver.switch_to.window(self.driver.window_handles[-1])  # Switch to the new tab
                 pyautogui.hotkey('ctrl','l')
                 autoGUIutils.type_into_dialogue_box(shared_link)
-
-                sleep(3)
                 try:
                     error_message = self.driver.find_element(*locators.error_message_selector)
                     assert not error_message.is_displayed(), "Error message is displayed"
@@ -854,12 +874,12 @@ class HigherActions(ButtonClicker) :
 
     def open_share_window(self,file_to_be_shared):
         self.navigate_to("Home")
-        sleep(2)
+        sleep(small_delay)
         self.select_item(file_to_be_shared)
-        sleep(3)
+        sleep(medium_delay)
         share_button = self.wait_for_element(locators.action_bar_button_selector("Share"))
         share_button.click()
-        sleep(5)
+        sleep(large_delay)
 
     def verify_share_link_to_friend(self, shared_file, email):
         #self.select_item(shared_file)
@@ -876,16 +896,13 @@ class HigherActions(ButtonClicker) :
     def share_link_to_friend(self,file_to_share,email):
         self.open_share_window(file_to_share)
         autoGUIutils.type_into_dialogue_box(email)
-        sleep(2)
         autoGUIutils.press_enter()
         autoGUIutils.n_tabs_shift_focus(3)
-        sleep(2)
+        
         autoGUIutils.type_into_dialogue_box("short notes")
         autoGUIutils.n_tabs_shift_focus(3)
-        sleep(2)
+        sleep(very_small_delay)
         autoGUIutils.press_enter()
-        sleep(2)
-        self.driver.refresh()
-        sleep(2)
+        self.refresh_and_wait_to_settle()
         
 

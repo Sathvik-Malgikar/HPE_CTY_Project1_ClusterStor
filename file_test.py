@@ -28,7 +28,7 @@ class TestfileActions(BaseTest):
     @classmethod
     def teardown_class(cls):
         #FIRST SUBCLASS TEARDOWN LOGIC
-        files_to_clean = [files.renamed_file_name, files.FILE_TO_UPLOAD, files.file_name_for_copy, files.expected_copied_file_name, files.file_to_be_searched, files.file_to_be_restored, files.renamed_undo_rename]
+        files_to_clean = [files.renamed_file_name, files.FILE_TO_UPLOAD, files.file_name_for_copy, files.expected_copied_file_name, files.file_to_be_searched, files.file_to_be_restored, files.renamed_undo_rename,files.undo_file_move]
         for filename in files_to_clean:
             cls.higher_actions.remove_file_action(filename)
         cls.higher_actions.remove_folder_action(files.undo_move_destination_folder)
@@ -91,7 +91,7 @@ class TestfileActions(BaseTest):
 
     def test_copy_file(self):
         copied_file_element = self.higher_actions.copy_file_action(files.file_name_for_copy)
-        assert copied_file_element is not None and self.higher_actions.select_item(files.file_name_for_copy)# second term to check if source file is still present
+        self.higher_actions.verify_copy_file_action(copied_file_element,files.file_name_for_copy)
 
 
     def test_search_for_file_by_name(self):
