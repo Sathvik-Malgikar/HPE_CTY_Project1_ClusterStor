@@ -188,3 +188,12 @@ class TestfileActions(BaseTest):
         restoration_successful = self.higher_actions.undo_delete_action(file_name_to_retrieve)
         assert restoration_successful is True, f"Failed to restore file '{file_name_to_retrieve}'"
 
+    @toast_testcase_name
+    def test_capacity_after_upload(self):
+        file_name_to_upload = files.capacity_file
+        initial_storage = self.higher_actions.get_storage_used()
+        self.higher_actions.upload_file_action(file_name_to_upload)
+        final_storage = self.higher_actions.get_storage_used()
+
+        assert final_storage - initial_storage == files.capacity_file_size
+
