@@ -1,4 +1,4 @@
-import locators
+from infrastructure import locators
 import files
 import autoGUIutils
 import hashlib

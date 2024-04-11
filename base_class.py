@@ -1,9 +1,8 @@
 from time import sleep
 from selenium.webdriver import Chrome
 from selenium.webdriver.support.wait import WebDriverWait
-from library_functions import HigherActions
-import locators
-import files
+from infrastructure.library_functions import HigherActions
+from infrastructure import locators
 import configparser
 import autoGUIutils
 from selenium.webdriver.common.keys import Keys
