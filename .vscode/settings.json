@@ -1,6 +1,0 @@
-{
-    "editor.defaultFormatter": "ms-python.flake8",
-    "[python]": {
-        "editor.defaultFormatter": "trunk.io"
-    }
-}
