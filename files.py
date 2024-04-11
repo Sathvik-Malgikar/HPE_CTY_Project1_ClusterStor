@@ -47,3 +47,5 @@ folder_to_be_moved="Cloud computing"
 
 undo_file_move="undo_move.pdf"
 undo_move_destination_folder="Undo move destination folder"
+capacity_file = ""
+capacity_file_size = 
