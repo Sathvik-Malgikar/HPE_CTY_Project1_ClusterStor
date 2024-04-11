@@ -2,3 +2,7 @@
 /__pycache__
 *.ini
 /.pytest_cache
+/.vscode
+=
+/results/*
+!/results/.gitkeep

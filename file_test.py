@@ -76,7 +76,7 @@ class TestfileActions(BaseTest):
             with open(downloaded_file_path, "rb") as downloaded_file:
                 
                 downloaded_file_hash = hashlib.file_digest(downloaded_file,"md5").hexdigest()
-            assert downloaded_file_hash == ground_truth_hash
+            assert downloaded_file_hash == ground_truth_hash, "Checksum mismatch"
         else:
             assert False
         

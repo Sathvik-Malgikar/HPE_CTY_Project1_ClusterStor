@@ -22,7 +22,7 @@ class BaseTest:
     @classmethod
     def setup_class(cls):
         # global not_first_sign_in
-        cls.driver = Chrome()
+        cls.driver = Chrome(executable_path="./tools/chromedriver.exe")
         cls.web_driver_wait = WebDriverWait(cls.driver, 10)
         
         cls.driver.get("https://www.google.com/intl/en-US/drive/")

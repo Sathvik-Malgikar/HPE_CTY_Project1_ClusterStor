@@ -26,9 +26,6 @@ import autoGUIutils
 
 parser = configparser.ConfigParser()
 parser.read("config.ini")
-small_delay = float(parser.get("Delay Parameters", "small_delay"))
-medium_delay = float(parser.get("Delay Parameters", "medium_delay"))
-large_delay = float(parser.get("Delay Parameters", "large_delay"))
 
 very_small_delay = float(parser.get("Delay Parameters", "very_small_delay"))
 small_delay = float(parser.get("Delay Parameters", "small_delay"))
