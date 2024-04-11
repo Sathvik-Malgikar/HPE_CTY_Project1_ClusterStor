@@ -1,6 +1,10 @@
-import locators
+import sys
+
+sys.path.append(r'C:\HPE_CTY_Project1_ClusterStor')
+from infrastructure import locators
+
 import files
-import autoGUIutils
+from infrastructure import autoGUIutils
 
 
 from base_class import BaseTest,toast_testcase_name

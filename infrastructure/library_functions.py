@@ -11,7 +11,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.by import By
 import configparser
 
-import autoGUIutils
+from infrastructure import autoGUIutils
 
 """Class for performing elementary actions using Selenium WebDriver for Google Drive.
 

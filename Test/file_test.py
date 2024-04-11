@@ -1,6 +1,10 @@
+import sys
+
+sys.path.append(r'C:\HPE_CTY_Project1_ClusterStor')
+
 from infrastructure import locators
 import files
-import autoGUIutils
+from infrastructure import autoGUIutils
 import hashlib
 import os
 

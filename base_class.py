@@ -4,7 +4,8 @@ from selenium.webdriver.support.wait import WebDriverWait
 from infrastructure.library_functions import HigherActions
 from infrastructure import locators
 import configparser
-import autoGUIutils
+from infrastructure import autoGUIutils
+
 from selenium.webdriver.common.keys import Keys
 from win10toast import ToastNotifier
 
