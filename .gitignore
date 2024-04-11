@@ -6,5 +6,4 @@
 =
 /results/*
 !/results/.gitkeep
-.flake8
-
+/.flake8
