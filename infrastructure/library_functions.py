@@ -1,3 +1,7 @@
+import sys
+
+sys.path.append(r'C:\HPE_CTY_Project1_ClusterStor')
+
 from time import sleep
 import pyautogui
 import pyperclip
@@ -5,7 +9,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 import selenium.common.exceptions as EXC
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
-import locators
+from infrastructure import locators
 from webbrowser import Chrome
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.by import By
@@ -24,7 +28,7 @@ from infrastructure import autoGUIutils
 """
 
 parser = configparser.ConfigParser()
-parser.read("config.ini")
+parser.read("infrastructure/config.ini")
 
 very_small_delay = float(parser.get("Delay Parameters", "very_small_delay"))
 small_delay = float(parser.get("Delay Parameters", "small_delay"))

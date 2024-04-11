@@ -37,7 +37,7 @@ class BaseTest:
             if "accounts.google.com" in cls.driver.current_url or "Sign in" in cls.driver.title:
                 break
         parser = configparser.ConfigParser()
-        parser.read("config.ini")
+        parser.read("infrastructure/config.ini")
         account_email_id = parser.get("Account Credentials", "alt_email")
         account_pwd = parser.get("Account Credentials", "alt_password")
      
