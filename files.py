@@ -47,5 +47,5 @@ folder_to_be_moved="Cloud computing"
 
 undo_file_move="undo_move.txt"
 undo_move_destination_folder="Undo move destination folder"
-# capacity_file = ""
-# capacity_file_size = 
+capacity_file = "large"
+capacity_file_size = "1.94 GB"
