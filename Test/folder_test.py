@@ -18,7 +18,7 @@ class TestfolderActions(BaseTest):
     @classmethod
     def setup_class(cls):
         super(cls, TestfolderActions).setup_class()#FIRST SUPER CLASS
-        plain_toast("Executing suite : " + cls.__name__, f"Contains {len(inspect.getmembers(TestfolderActions,inspect.isfunction))-2} testcases")
+        plain_toast("Executing suite : " + cls.__name__, f"Contains {len(inspect.getmembers(TestfolderActions,inspect.isfunction))} testcases")
 
         #THEN SUBCLASS SETUP
         folders_to_create = [files.renamed_folder_name , files.destination_folder_name, files.create_folder_name,files.folder_to_be_moved,files.folder_name, files.folder_name_to_be_removed]
@@ -35,10 +35,10 @@ class TestfolderActions(BaseTest):
     
     @classmethod
     def teardown_class(cls):
-        #FIRST SUBCLASS TEARDOWN LOGIC
-        folders_to_clean = [files.renamed_folder_name , files.destination_folder_name,files.create_folder_name]
-        for foldername in folders_to_clean:
-            cls.higher_actions.remove_file_action(foldername) # remove_file_action works for both file and folder
+        # #FIRST SUBCLASS TEARDOWN LOGIC
+        # folders_to_clean = [files.renamed_folder_name , files.destination_folder_name,files.create_folder_name]
+        # for foldername in folders_to_clean:
+        #     cls.higher_actions.remove_file_action(foldername) # remove_file_action works for both file and folder
         
         super(cls, TestfolderActions).teardown_class()#THEN SUPERCLASS TEARDOWN
 

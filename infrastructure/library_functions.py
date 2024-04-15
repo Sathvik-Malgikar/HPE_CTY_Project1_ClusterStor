@@ -441,7 +441,7 @@ class HigherActions(ButtonClicker):
             self.double_click_element(destination_folder_element)
             sleep(medium_delay)
         except EXC.StaleElementReferenceException:
-            print("StaleElementReferenceException occurred...")  # TODO either actually retry or remove "retrying"
+            print("StaleElementReferenceException occurred...") 
         # Verify file presence in the destination folder
         assert self.wait_for_element(locators.file_selector(moved_file_name)) is not None, "File has not been moved successfully to the destination folder"
 
@@ -673,7 +673,7 @@ class HigherActions(ButtonClicker):
 
     def verify_copy_file_action(self, copied_file_element, file_name_for_copy):
         try:
-            source_file_element = self.higher_actions.select_item(file_name_for_copy)
+            source_file_element = self.select_item(file_name_for_copy)
         except FileNotFoundError:
             print("source file missing adter copy action")
             source_file_element = None
@@ -716,7 +716,7 @@ class HigherActions(ButtonClicker):
         self.navigate_to("My Drive")
         self.click_on_type_button()
         self.click_on_the_required_type()
-        file_elements = self.driver.find_elements_by_css_selector("div.KL4NAf")
+        file_elements = self.driver.find_elements(By.CSS_SELECTOR , "div.KL4NAf")
         # Extract file names from file elements
         file_names = [element.text for element in file_elements]
         sleep(medium_delay)
@@ -753,7 +753,7 @@ class HigherActions(ButtonClicker):
     def delete_permanently_action(self, delete_forever_file_name):
         self.driver.refresh()
         sleep(large_delay)
-        self.button_clicker.navigate_to("Trash")
+        self.navigate_to("Trash")
         self.select_item(delete_forever_file_name)
         self.click_action_bar_button("Move to trash")
         self.navigate_to("Trash")
@@ -835,7 +835,7 @@ class HigherActions(ButtonClicker):
         action_button.click()
         sleep(small_delay)
         autoGUIutils.type_into_dialogue_box(folder_name)
-        self.driver.refresh()
+        self.refresh_and_wait_to_settle()
 
     """Remove a folder.
 

@@ -10,7 +10,7 @@ renamed_folder_name = "After_rename"
 
 
 file_move_name = "test2.txt"
-destination_folder_name = "After_rename"
+destination_folder_name = "MOVE Destination"
 
 button_names_and_tooltips = {"Home": "Home", "My Drive": "My Drive", "Computers": "Computers", "Shared with me": "Items shared with me", "Recent": "Recent items", "Starred": "Starred items", "Spam": "Spam", "Trash": "Trashed items", "Storage": "Storage"}
 file_name_for_copy = 'test.txt'

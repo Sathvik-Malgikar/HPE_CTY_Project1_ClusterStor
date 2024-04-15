@@ -53,10 +53,43 @@ class BaseTest:
         cls.higher_actions.send_keys_to_focused(account_pwd)
         cls.higher_actions.send_keys_to_focused(Keys.ENTER)
         #cls.web_driver_wait.until(EC.title_is("Home - Google Drive"))
+        
+        # AT HOME PAGE ,LOGGED IN , CLEANING RESIDUAL FILES
+        cls.higher_actions.navigate_to("My Drive")
+        autoGUIutils.select_all() 
+        autoGUIutils.press_delete()
+        
+        # cls.higher_actions.click_on_folders_button()
+        # autoGUIutils.select_all() 
+        # autoGUIutils.press_delete()
+        
+        cls.higher_actions.navigate_to("Trash")
+        button_found = cls.higher_actions.wait_to_click(locators.empty_trash_button)
+        if button_found:
+            button_found.click()
+            autoGUIutils.n_tabs_shift_focus(3)
+            autoGUIutils.press_enter()
 
     @classmethod
     def teardown_class(cls):
-         # TEARDOWN START ###
+        # TEARDOWN START ###
+         
+        cls.higher_actions.navigate_to("My Drive")
+        autoGUIutils.select_all() 
+        autoGUIutils.press_delete()
+        
+        # cls.higher_actions.click_on_folders_button()
+        # autoGUIutils.select_all() 
+        # autoGUIutils.press_delete()
+        
+        cls.higher_actions.navigate_to("Trash")
+        button_found = cls.higher_actions.wait_to_click(locators.empty_trash_button)
+        if button_found:
+            button_found.click()
+            autoGUIutils.n_tabs_shift_focus(3)
+            autoGUIutils.press_enter()
+        
+        
         user_profile_button_element = cls.higher_actions.wait_for_element(locators.user_profile_button_locator)
         cls.higher_actions.click_element(user_profile_button_element)
         autoGUIutils.n_tabs_shift_focus(5)

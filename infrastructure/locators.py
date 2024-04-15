@@ -97,3 +97,4 @@ undo_button_selector=(By.CSS_SELECTOR, "span.la-Y-A.kc-A[data-target='undo']")
 
 error_message_selector=((By.CLASS_NAME, "errorMessage"))
 
+empty_trash_button = ((By.CSS_SELECTOR , "div.VfPpkd-RLmnJb"))

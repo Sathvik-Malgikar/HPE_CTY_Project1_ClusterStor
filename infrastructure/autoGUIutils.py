@@ -72,6 +72,17 @@ def zoom_out():
     pyautogui.press("-")
     pyautogui.keyUp("ctrl")
     
+
+def select_all():
+    # Assuming the cursor is already focused on the text area where you want to select all
+    pyautogui.hotkey('ctrl', 'a')  # Presses Ctrl + A to select all text
+    sleep(small_delay)
+    
+def press_delete():
+    pyautogui.press("delete")  # Presses the "Delete" key
+    sleep(medium_delay)
+
+    
 def wait_for_file(path, timeout=None, poll_interval=2):
     start_time = time.time()
     while True:

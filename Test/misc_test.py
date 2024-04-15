@@ -14,7 +14,7 @@ class TestMiscellaneousActions(BaseTest):
     def setup_class(cls):
         super(cls, TestMiscellaneousActions).setup_class()#FIRST SUPER CLASS
         toast_testcase_name(cls)
-        plain_toast("Executing suite : " + cls.__name__, f"Contains {len(inspect.getmembers(TestMiscellaneousActions,inspect.isfunction))-2} testcases")
+        plain_toast("Executing suite : " + cls.__name__, f"Contains {len(inspect.getmembers(TestMiscellaneousActions,inspect.isfunction))} testcases")
         prereqs = [files.view_info_file_name, files.share_file]
         file_list_to_upload = " ".join(list(map(lambda a: f'"{a}"', prereqs)))
         cls.higher_actions.click_on_new_button()
@@ -26,10 +26,10 @@ class TestMiscellaneousActions(BaseTest):
     
     @classmethod
     def teardown_class(cls):
-        #FIRST SUBCLASS TEARDOWN LOGIC
-        files_to_clean = [files.share_file , files.view_info_file_name]
-        for filename in files_to_clean:
-            cls.higher_actions.remove_file_action(filename)
+        # #FIRST SUBCLASS TEARDOWN LOGIC
+        # files_to_clean = [files.share_file , files.view_info_file_name]
+        # for filename in files_to_clean:
+        #     cls.higher_actions.remove_file_action(filename)
 
         super(cls, TestMiscellaneousActions).teardown_class()#THEN SUPERCLASS TEARDOWN
     
