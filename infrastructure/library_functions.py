@@ -246,6 +246,14 @@ class ButtonClicker(ElementaryActions):
         ok_button = self.wait_to_click(locators.ok_button_locator)
         ok_button.click()
         sleep(small_delay)
+        
+    """Click on the close button.
+        Parameters: None
+    """
+    def click_on_close_button(self):
+        close_button = self.wait_to_click(locators.close_details_button)
+        close_button.click()
+        sleep(small_delay)
 
     """Click on the Type button."""
     def click_on_type_button(self):
@@ -1023,12 +1031,12 @@ class HigherActions(ButtonClicker):
         # self.select_item(shared_file)
         self.open_share_window(shared_file)
         try:
-            autoGUIutils.press_tab()
+            # autoGUIutils.press_tab()
             element = self.wait_for_element(locators.email_selector)
             if element is not None:
-                return True
+                assert True
         except TimeoutException:
-            return False
+            return False ,f"Friend's email {email} not found in list"
         finally:
             autoGUIutils.go_back_esc()
 

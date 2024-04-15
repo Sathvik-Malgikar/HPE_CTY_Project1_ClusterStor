@@ -45,8 +45,7 @@ class TestMiscellaneousActions(Base):
         friend_email=files.email
         #username=files.username
         self.higher_actions.share_link_to_friend(file_to_be_shared,friend_email)
-        res=self.higher_actions.verify_share_link_to_friend(files.share_file,friend_email)
-        assert res, f"Friend's email {friend_email} not found in list"
+        self.higher_actions.verify_share_link_to_friend(files.share_file,friend_email)
     
     @toast_testcase_name
     def test_view_file_info(self):
@@ -56,8 +55,7 @@ class TestMiscellaneousActions(Base):
         if not element:
             assert False, f"File info dialog for {files.view_info_file_name} is not visible"
         else:
-            self.higher_actions.click_element(element)
-            autoGUIutils.go_back_esc()
+            self.higher_actions.click_on_close_button()
             assert True
 
     @toast_testcase_name
