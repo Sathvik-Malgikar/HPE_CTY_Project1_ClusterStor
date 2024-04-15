@@ -1,5 +1,5 @@
 from time import sleep
-from selenium.webdriver import Chrome
+from selenium.webdriver import Chrome,ChromeOptions
 from selenium.webdriver.support.wait import WebDriverWait
 from infrastructure.library_functions import HigherActions
 from infrastructure import locators
@@ -21,11 +21,18 @@ def toast_testcase_name(func):
     return wrapper
 
 
-class BaseTest:
+class Base:
     @classmethod
     def setup_class(cls):
         # global not_first_sign_in
-        cls.driver = Chrome()
+        
+        # Create an instance of the ChromeOptions class
+        options = ChromeOptions()
+
+        # Add the chrome switch to disable notifications
+        options.add_argument("--disable-notifications")
+        
+        cls.driver = Chrome(options=options)
         cls.web_driver_wait = WebDriverWait(cls.driver, 10)
         
         cls.driver.get("https://www.google.com/intl/en-US/drive/")
@@ -69,6 +76,8 @@ class BaseTest:
             button_found.click()
             autoGUIutils.n_tabs_shift_focus(3)
             autoGUIutils.press_enter()
+        
+        cls.higher_actions.navigate_to("Home")
 
     @classmethod
     def teardown_class(cls):

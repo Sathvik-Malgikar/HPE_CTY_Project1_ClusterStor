@@ -7,9 +7,9 @@ import files
 from infrastructure import autoGUIutils
 import inspect
 
-from base_class import BaseTest,toast_testcase_name,plain_toast
+from base_class import Base,toast_testcase_name,plain_toast
 
-class TestMiscellaneousActions(BaseTest):
+class TestMiscellaneousActions(Base):
     @classmethod
     def setup_class(cls):
         super(cls, TestMiscellaneousActions).setup_class()#FIRST SUPER CLASS

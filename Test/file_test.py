@@ -9,10 +9,10 @@ import hashlib
 import os
 import inspect
 
-from base_class import BaseTest, toast_testcase_name,plain_toast
+from base_class import Base, toast_testcase_name,plain_toast
 
 
-class TestfileActions(BaseTest):
+class TestfileActions(Base):
     """
     Test function to rename a file in the Google Drive web GUI.
     """

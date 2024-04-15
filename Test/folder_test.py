@@ -8,9 +8,9 @@ from infrastructure import locators
 import files
 from infrastructure import autoGUIutils
 
-from base_class import BaseTest,toast_testcase_name,plain_toast
+from base_class import Base,toast_testcase_name,plain_toast
 
-class TestfolderActions(BaseTest):
+class TestfolderActions(Base):
 
     """
     Test function to rename a folder in the Google Drive web GUI.
