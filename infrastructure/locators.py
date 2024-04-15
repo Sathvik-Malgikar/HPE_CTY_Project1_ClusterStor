@@ -91,7 +91,7 @@ all_locations_button_locator = (By.CSS_SELECTOR, 'button.VfPpkd-AznF2e.VfPpkd-Az
 # email_selector=(By.CSS_SELECTOR, f'div.fOEalf[data-hovercard-id="{files.email}"] div.Jw4Ike')
 
 email_selector = (By.CSS_SELECTOR, "div[aria-label='sravnihm2021@gmail.com']")
-storage_selector = (By.XPATH, "a[contains(@aria-label, 'Storage Summary')]")  
+storage_selector = ((By.CLASS_NAME, "ji-A cr-hTVF2c-r")) 
 undo_button_selector=(By.CSS_SELECTOR, "span.la-Y-A.kc-A[data-target='undo']")
 
 error_message_selector=((By.CLASS_NAME, "errorMessage"))
