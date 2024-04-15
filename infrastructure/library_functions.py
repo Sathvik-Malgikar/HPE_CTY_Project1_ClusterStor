@@ -1086,11 +1086,7 @@ class HigherActions(ButtonClicker):
 
     def get_storage_used(self):
         storage_element = self.driver.find_element(*locators.storage_selector)
-        text = storage_element.text
-        capacity = ""
-        for i in text:
-            if i == "G":
-                break
-            else:
-                capacity = capacity + i
-        return float(capacity)
+        capacity, units = float(storage_element.text.split(" ")[0]),storage_element.text.split(" ")[1]
+        storage_units = {"KB": 1024, "MB": 1024 ** 2, "GB": 1024 ** 3}
+        bytes = capacity * storage_units.get(units, 1)    
+        return bytes
