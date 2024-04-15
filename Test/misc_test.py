@@ -5,14 +5,16 @@ from infrastructure import locators
 
 import files
 from infrastructure import autoGUIutils
+import inspect
 
-
-from base_class import BaseTest,toast_testcase_name
+from base_class import BaseTest,toast_testcase_name,plain_toast
 
 class TestMiscellaneousActions(BaseTest):
     @classmethod
     def setup_class(cls):
         super(cls, TestMiscellaneousActions).setup_class()#FIRST SUPER CLASS
+        toast_testcase_name(cls)
+        plain_toast("Executing suite : " + cls.__name__, f"Contains {len(inspect.getmembers(TestMiscellaneousActions,inspect.isfunction))-2} testcases")
         prereqs = [files.view_info_file_name, files.share_file]
         file_list_to_upload = " ".join(list(map(lambda a: f'"{a}"', prereqs)))
         cls.higher_actions.click_on_new_button()
@@ -34,12 +36,9 @@ class TestMiscellaneousActions(BaseTest):
     
     @toast_testcase_name
     def test_share_via_link(self ):
-        self.higher_actions.open_share_window(files.share_file)
-        autoGUIutils.n_tabs_shift_focus(3)
-        autoGUIutils.press_enter()
-        autoGUIutils.go_back_esc()
+        self.higher_actions.share_via_link(files.share_file)
         self.higher_actions.verify_copied_link()
-
+        
     @toast_testcase_name
     def test_share_file_to_friend(self):
         file_to_be_shared=files.share_file

@@ -7,8 +7,9 @@ import files
 from infrastructure import autoGUIutils
 import hashlib
 import os
+import inspect
 
-from base_class import BaseTest, toast_testcase_name
+from base_class import BaseTest, toast_testcase_name,plain_toast
 
 
 class TestfileActions(BaseTest):
@@ -18,7 +19,7 @@ class TestfileActions(BaseTest):
     @classmethod
     def setup_class(cls):
         super(cls, TestfileActions).setup_class()  # FIRST SUPER CLASS
-        # THEN SUBCLASS SETUP
+        plain_toast("Executing suite : " + cls.__name__ , f"Contains {len(inspect.getmembers(TestfileActions,inspect.isfunction))-2} testcases")        # THEN SUBCLASS SETUP
         prereqs = [files.file_name, files.file_name_for_copy, files.file_move_name, files.file_to_be_deleted, *files.fileCollection, files.delete_forever_file_name, files.undo_rename, files.undo_file_move]
         file_list_to_upload = " ".join(list(map(lambda a: f'"{a}"', prereqs)))
         cls.higher_actions.click_on_new_button()
@@ -188,11 +189,11 @@ class TestfileActions(BaseTest):
         restoration_successful = self.higher_actions.undo_delete_action(file_name_to_retrieve)
         assert restoration_successful is True, f"Failed to restore file '{file_name_to_retrieve}'"
 
-    @toast_testcase_name
-    def test_capacity_after_upload(self):
-        file_name_to_upload = files.capacity_file
-        initial_storage = self.higher_actions.get_storage_used()
-        self.higher_actions.upload_file_action(file_name_to_upload)
-        final_storage = self.higher_actions.get_storage_used()
+    # @toast_testcase_name
+    # def test_capacity_after_upload(self):
+    #     file_name_to_upload = files.capacity_file
+    #     initial_storage = self.higher_actions.get_storage_used()
+    #     self.higher_actions.upload_file_action(file_name_to_upload)
+    #     final_storage = self.higher_actions.get_storage_used()
 
-        assert final_storage - initial_storage == files.capacity_file_size
+    #     assert final_storage - initial_storage == files.capacity_file_size

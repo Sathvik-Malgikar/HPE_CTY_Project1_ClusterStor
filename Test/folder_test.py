@@ -1,4 +1,5 @@
 import sys
+import inspect
 
 sys.path.append(r'C:\HPE_CTY_Project1_ClusterStor')
 
@@ -7,7 +8,7 @@ from infrastructure import locators
 import files
 from infrastructure import autoGUIutils
 
-from base_class import BaseTest,toast_testcase_name
+from base_class import BaseTest,toast_testcase_name,plain_toast
 
 class TestfolderActions(BaseTest):
 
@@ -17,6 +18,8 @@ class TestfolderActions(BaseTest):
     @classmethod
     def setup_class(cls):
         super(cls, TestfolderActions).setup_class()#FIRST SUPER CLASS
+        plain_toast("Executing suite : " + cls.__name__, f"Contains {len(inspect.getmembers(TestfolderActions,inspect.isfunction))-2} testcases")
+
         #THEN SUBCLASS SETUP
         folders_to_create = [files.renamed_folder_name , files.destination_folder_name, files.create_folder_name,files.folder_to_be_moved,files.folder_name, files.folder_name_to_be_removed]
         

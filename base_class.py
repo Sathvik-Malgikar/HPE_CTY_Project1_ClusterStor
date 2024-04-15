@@ -11,6 +11,9 @@ from win10toast import ToastNotifier
 
 tn = ToastNotifier()
 
+def plain_toast(title,msg):
+    tn.show_toast(title,msg,duration=10)
+
 def toast_testcase_name(func):
     def wrapper(*args , **kwargs):
         tn.show_toast(f"Now running - {func.__name__[5:]}",f"Testcase being executed : {func.__name__[5:]}\n - ClusterStor Web Interface Test Automation",duration=10)
@@ -22,7 +25,7 @@ class BaseTest:
     @classmethod
     def setup_class(cls):
         # global not_first_sign_in
-        cls.driver = Chrome(executable_path="./tools/chromedriver.exe")
+        cls.driver = Chrome()
         cls.web_driver_wait = WebDriverWait(cls.driver, 10)
         
         cls.driver.get("https://www.google.com/intl/en-US/drive/")
@@ -38,8 +41,8 @@ class BaseTest:
                 break
         parser = configparser.ConfigParser()
         parser.read("infrastructure/config.ini")
-        account_email_id = parser.get("Account Credentials", "alt_email")
-        account_pwd = parser.get("Account Credentials", "alt_password")
+        account_email_id = parser.get("Account Credentials", "email")
+        account_pwd = parser.get("Account Credentials", "password")
      
         cls.higher_actions.send_keys_to_focused(account_email_id)
         cls.higher_actions.send_keys_to_focused(Keys.ENTER)

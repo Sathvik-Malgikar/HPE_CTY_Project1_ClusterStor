@@ -61,7 +61,10 @@ def view_shortcut():
     # types into dialogue box
     pyautogui.typewrite("gd")
     sleep(small_delay)
-    
+
+def press_down_arrow():
+    pyautogui.press('down')
+    sleep(small_delay)
     
 def zoom_out():
     pyautogui.keyDown("ctrl")

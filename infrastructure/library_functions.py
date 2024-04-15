@@ -772,6 +772,17 @@ class HigherActions(ButtonClicker):
             return False
         return True
 
+    def share_via_link(self,filename):
+        self.open_share_window(filename)
+        autoGUIutils.n_tabs_shift_focus(2)
+        autoGUIutils.press_enter()
+        autoGUIutils.press_down_arrow()
+        autoGUIutils.press_enter()
+        sleep(large_delay)
+        autoGUIutils.n_tabs_shift_focus(2)
+        autoGUIutils.press_enter()
+        autoGUIutils.go_back_esc()
+        
     """Undo deletion of a file.
 
         Parameters:
@@ -1018,6 +1029,8 @@ class HigherActions(ButtonClicker):
                 return True
         except TimeoutException:
             return False
+        finally:
+            autoGUIutils.go_back_esc()
 
     """Share a file link with a friend via email.
 
