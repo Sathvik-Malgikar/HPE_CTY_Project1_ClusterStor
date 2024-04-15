@@ -711,7 +711,7 @@ class HigherActions(ButtonClicker):
         if file_elements:
             file_names = [element.text for element in file_elements]
         # Write file names to a text file
-            with open("file_names.txt", "w") as file:
+            with open("debug_file_names.log", "w") as file:
                 for name in file_names:
                     file.write(name + "\n")
         else:
@@ -732,7 +732,7 @@ class HigherActions(ButtonClicker):
         file_names = [element.text for element in file_elements]
         sleep(medium_delay)
         # Write file names to a text file
-        with open("file_names_by_type.txt", "w") as file:
+        with open("debug_file_names_by_type.log", "w") as file:
             for name in file_names:
                 file.write(name + "\n")
         return len(file_names)

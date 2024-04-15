@@ -6,7 +6,7 @@ import inspect
 from infrastructure import locators
 import files
 from infrastructure import autoGUIutils
-from base_class import Base, toast_testcase_name, plain_toast
+from Test.base_class import Base, toast_testcase_name, plain_toast
 
 class TestfolderActions(Base):
 
@@ -16,7 +16,6 @@ class TestfolderActions(Base):
     @classmethod
     def setup_class(cls):
         super(cls, TestfolderActions).setup_class()  # FIRST SUPER CLASS
-        plain_toast("Executing suite : " + cls.__name__, f"Contains {len(inspect.getmembers(TestfolderActions,inspect.isfunction))} testcases")
         # THEN SUBCLASS SETUP
         folders_to_create = [files.renamed_folder_name, files.destination_folder_name, files.create_folder_name, files.folder_to_be_moved, files.folder_name, files.folder_name_to_be_removed]
         for folder_name in folders_to_create:
@@ -26,6 +25,7 @@ class TestfolderActions(Base):
             autoGUIutils.type_into_dialogue_box(folder_name)
             cls.higher_actions.refresh_and_wait_to_settle()
 
+        plain_toast(f"Prerequisites for suite {cls.__name__} ready.", f"Contains {len(inspect.getmembers(TestfolderActions,inspect.isfunction))} testcases, starting now.")
     @classmethod
     def teardown_class(cls):
         # FIRST SUBCLASS TEARDOWN LOGIC

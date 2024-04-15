@@ -9,7 +9,7 @@ import hashlib
 import os
 import inspect
 
-from base_class import Base, toast_testcase_name, plain_toast
+from Test.base_class import Base, toast_testcase_name, plain_toast
 
 class TestfileActions(Base):
     """
@@ -18,7 +18,7 @@ class TestfileActions(Base):
     @classmethod
     def setup_class(cls):
         super(cls, TestfileActions).setup_class()  # FIRST SUPER CLASS
-        plain_toast("Executing suite : " + cls.__name__, f"Contains {len(inspect.getmembers(TestfileActions, inspect.isfunction))} testcases")        # THEN SUBCLASS SETUP
+        # THEN SUBCLASS SETUP
         prereqs = [files.file_name, files.file_name_for_copy, files.file_move_name, files.file_to_be_deleted, *files.fileCollection, files.delete_forever_file_name, files.undo_rename, files.undo_file_move]
         file_list_to_upload = " ".join(list(map(lambda a: f'"{a}"', prereqs)))
         cls.higher_actions.click_on_new_button()
@@ -31,6 +31,7 @@ class TestfileActions(Base):
         for folder_name in folders_to_create:
             cls.higher_actions.create_folder_action(folder_name)
 
+        plain_toast(f"Prerequisites for suite {cls.__name__} ready.", f"Contains {len(inspect.getmembers(TestfileActions,inspect.isfunction))} testcases, starting now.")
     @classmethod
     def teardown_class(cls):
         # FIRST SUBCLASS TEARDOWN LOGIC

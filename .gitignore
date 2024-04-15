@@ -6,3 +6,4 @@
 /results/*
 !/results/.gitkeep
 /.flake8
+*.log
