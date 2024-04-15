@@ -1,7 +1,4 @@
 import sys
-
-sys.path.append(r'C:\HPE_CTY_Project1_ClusterStor')
-
 from infrastructure import locators
 import files
 from infrastructure import autoGUIutils
@@ -9,7 +6,8 @@ import hashlib
 import os
 import inspect
 
-from base_class import Base, toast_testcase_name,plain_toast
+from base_class import Base, toast_testcase_name, plain_toast
+sys.path.append(r'C:\HPE_CTY_Project1_ClusterStor')
 
 
 class TestfileActions(Base):
@@ -19,7 +17,7 @@ class TestfileActions(Base):
     @classmethod
     def setup_class(cls):
         super(cls, TestfileActions).setup_class()  # FIRST SUPER CLASS
-        plain_toast("Executing suite : " + cls.__name__ , f"Contains {len(inspect.getmembers(TestfileActions,inspect.isfunction))} testcases")        # THEN SUBCLASS SETUP
+        plain_toast("Executing suite : " + cls.__name__, f"Contains {len(inspect.getmembers(TestfileActions, inspect.isfunction))} testcases")        # THEN SUBCLASS SETUP
         prereqs = [files.file_name, files.file_name_for_copy, files.file_move_name, files.file_to_be_deleted, *files.fileCollection, files.delete_forever_file_name, files.undo_rename, files.undo_file_move]
         file_list_to_upload = " ".join(list(map(lambda a: f'"{a}"', prereqs)))
         cls.higher_actions.click_on_new_button()
@@ -28,8 +26,7 @@ class TestfileActions(Base):
         autoGUIutils.type_into_dialogue_box(file_list_to_upload)
         cls.higher_actions.deal_duplicate_and_await_upload()
         cls.higher_actions.refresh_and_wait_to_settle()
-        
-        folders_to_create = [files.destination_folder_name ,files.undo_move_destination_folder]
+        folders_to_create = [files.destination_folder_name, files.undo_move_destination_folder]
         for folder_name in folders_to_create:
             cls.higher_actions.create_folder_action(folder_name)
 
@@ -41,7 +38,6 @@ class TestfileActions(Base):
         # for filename in files_to_clean:
         #     cls.higher_actions.remove_file_action(filename)
         # for folder_name in folders_to_remove:
-            
         #     cls.higher_actions.remove_folder_action(folder_name)
         super(cls, TestfileActions).teardown_class()  # THEN SUPERCLASS TEARDOWN
 
@@ -67,7 +63,7 @@ class TestfileActions(Base):
         assert no_of_files > 0
 
     @toast_testcase_name
-    def test_upload_file(self):# this file is present in User folder
+    def test_upload_file(self):  # this file is present in User folder
         self.higher_actions.upload_file_action(files.FILE_TO_UPLOAD)
         self.higher_actions.wait_for_element(locators.file_selector(files.FILE_TO_UPLOAD))
         ground_truth_hash = None
@@ -81,8 +77,7 @@ class TestfileActions(Base):
         if autoGUIutils.wait_for_file(downloaded_file_path, timeout=16):  # this will skip hash checking if file not downloaded before timeout
             downloaded_file_hash = None
             with open(downloaded_file_path, "rb") as downloaded_file:
-                
-                downloaded_file_hash = hashlib.file_digest(downloaded_file,"md5").hexdigest()
+                downloaded_file_hash = hashlib.file_digest(downloaded_file, "md5").hexdigest()
             assert downloaded_file_hash == ground_truth_hash, "Checksum mismatch"
         else:
             assert False
