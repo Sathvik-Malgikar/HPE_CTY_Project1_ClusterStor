@@ -1,7 +1,5 @@
+
 import sys
-
-sys.path.append(r'C:\HPE_CTY_Project1_ClusterStor')
-
 from time import sleep
 import pyautogui
 import pyperclip
@@ -14,8 +12,9 @@ from webbrowser import Chrome
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.by import By
 import configparser
-
 from infrastructure import autoGUIutils
+
+sys.path.append(r'C:\HPE_CTY_Project1_ClusterStor')
 
 """Class for performing elementary actions using Selenium WebDriver for Google Drive.
 
@@ -246,7 +245,7 @@ class ButtonClicker(ElementaryActions):
         ok_button = self.wait_to_click(locators.ok_button_locator)
         ok_button.click()
         sleep(small_delay)
-        
+
     """Click on the close button.
         Parameters: None
     """
@@ -449,7 +448,7 @@ class HigherActions(ButtonClicker):
             self.double_click_element(destination_folder_element)
             sleep(medium_delay)
         except EXC.StaleElementReferenceException:
-            print("StaleElementReferenceException occurred...") 
+            print("StaleElementReferenceException occurred...")
         # Verify file presence in the destination folder
         assert self.wait_for_element(locators.file_selector(moved_file_name)) is not None, "File has not been moved successfully to the destination folder"
 
@@ -724,7 +723,7 @@ class HigherActions(ButtonClicker):
         self.navigate_to("My Drive")
         self.click_on_type_button()
         self.click_on_the_required_type()
-        file_elements = self.driver.find_elements(By.CSS_SELECTOR , "div.KL4NAf")
+        file_elements = self.driver.find_elements(By.CSS_SELECTOR, "div.KL4NAf")
         # Extract file names from file elements
         file_names = [element.text for element in file_elements]
         sleep(medium_delay)
@@ -780,7 +779,7 @@ class HigherActions(ButtonClicker):
             return False
         return True
 
-    def share_via_link(self,filename):
+    def share_via_link(self, filename):
         self.open_share_window(filename)
         autoGUIutils.n_tabs_shift_focus(2)
         autoGUIutils.press_enter()
@@ -790,7 +789,7 @@ class HigherActions(ButtonClicker):
         autoGUIutils.n_tabs_shift_focus(2)
         autoGUIutils.press_enter()
         autoGUIutils.go_back_esc()
-        
+
     """Undo deletion of a file.
 
         Parameters:
@@ -1036,7 +1035,7 @@ class HigherActions(ButtonClicker):
             if element is not None:
                 assert True
         except TimeoutException:
-            return False ,f"Friend's email {email} not found in list"
+            return False, f"Friend's email {email} not found in list"
         finally:
             autoGUIutils.go_back_esc()
 
@@ -1086,7 +1085,7 @@ class HigherActions(ButtonClicker):
 
     def get_storage_used(self):
         storage_element = self.driver.find_element(*locators.storage_selector)
-        capacity, units = float(storage_element.text.split(" ")[0]),storage_element.text.split(" ")[1]
+        capacity, units = float(storage_element.text.split(" ")[0]), storage_element.text.split(" ")[1]
         storage_units = {"KB": 1024, "MB": 1024 ** 2, "GB": 1024 ** 3}
-        bytes = capacity * storage_units.get(units, 1)    
+        bytes = capacity * storage_units.get(units, 1)
         return bytes
