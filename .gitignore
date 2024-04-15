@@ -1,7 +1,6 @@
 *.pyc -f
-/__pycache__
+**/__pycache/
 *.ini
-/.pytest_cache
 /.vscode
 =
 /results/*

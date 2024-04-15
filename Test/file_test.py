@@ -1,4 +1,7 @@
 import sys
+
+sys.path.append(r'C:\HPE_CTY_Project1_ClusterStor')
+
 from infrastructure import locators
 import files
 from infrastructure import autoGUIutils
@@ -7,8 +10,6 @@ import os
 import inspect
 
 from base_class import Base, toast_testcase_name, plain_toast
-sys.path.append(r'C:\HPE_CTY_Project1_ClusterStor')
-
 
 class TestfileActions(Base):
     """
@@ -40,6 +41,7 @@ class TestfileActions(Base):
         # for folder_name in folders_to_remove:
         #     cls.higher_actions.remove_folder_action(folder_name)
         super(cls, TestfileActions).teardown_class()  # THEN SUPERCLASS TEARDOWN
+
 
     @toast_testcase_name
     def test_rename_file(self):

@@ -413,7 +413,8 @@ class HigherActions(ButtonClicker):
     detection or upload completion mechanism changes, this function may need to be updated accordingly.
     """
 
-    def deal_duplicate_and_await_upload(self):
+    def deal_duplicate_and_await_upload(self, custom_timeout = 10):
+        # wait till upload completes, max 10 seconds by default
         # try block to deal with situation of file being there already
         try:
             # to see if the warning of file being alreay ent shows up
@@ -427,8 +428,9 @@ class HigherActions(ButtonClicker):
             pyautogui.press("space")
             sleep(small_delay)
         finally:
-            # wait till upload completes, max 10 seconds for now
-            self.web_driver_wait.until(EC.presence_of_element_located(
+            
+            web_driver_wait = WebDriverWait(self.driver , custom_timeout )
+            web_driver_wait.until(EC.presence_of_element_located(
                 locators.upload_complete_text))
             sleep(small_delay)
 
@@ -640,7 +642,9 @@ class HigherActions(ButtonClicker):
         sleep(medium_delay)
         autoGUIutils.type_into_dialogue_box(file_to_upload)
         # this is utility solely because prerequisites aso reuses this function
-        self.deal_duplicate_and_await_upload()
+        
+        # currently max 25 minutes for large file upload
+        self.deal_duplicate_and_await_upload(custom_timeout = 25 * 60) 
         sleep(medium_delay)
 
     """Copy a file.
