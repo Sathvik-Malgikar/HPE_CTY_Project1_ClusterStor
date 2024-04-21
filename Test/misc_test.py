@@ -1,20 +1,19 @@
 
 import sys
-sys.path.append(r'C:\Users\adith\Desktop\HPE_CTY_Project1_ClusterStor')
-from ..infrastructure import locators
+
+sys.path.append(r'C:\HPE_CTY_Project1_ClusterStor')
+
+from infrastructure import locators
 import files
 from ..infrastructure import autoGUIutils
 import inspect
-from base_class import Base, toast_testcase_name, plain_toast
-sys.path.append(r'C:\HPE_CTY_Project1_ClusterStor')
-
+from Test.base_class import Base, toast_testcase_name, plain_toast
 
 class TestMiscellaneousActions(Base):
     @classmethod
     def setup_class(cls):
+        
         super(cls, TestMiscellaneousActions).setup_class()  # FIRST SUPER CLASS
-        toast_testcase_name(cls)
-        plain_toast("Executing suite : " + cls.__name__, f"Contains {len(inspect.getmembers(TestMiscellaneousActions,inspect.isfunction))} testcases")
         prereqs = [files.view_info_file_name, files.share_file]
         file_list_to_upload = " ".join(list(map(lambda a: f'"{a}"', prereqs)))
         cls.higher_actions.click_on_new_button()
@@ -23,6 +22,8 @@ class TestMiscellaneousActions(Base):
         autoGUIutils.type_into_dialogue_box(file_list_to_upload)
         cls.higher_actions.deal_duplicate_and_await_upload()
         cls.higher_actions.refresh_and_wait_to_settle()
+        plain_toast(f"Prerequisites for suite {cls.__name__} ready.", f"Contains {len(inspect.getmembers(TestMiscellaneousActions,inspect.isfunction))} testcases, starting now.")
+        
 
     @classmethod
     def teardown_class(cls):

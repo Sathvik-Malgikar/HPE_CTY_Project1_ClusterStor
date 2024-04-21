@@ -78,11 +78,13 @@ class Base:
             autoGUIutils.press_enter()
         
         cls.higher_actions.navigate_to("Home")
+        plain_toast("Login successful." , "Waiting for prerequisites to complete.")
 
     @classmethod
     def teardown_class(cls):
+        
+        plain_toast("Logging out ..." ,"Finished executing all testcases." )
         # TEARDOWN START ###
-         
         cls.higher_actions.navigate_to("My Drive")
         autoGUIutils.select_all() 
         autoGUIutils.press_delete()
