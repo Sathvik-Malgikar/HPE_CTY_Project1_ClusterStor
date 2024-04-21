@@ -1,1 +1,1 @@
-pytest -c pytest.ini Test/misc_test.py --html-report=/results
+pytest Test/misc_test.py -c pytest.ini --html-report=/results
