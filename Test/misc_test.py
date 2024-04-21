@@ -24,10 +24,6 @@ class TestMiscellaneousActions(Base):
 
     @classmethod
     def teardown_class(cls):
-        # FIRST SUBCLASS TEARDOWN LOGIC
-        # files_to_clean = [files.share_file , files.view_info_file_name]
-        # for filename in files_to_clean:
-        #     cls.higher_actions.remove_file_action(filename)
         super(cls, TestMiscellaneousActions).teardown_class()  # THEN SUPERCLASS TEARDOWN
 
     @toast_testcase_name

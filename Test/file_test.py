@@ -11,9 +11,6 @@ import inspect
 
 
 class TestfileActions(Base):
-    """
-    Test function to rename a file in the Google Drive web GUI.
-    """
     @classmethod
     def setup_class(cls):
         super(cls, TestfileActions).setup_class()  # FIRST SUPER CLASS
@@ -34,12 +31,6 @@ class TestfileActions(Base):
     @classmethod
     def teardown_class(cls):
         # FIRST SUBCLASS TEARDOWN LOGIC
-        # files_to_clean = [files.renamed_file_name, files.FILE_TO_UPLOAD, files.file_name_for_copy, files.expected_copied_file_name, files.file_to_be_searched, files.file_to_be_restored, files.renamed_undo_rename, files.undo_file_move]
-        # folders_to_remove = [files.undo_move_destination_folder]
-        # for filename in files_to_clean:
-        #     cls.higher_actions.remove_file_action(filename)
-        # for folder_name in folders_to_remove:
-        #     cls.higher_actions.remove_folder_action(folder_name)
         super(cls, TestfileActions).teardown_class()  # THEN SUPERCLASS TEARDOWN
 
     @pytest.mark.GROUPA
@@ -87,9 +78,6 @@ class TestfileActions(Base):
         else:
             assert False
 
-    """
-    ## Test function to download a file in the Google Drive web GUI.
-    """
 
     @pytest.mark.GROUPA
     @toast_testcase_name
@@ -166,12 +154,6 @@ class TestfileActions(Base):
         file_name = files.file_to_be_deleted
         self.higher_actions.remove_file_action(file_name)
 
-    """
-    The following tests are commented out because they require manual intervention and cannot be run on the CI server.
-    The following tests are commented out because they
-
-    ## Test function to remove multiple files in the Google Drive web GUI.
-    """
 
     @pytest.mark.GROUPB
     @toast_testcase_name
@@ -195,9 +177,6 @@ class TestfileActions(Base):
         else:
             assert True, f"{files.delete_forever_file_name} is permanently deleted"
 
-    """
-    Test function to undo delete action in the Google Drive web GUI.
-    """
     @pytest.mark.GROUPB
     @toast_testcase_name
     def test_undo_delete_action(self):
