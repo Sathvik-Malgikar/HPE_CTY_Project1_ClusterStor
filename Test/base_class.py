@@ -3,7 +3,7 @@ import os
 # Add the current directory to the path to import the library functions
 sys.path.append(os.getcwd())
 from time import sleep
-from selenium.webdriver import Chrome,ChromeOptions
+from selenium.webdriver import Chrome,ChromeOptions,Firefox,FirefoxOptions
 from selenium.webdriver.support.wait import WebDriverWait
 from infrastructure.library_functions import HigherActions
 from infrastructure import locators
@@ -32,12 +32,12 @@ class Base:
         # global not_first_sign_in
         
         # Create an instance of the ChromeOptions class
-        options = ChromeOptions()
+        options = FirefoxOptions()
 
         # Add the chrome switch to disable notifications
         options.add_argument("--disable-notifications")
         
-        cls.driver = Chrome(options=options)
+        cls.driver = Firefox(options=options)
         cls.web_driver_wait = WebDriverWait(cls.driver, 10)
         
         cls.driver.get("https://www.google.com/intl/en-US/drive/")
@@ -53,13 +53,15 @@ class Base:
                 break
         parser = configparser.ConfigParser()
         parser.read("infrastructure/config.ini")
+        cls.higher_actions.wait_for_element(locators.span_with_text("Sign"))
+        sleep(3)
         account_email_id = parser.get("Account Credentials", "email")
         account_pwd = parser.get("Account Credentials", "password")
      
         cls.higher_actions.send_keys_to_focused(account_email_id)
         cls.higher_actions.send_keys_to_focused(Keys.ENTER)
-        cls.higher_actions.wait_for_element(locators.welcome_span)
-        # deal with input animation 
+        # deal with input animation
+        cls.higher_actions.wait_for_element(locators.span_with_text("Welcome"))
         sleep(3)
         # not_first_sign_in = True
         cls.higher_actions.send_keys_to_focused(account_pwd)
