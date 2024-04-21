@@ -1,5 +1,4 @@
 
-import sys
 from time import sleep
 import pyautogui
 import pyperclip
@@ -13,8 +12,6 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.by import By
 import configparser
 from infrastructure import autoGUIutils
-
-sys.path.append(r'C:\HPE_CTY_Project1_ClusterStor')
 
 """Class for performing elementary actions using Selenium WebDriver for Google Drive.
 

@@ -1,1 +1,1 @@
-pytest Test/misc_test.py -c pytest.ini --html-report=/results
+pytest Test/file_test.py -m GROUPA -c pytest.ini --html-report=/results

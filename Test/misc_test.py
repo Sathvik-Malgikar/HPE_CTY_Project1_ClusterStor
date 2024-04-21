@@ -1,13 +1,10 @@
+from base_class import Base, toast_testcase_name, plain_toast
 
-import sys
-
-sys.path.append(r'D:\projects\HPE_CTY_Project1_ClusterStor')
 
 from infrastructure import locators
 import files
 from infrastructure import autoGUIutils
 import inspect
-from Test.base_class import Base, toast_testcase_name, plain_toast
 
 class TestMiscellaneousActions(Base):
     @classmethod

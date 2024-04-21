@@ -1,3 +1,7 @@
+import sys
+import os
+# Add the current directory to the path to import the library functions
+sys.path.append(os.getcwd())
 from time import sleep
 from selenium.webdriver import Chrome,ChromeOptions
 from selenium.webdriver.support.wait import WebDriverWait
@@ -8,6 +12,7 @@ from infrastructure import autoGUIutils
 
 from selenium.webdriver.common.keys import Keys
 from win10toast import ToastNotifier
+
 
 tn = ToastNotifier()
 

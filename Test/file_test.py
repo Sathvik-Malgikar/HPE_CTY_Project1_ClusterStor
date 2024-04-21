@@ -1,8 +1,6 @@
-import sys
+from base_class import Base, toast_testcase_name, plain_toast
 
 import pytest
-
-sys.path.append(r'C:\HPE_CTY_Project1_ClusterStor')
 
 from infrastructure import locators
 import files
@@ -11,7 +9,6 @@ import hashlib
 import os
 import inspect
 
-from Test.base_class import Base, toast_testcase_name, plain_toast
 
 class TestfileActions(Base):
     """
