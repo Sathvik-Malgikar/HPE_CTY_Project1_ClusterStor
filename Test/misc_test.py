@@ -1,8 +1,9 @@
 
 import sys
-from infrastructure import locators
+sys.path.append(r'C:\Users\adith\Desktop\HPE_CTY_Project1_ClusterStor')
+from ..infrastructure import locators
 import files
-from infrastructure import autoGUIutils
+from ..infrastructure import autoGUIutils
 import inspect
 from base_class import Base, toast_testcase_name, plain_toast
 sys.path.append(r'C:\HPE_CTY_Project1_ClusterStor')
