@@ -1,5 +1,5 @@
 *.pyc -f
-**/__pycache/
+**/__pycache__ 
 *.ini
 /.vscode
 =
@@ -7,3 +7,5 @@
 !/results/.gitkeep
 /.flake8
 *.log
+**/pytest_html_report.html
+**/output.json
