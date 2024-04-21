@@ -1,42 +1,38 @@
-
-import sys
 from time import sleep
 import pyautogui
-import pyperclip
 from selenium.webdriver.common.action_chains import ActionChains
 import selenium.common.exceptions as EXC
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
-from infrastructure import locators
+import locators
+from selenium.common.exceptions import NoSuchElementException
 from webbrowser import Chrome
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.by import By
 import configparser
-from infrastructure import autoGUIutils
 
-sys.path.append(r'C:\HPE_CTY_Project1_ClusterStor')
+import autoGUIutils
 
 """Class for performing elementary actions using Selenium WebDriver for Google Drive.
 
     This class provides methods to perform basic actions such as waiting for elements,
     double-clicking on elements, dragging and dropping elements, sending keys to elements,
     and performing context clicks.
+
     Parameters:
     driver (WebDriver): The Selenium WebDriver instance.
     web_driver_wait (WebDriverWait): The Selenium WebDriverWait instance for waiting on elements.
 """
 
 parser = configparser.ConfigParser()
-parser.read("infrastructure/config.ini")
-
-very_small_delay = float(parser.get("Delay Parameters", "very_small_delay"))
-small_delay = float(parser.get("Delay Parameters", "small_delay"))
-medium_delay = float(parser.get("Delay Parameters", "medium_delay"))
-large_delay = float(parser.get("Delay Parameters", "large_delay"))
+parser.read("config.ini")
+small_delay = parser.get("Delay Parameters", "small_delay")
+medium_delay = parser.get("Delay Parameters", "medium_delay")
+large_delay = parser.get("Delay Parameters", "large_delay")
 
 
 class ElementaryActions:
-    def __init__(self, driver: Chrome, web_driver_wait: WebDriverWait):
+    def __init__(self, driver, web_driver_wait):
         self.driver = driver
         self.web_driver_wait = web_driver_wait
 
@@ -59,15 +55,15 @@ class ElementaryActions:
         except TimeoutException:
             print(f"Timeout waiting for element with locator {locator}")
             return None
-
+        
     def wait_for_elements(self, locator):
         """
         Wait for elements matching the locator to be present in the DOM.
-
+        
         Args:
             locator: A tuple containing the locator strategy and value (e.g., (By.ID, 'element_id')).
             timeout: Maximum time to wait for the elements (default is 10 seconds).
-
+        
         Returns:
             A list of matching elements, or an empty list if no elements are found within the timeout.
         """
@@ -157,7 +153,7 @@ class ElementaryActions:
         except Exception as e:
             print(f"Error sending keys to element: {e}")
 
-    """Send keys to the currently foc               d element.
+    """Send keys to the currently focused element.
 
         Parameters:
         text (str): The text to be sent to the focused element.
@@ -184,16 +180,6 @@ class ElementaryActions:
     def context_click(self):
         action_chain = ActionChains(self.driver)
         action_chain.context_click().perform()
-
-    """Perform a refresh operation and wait till the page loads.
-        Parameters:None
-        Raises:
-        None
-    """
-
-    def refresh_and_wait_to_settle(self):
-        self.driver.refresh()
-        sleep(large_delay)
 
     """Click on a specified element.
 
@@ -223,12 +209,12 @@ class ElementaryActions:
 
 
 class ButtonClicker(ElementaryActions):
+    
+    def __init__(self,driver,web_driver_wait):
 
-    def __init__(self, driver, web_driver_wait):
-
-        super().__init__(driver, web_driver_wait)
-        # self.web_driver_wait = web_driver_wait
-        # self = ElementaryActions(self.driver, self.web_driver_wait)
+        super().__init__(driver,web_driver_wait)
+        #self.web_driver_wait = web_driver_wait
+        #self = ElementaryActions(self.driver, self.web_driver_wait)
 
     """Click on a button in the action bar.
         Parameters:
@@ -238,20 +224,14 @@ class ButtonClicker(ElementaryActions):
         button_element = self.wait_to_click(locators.action_bar_button_selector(button_name))
         button_element.click()
 
+   
+
     """Click on the OK button.
         Parameters: None
     """
     def click_on_ok_button(self):
         ok_button = self.wait_to_click(locators.ok_button_locator)
         ok_button.click()
-        sleep(small_delay)
-
-    """Click on the close button.
-        Parameters: None
-    """
-    def click_on_close_button(self):
-        close_button = self.wait_to_click(locators.close_details_button)
-        close_button.click()
         sleep(small_delay)
 
     """Click on the Type button."""
@@ -282,8 +262,8 @@ class ButtonClicker(ElementaryActions):
         new_button = self.wait_to_click(locators.new_button_selector)
         new_button.click()
         sleep(small_delay)
+    
 
-    """Click on the Add button."""
     def click_on_add_button(self):
         # add_button = self.elementary_actions.wait_to_click(locators.add_button_locator)
         # add_button.click()
@@ -294,7 +274,6 @@ class ButtonClicker(ElementaryActions):
         autoGUIutils.press_tab()
         autoGUIutils.press_enter()
 
-    """Click on the Shortcut Folder Button button."""
     def click_on_shortcut_folder_button(self):
         autoGUIutils.press_tab()
         autoGUIutils.press_enter()
@@ -304,11 +283,11 @@ class ButtonClicker(ElementaryActions):
         Parameters:
         button_name (str): The name of the button representing the page to navigate to.
     """
+    
 
     def navigate_to(self, button_name):
         button_element = self.wait_to_click(locators.left_menu_page_selector(button_name))
         button_element.click()
-        sleep(small_delay)
 
 
 """Class for performing higher-level actions using Selenium WebDriver in Google Drive.
@@ -324,19 +303,22 @@ class ButtonClicker(ElementaryActions):
     helper (Helper): An instance of the Helper class for performing helper actions.
 """
 
-
-class HigherActions(ButtonClicker):
+class HigherActions(ButtonClicker) :
     def __init__(self, driver, web_driver_wait):
-        super().__init__(driver, web_driver_wait)
+         
+        super().__init__(driver,web_driver_wait)
     #     self.driver = driver
     #     self.web_driver_wait = web_driver_wait
     #     self.button_clicker = ButtonClicker(self.driver,self.web_driver_wait)
     #     self.elementary_actions = ElementaryActions(self.driver,self.web_driver_wait)
 
+    
     """Select an item by its name.
 
         Parameters:
         item_name (str): Name of the item to be selected.
+        
+
         Raises:
         FileNotFoundError: If the item with the specified name is not found.
     """
@@ -394,27 +376,10 @@ class HigherActions(ButtonClicker):
         # Verify the existence of the new file
         renamed_file_element = self.wait_for_element(locators.file_selector(new_file_name))
         assert renamed_file_element is not None, f"New file '{new_file_name}' not found after rename operation."
-        # return true if both conditions are satisfied
+        # return tru if bot conditions are satisfied
         return True
 
-    """Handle duplicate file and await upload completion.
-
-    This function deals with the situation where a file being uploaded already exists in Google Drive. It waits for the
-    warning of the file being already present to show up. If the warning does not appear, it assumes the file is not
-    already in Google Drive and proceeds to upload it as a new file. If the warning does appear, it assumes the file
-    already exists and simulates pressing the spacebar to deal with the file. Finally, it waits until the upload
-    completes, with a maximum wait time of 10 seconds.
-
-    Returns:
-    None
-
-    Note:
-    This function assumes that the file upload process can be initiated and completed successfully. If the warning
-    detection or upload completion mechanism changes, this function may need to be updated accordingly.
-    """
-
-    def deal_duplicate_and_await_upload(self, custom_timeout = 10):
-        # wait till upload completes, max 10 seconds by default
+    def deal_duplicate_and_await_upload(self):
         # try block to deal with situation of file being there already
         try:
             # to see if the warning of file being alreay ent shows up
@@ -428,9 +393,8 @@ class HigherActions(ButtonClicker):
             pyautogui.press("space")
             sleep(small_delay)
         finally:
-            
-            web_driver_wait = WebDriverWait(self.driver , custom_timeout )
-            web_driver_wait.until(EC.presence_of_element_located(
+            # wait till upload completes, max 10 seconds for now
+            self.web_driver_wait.until(EC.presence_of_element_located(
                 locators.upload_complete_text))
             sleep(small_delay)
 
@@ -450,7 +414,7 @@ class HigherActions(ButtonClicker):
             self.double_click_element(destination_folder_element)
             sleep(medium_delay)
         except EXC.StaleElementReferenceException:
-            print("StaleElementReferenceException occurred...")
+            print("StaleElementReferenceException occurred. Retrying...")  # TODO either actually retry or remove "retrying"
         # Verify file presence in the destination folder
         assert self.wait_for_element(locators.file_selector(moved_file_name)) is not None, "File has not been moved successfully to the destination folder"
 
@@ -474,6 +438,7 @@ class HigherActions(ButtonClicker):
         else:
             return False
 
+    
     """Move a file to a specified destination folder.
 
         Parameters:
@@ -485,7 +450,7 @@ class HigherActions(ButtonClicker):
         None
     """
 
-    def move_action(self, move_file_name, destination_folder_name):
+    def move_action(self, move_file_name, destination_folder_name, show_more):
         self.select_item(move_file_name)
         file_element = self.wait_for_element(locators.file_selector(move_file_name))
         destination_folder_element = self.wait_for_element(locators.file_selector(destination_folder_name))
@@ -501,119 +466,13 @@ class HigherActions(ButtonClicker):
         Returns:
         bool: True if the file has been renamed successfully, False otherwise.
     """
-    def undo_move_action(self, filename, folder):
-        self.navigate_to("My Drive")
-        self.move_action(filename, folder)
-        try:
-            undo_button = self.wait_for_element(locators.undo_button_selector)
-            undo_button.click()
-        except TimeoutException:
-            print("Undo button timed out! simulating ctrl+z ...")
-            # keyboard.press("ctrl+z")
-            pyautogui.hotkey('ctrl', 'z')
-        self.verify_undo_move_action(filename, folder)
-
-    """Verify the undo of a move action.
-
-    Parameters:
-    filename (str): Name of the file that was moved.
-    folder (str): Name of the destination folder.
-
-    Raises:
-    AssertionError: If the file is still in the destination folder or not present in My Drive.
-    """
-
-    def verify_undo_move_action(self, filename, folder):
-        try:
-            # Double click the destination folder
-            destination_folder_element = self.wait_for_element(locators.file_selector(folder))
-            self.double_click_element(destination_folder_element)
-            sleep(large_delay)
-        except EXC.StaleElementReferenceException:
-            print("StaleElementReferenceException occurred...")  # TODO either actually retry or remove "retrying"
-        # Verify file presence in the destination folder
-        assert not self.wait_for_element(locators.file_selector(filename)) is not None, "File is not in the destination folder"
-        self.navigate_to("My Drive")
-        self.driver.refresh()
-        assert self.wait_for_element(locators.file_selector(filename)), "File is not present in My Drive"
-
-    """Rename a file.
-
-    This function renames a file from its old name to a new name by selecting the file, initiating the renaming process,
-    and confirming the new name. It performs these actions through the provided methods (`select_item`, `rename_selected_item`,
-    and `click_on_ok_button`) in sequence.
-
-    Parameters:
-    old_file_name (str): The original name of the file.
-    new_file_name (str): The new name to be assigned to the file.
-
-    Returns:
-    None
-
-    Note:
-    This function assumes that the file can be located and selected using the provided name, and that the renaming process
-    can be completed without errors. If the file selection, renaming process, or confirmation mechanism changes,
-    this function may need to be updated accordingly.
-    """
 
     def rename_action(self, old_file_name, new_file_name):
         self.select_item(old_file_name)
         self.rename_selected_item(new_file_name)
         self.click_on_ok_button()
-
-    """Undo the renaming of a file.
-
-    This function performs the undo operation after renaming a file by simulating the 'Ctrl+Z' keyboard shortcut.
-    After undoing the rename action, it verifies the success of the undo operation by checking if the original file
-    name has been restored and the new file name no longer exists.
-
-    Parameters:
-    old_file_name (str): The original name of the file before renaming.
-    new_file_name (str): The new name of the file after renaming.
-
-    Returns:
-    bool: True if the renaming is successfully undone, False otherwise.
-
-    Note:
-    This function assumes that the renaming action can be undone using the 'Ctrl+Z' keyboard shortcut and that the
-    success of the undo operation can be verified by checking file elements using provided locators. If the renaming
-    mechanism or verification process changes, this function may need to be updated accordingly.
-    """
-
-    def undo_rename_action(self, old_file_name, new_file_name):
-        self.rename_action(old_file_name, new_file_name)
-        # press control+z
-        pyautogui.hotkey('ctrl', 'z')
-        result = self.undo_rename_verification(old_file_name, new_file_name)
+        result = self.rename_verification(old_file_name, new_file_name)
         return result
-
-    """Verify the undo operation of file renaming.
-
-    This function verifies the success of the undo operation after renaming a file. It checks if the old file (with the
-    original name) exists and if the new file (with the renamed name) does not exist. If both conditions are satisfied,
-    it indicates that the undo operation was successful.
-
-    Parameters:
-    old_file_name (str): The original name of the file before renaming.
-    new_file_name (str): The new name of the file after renaming.
-
-    Returns:
-    bool: True if the undo operation was successful, False otherwise.
-
-    Note:
-    This function assumes that the file elements can be located using the provided locators. If the file elements or
-    renaming mechanism changes, this function may need to be updated accordingly.
-    """
-
-    def undo_rename_verification(self, old_file_name, new_file_name):
-        # Verify that the new file doesn't exist
-        old_file_element = self.wait_for_element(locators.file_selector(new_file_name))
-        assert old_file_element is None, f"Old file '{old_file_name}' still exists after rename operation."
-        # Verify the existence of the old file
-        renamed_file_element = self.wait_for_element(locators.file_selector(old_file_name))
-        assert renamed_file_element is not None, f"New file '{new_file_name}' not found after rename operation."
-        # return true if both conditions are satisfied
-        return True
 
     """Get the number of file names.
 
@@ -642,9 +501,7 @@ class HigherActions(ButtonClicker):
         sleep(medium_delay)
         autoGUIutils.type_into_dialogue_box(file_to_upload)
         # this is utility solely because prerequisites aso reuses this function
-        
-        # currently max 25 minutes for large file upload
-        self.deal_duplicate_and_await_upload(custom_timeout = 25 * 60) 
+        self.deal_duplicate_and_await_upload()
         sleep(medium_delay)
 
     """Copy a file.
@@ -670,26 +527,6 @@ class HigherActions(ButtonClicker):
         copied_file_element = self.wait_for_element(locators.copied_file_locator)
         return copied_file_element
 
-    """Verify copy file testcase results.
-
-        Parameters:
-        copied_file_element : The file element after created after copying.
-        file_name_for_copy : The name of original file.
-
-        Asserts True if both source and copied file exist otherwise False
-
-        Returns:
-        None
-    """
-
-    def verify_copy_file_action(self, copied_file_element, file_name_for_copy):
-        try:
-            source_file_element = self.select_item(file_name_for_copy)
-        except FileNotFoundError:
-            print("source file missing adter copy action")
-            source_file_element = None
-        assert copied_file_element is not None and source_file_element is not None  # second term to check if source file is still present
-
     """Search for a file by its name.
 
         Parameters:
@@ -702,20 +539,22 @@ class HigherActions(ButtonClicker):
     def search_by_name_action(self, file_to_be_searched):
         self.navigate_to("My Drive")
         self.click_on_search_in_drive()
-        sleep(small_delay)
         self.send_keys_to_focused(file_to_be_searched)
         autoGUIutils.press_enter()
         # Retrieve file elements from the search results
         file_elements = self.wait_for_elements(locators.file_selector(file_to_be_searched))
         # Extract file names from file elements
         if file_elements:
+        # Extract file names from file elements
             file_names = [element.text for element in file_elements]
+        
         # Write file names to a text file
-            with open("debug_file_names.log", "w") as file:
+            with open("file_names.txt", "w") as file:
                 for name in file_names:
                     file.write(name + "\n")
         else:
             print("No matching file elements found.")
+
 
     """Search for files by their type.
 
@@ -727,12 +566,12 @@ class HigherActions(ButtonClicker):
         self.navigate_to("My Drive")
         self.click_on_type_button()
         self.click_on_the_required_type()
-        file_elements = self.driver.find_elements(By.CSS_SELECTOR, "div.KL4NAf")
+        file_elements = self.driver.find_elements_by_css_selector("div.KL4NAf")
         # Extract file names from file elements
         file_names = [element.text for element in file_elements]
         sleep(medium_delay)
         # Write file names to a text file
-        with open("debug_file_names_by_type.log", "w") as file:
+        with open("file_names_by_type.txt", "w") as file:
             for name in file_names:
                 file.write(name + "\n")
         return len(file_names)
@@ -761,10 +600,12 @@ class HigherActions(ButtonClicker):
         bool: True if the file has been permanently deleted, False otherwise.
     """
 
+    
+
     def delete_permanently_action(self, delete_forever_file_name):
         self.driver.refresh()
         sleep(large_delay)
-        self.navigate_to("Trash")
+        self.button_clicker.navigate_to("Trash")
         self.select_item(delete_forever_file_name)
         self.click_action_bar_button("Move to trash")
         self.navigate_to("Trash")
@@ -782,17 +623,6 @@ class HigherActions(ButtonClicker):
         except Exception:
             return False
         return True
-
-    def share_via_link(self, filename):
-        self.open_share_window(filename)
-        autoGUIutils.n_tabs_shift_focus(2)
-        autoGUIutils.press_enter()
-        autoGUIutils.press_down_arrow()
-        autoGUIutils.press_enter()
-        sleep(large_delay)
-        autoGUIutils.n_tabs_shift_focus(2)
-        autoGUIutils.press_enter()
-        autoGUIutils.go_back_esc()
 
     """Undo deletion of a file.
 
@@ -846,7 +676,7 @@ class HigherActions(ButtonClicker):
         action_button.click()
         sleep(small_delay)
         autoGUIutils.type_into_dialogue_box(folder_name)
-        self.refresh_and_wait_to_settle()
+        self.driver.refresh()
 
     """Remove a folder.
 
@@ -862,8 +692,8 @@ class HigherActions(ButtonClicker):
         self.click_on_folders_button()
         self.select_item(folder_to_be_removed)
         self.click_action_bar_button("Move to trash")
-        sleep(medium_delay)
-
+        sleep(medium_delay) 
+        
     def verify_button_tooltips(self, button_names_and_tooltips):
         """
         Verify the tooltip text of buttons like "Home", "My Drive" etc.
@@ -899,223 +729,10 @@ class HigherActions(ButtonClicker):
                 all_buttons_present = False
 
         return all_buttons_present
-
-    """Verify tooltips for files in the Home page.
-
-    This function navigates to the Home page, selects each file individually to trigger the tooltip, and checks if the
-    tooltip text is present for each file. If any file does not have a tooltip text or cannot be found, it sets the
-    verification status flag to False.
-
-    Returns:
-    bool: True if all files have tooltips, False otherwise.
-
-    Note:
-    This function assumes that each file element has a tooltip attribute and can be selected individually. If the UI
-    layout or tooltip mechanism changes, this function may need to be updated accordingly.
-    """
-
-    def verify_file_tooltips(self):
-        self.navigate_to("Home")
-        # Initialize flag to track verification status
-        all_files_verified = True
-
-        # Get the list of file names
-        file_name_divs = self.driver.find_elements(By.CSS_SELECTOR, "div.KL4NAf")
-        file_names = [file_name_div.text for file_name_div in file_name_divs]
-
-        # Loop through each file name
-        for file_name in file_names:
-            try:
-                # Select the file to trigger the tooltip
-                self.select_item(file_name)
-                sleep(small_delay)  # Add a short delay to allow the tooltip to appear
-
-                # Get the actual tooltip text
-                file_element = self.wait_for_element(locators.file_selector(file_name))
-                actual_tooltip_text = file_element.get_attribute('title')
-
-                # Check if the tooltip text is present
-                if not actual_tooltip_text:
-                    print(f"Tooltip text for file '{file_name}' is not present.")
-                    all_files_verified = False
-            except NoSuchElementException:
-                print(f"File '{file_name}' not found.")
-                all_files_verified = False
-
-        return all_files_verified
-
-    """Verify if a link has been copied to the clipboard and access it in a new tab.
-
-    This function attempts to retrieve a shared link from the clipboard using the `pyperclip` module. If a link is found,
-    it simulates keyboard shortcuts to open a new tab in the web browser, paste the link into the address bar, and
-    verifies if any error message is displayed on the new page. If the link cannot be retrieved from the clipboard or
-    there is any error during the process, appropriate error messages are printed.
-
-    Returns:
-    None
-
-    Note:
-    This function assumes that the shared link is copied to the clipboard and can be accessed in a new tab without any
-    authentication requirements. If the clipboard access or browser interaction changes, this function may need to be
-    updated accordingly.
-    """
-
-    def verify_copied_link(self):
-        try:
-            shared_link = pyperclip.paste()
-            print(f"Retrieved shared link: {shared_link}")
-
-            try:
-                # self.driver.execute_script("window.open('');")  # Open an empty new tab
-                # Simulate keyboard shortcuts to focus on the address bar and paste the link
-                pyautogui.hotkey('ctrl', 't')
-                self.driver.switch_to.window(self.driver.window_handles[-1])  # Switch to the new tab
-                pyautogui.hotkey('ctrl', 'l')
-                autoGUIutils.type_into_dialogue_box(shared_link)
-                try:
-                    error_message = self.driver.find_element(*locators.error_message_selector)
-                    assert not error_message.is_displayed(), "Error message is displayed"
-                except NoSuchElementException:
-                    # If the element is not found, it means error message is not displayed
-                    pass
-                self.driver.close()
-                self.driver.switch_to.window(self.driver.window_handles[-1])
-            except Exception as e:
-                print(f"Error opening link in new tab: {e}")
-                print("Continuing with test execution...")
-
-        except pyperclip.exceptions.PyperclipException:
-            print("Failed to access clipboard.")
-
-    """Open the share window for a specified file.
-
-    This function navigates to the Home page, selects the specified file, and opens the share window for that file.
-
-    Parameters:
-    file_to_be_shared (str): The name of the file for which the share window should be opened.
-
-    Returns:
-    None
-
-    Note:
-    This function assumes that the file can be located and that a share button is present in the action bar to open
-    the share window. If the UI layout or navigation changes, this function may need to be updated accordingly.
-    """
-
-    def open_share_window(self, file_to_be_shared):
-        self.navigate_to("Home")
-        sleep(small_delay)
-        self.select_item(file_to_be_shared)
-        sleep(medium_delay)
-        share_button = self.wait_for_element(locators.action_bar_button_selector("Share"))
-        share_button.click()
-        sleep(large_delay)
-
-    """Verify if a file has been shared with a friend via email.
-
-    This function checks if a specified file has been shared with a friend via email by attempting to locate the email
-    address of the recipient in the share window. If the email address is found, it indicates that the file has been
-    shared successfully.
-
-    Parameters:
-    shared_file (str): The name of the file to be shared.
-    email (str): The email address of the recipient.
-
-    Returns:
-    bool: True if the file has been shared with the specified email address, False otherwise.
-
-    Note:
-    This function assumes that the share window displays the recipient's email address in a specified location
-    (represented by 'locators.email_selector'). If the layout of the share window changes, this function may need to be
-    updated accordingly.
-    """
-
-    def verify_share_link_to_friend(self, shared_file, email):
-        # self.select_item(shared_file)
-        self.open_share_window(shared_file)
-        try:
-            # autoGUIutils.press_tab()
-            element = self.wait_for_element(locators.email_selector)
-            if element is not None:
-                assert True
-        except TimeoutException:
-            return False, f"Friend's email {email} not found in list"
-        finally:
-            autoGUIutils.go_back_esc()
-
-    """Share a file link with a friend via email.
-
-    This function initiates the sharing process for a specified file by opening the share window, entering the recipient's
-    email address, and sending the share invitation. It also includes a brief message ("short notes") before finalizing
-    the sharing process.
-
-    Parameters:
-    file_to_share (str): The name of the file to be shared.
-    email (str): The email address of the recipient.
-
-    Returns:
-    None
-
-    Note:
-    This function assumes that the sharing process involves typing the recipient's email address into a dialogue box,
-    navigating tabs to enter a message, and pressing 'Enter' to finalize the sharing process. If the sharing process
-    changes in the future, this function may need to be updated accordingly.
-    """
-
-    def share_link_to_friend(self, file_to_share, email):
-        self.open_share_window(file_to_share)
-        autoGUIutils.type_into_dialogue_box(email)
-        autoGUIutils.press_enter()
-        autoGUIutils.n_tabs_shift_focus(3)
-        autoGUIutils.type_into_dialogue_box("short notes")
-        autoGUIutils.n_tabs_shift_focus(3)
-        sleep(very_small_delay)
-        autoGUIutils.press_enter()
-        self.refresh_and_wait_to_settle()
-
-    """Get the amount of storage used in Google Drive.
-
-    This function retrieves the amount of storage used in Google Drive by parsing the text of the storage element
-    located using the provided locator. It extracts the storage capacity until the first occurrence of 'G' (indicating
-    gigabytes) and returns it as a floating-point number.
-
-    Returns:
-    float: The amount of storage used in gigabytes.
-
-    Note:
-    This function assumes that the storage capacity is represented in gigabytes ('G'). If the format of the storage
-    element changes, this function may need to be updated accordingly.
-    """
-
-    def get_storage_used(self):
-        storage_element = self.driver.find_element(*locators.storage_selector)
-        capacity, units = float(storage_element.text.split(" ")[0]), storage_element.text.split(" ")[1]
-        storage_units = {"KB": 1024, "MB": 1024 ** 2, "GB": 1024 ** 3}
-        bytes = capacity * storage_units.get(units, 1)
-        return bytes
     
-    def traverse_path(self,path,from_home=False):
-        if from_home:
-            self.navigate_to("Home")
-        for i in path.split('/'):
-            file_selector = locators.file_selector(i)
-            self.wait_for_element(file_selector)
-            self.click_element(file_selector)
+    def navigate_to_path(self,path):
+        current_path = []
+        navbar = self.wait_for_element(locators.navbar_locator)
+        print(len(navbar))
 
-    def navigate_to(self,current_path,required_path):
-        current_path = current_path.split("/")
-        required_path = required_path.split("/")
-        current_depth = len(current_path)
-        i = 0
-        while(i < min(len(current_path),len(required_path))):
-            if(current_path[i] == required_path[i]):
-                i+=1
-            else:
-                break
-        
-        for _ in range(current_depth-i):
-            self.driver.navigate().back()
 
-        self.traverse_path("/".join(required_path[i:]))
-
-        

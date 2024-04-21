@@ -1,7 +1,7 @@
 
 import sys
 
-sys.path.append(r'C:\HPE_CTY_Project1_ClusterStor')
+sys.path.append(r'D:\projects\HPE_CTY_Project1_ClusterStor')
 
 from infrastructure import locators
 import files
@@ -68,3 +68,8 @@ class TestMiscellaneousActions(Base):
         verification_result = self.higher_actions.verify_file_tooltips()
         if verification_result:
             assert True
+
+    @toast_testcase_name
+    def test_navigate_to(self):
+        self.higher_actions.traverse_path(files.initial_path,from_home=True)
+        self.higher_actions.navigate_to(files.initial_path,files.final_path)
