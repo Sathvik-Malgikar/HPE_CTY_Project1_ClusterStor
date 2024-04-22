@@ -1,12 +1,10 @@
-import sys
+from base_class import Base, toast_testcase_name, plain_toast
 
-sys.path.append(r'C:\Users\adith\Desktop\HPE_CTY_Project1_ClusterStor')
 
 from infrastructure import locators
 import files
 from infrastructure import autoGUIutils
 import inspect
-from Test.base_class import Base, toast_testcase_name, plain_toast
 
 class TestMiscellaneousActions(Base):
     @classmethod
@@ -26,10 +24,6 @@ class TestMiscellaneousActions(Base):
 
     @classmethod
     def teardown_class(cls):
-        # FIRST SUBCLASS TEARDOWN LOGIC
-        # files_to_clean = [files.share_file , files.view_info_file_name]
-        # for filename in files_to_clean:
-        #     cls.higher_actions.remove_file_action(filename)
         super(cls, TestMiscellaneousActions).teardown_class()  # THEN SUPERCLASS TEARDOWN
 
     @toast_testcase_name
@@ -67,3 +61,8 @@ class TestMiscellaneousActions(Base):
         verification_result = self.higher_actions.verify_file_tooltips()
         if verification_result:
             assert True
+
+    @toast_testcase_name
+    def test_navigate_to(self):
+        self.higher_actions.traverse_path(files.initial_path,from_home=True)
+        self.higher_actions.navigate_to(files.initial_path,files.final_path)

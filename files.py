@@ -49,3 +49,6 @@ undo_file_move="undo_move.txt"
 undo_move_destination_folder="Undo move destination folder"
 capacity_file = "large"
 capacity_file_size = "1.94 GB"
+
+initial_path = r"A/B/C"
+final_path = r"A/D"

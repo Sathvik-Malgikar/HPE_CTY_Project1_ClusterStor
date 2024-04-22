@@ -11,25 +11,25 @@ small_delay = float(parser.get("Delay Parameters", "small_delay"))
 medium_delay = float(parser.get("Delay Parameters", "medium_delay"))
 large_delay = float(parser.get("Delay Parameters", "large_delay"))
 
-"""
-Utility function to type text into a dialogue box in the GUI.
-
-This function types the specified text into the dialogue box and presses 'Enter'.
-
-Parameters:
-    FILE_TO_UPLOAD (str): The text to be typed into the dialogue box.
-
-Returns:
-    None
-
-Raises:
-    None
-
-Usage:
-    type_into_dialogue_box(FILE_TO_UPLOAD)
-"""
 
 def type_into_dialogue_box(stringvalue):
+    """
+    Utility function to type text into a dialogue box in the GUI.
+
+    This function types the specified text into the dialogue box and presses 'Enter'.
+
+    Parameters:
+        FILE_TO_UPLOAD (str): The text to be typed into the dialogue box.
+
+    Returns:
+        None
+
+    Raises:
+        None
+
+    Usage:
+        type_into_dialogue_box(FILE_TO_UPLOAD)
+    """
     sleep(small_delay)
     # types into dialogue box
     pyautogui.typewrite(stringvalue)

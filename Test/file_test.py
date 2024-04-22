@@ -1,6 +1,6 @@
-import sys
+from base_class import Base, toast_testcase_name, plain_toast
 
-sys.path.append(r'C:\HPE_CTY_Project1_ClusterStor')
+import pytest
 
 from infrastructure import locators
 import files
@@ -9,12 +9,8 @@ import hashlib
 import os
 import inspect
 
-from Test.base_class import Base, toast_testcase_name, plain_toast
 
 class TestfileActions(Base):
-    """
-    Test function to rename a file in the Google Drive web GUI.
-    """
     @classmethod
     def setup_class(cls):
         super(cls, TestfileActions).setup_class()  # FIRST SUPER CLASS
@@ -35,15 +31,9 @@ class TestfileActions(Base):
     @classmethod
     def teardown_class(cls):
         # FIRST SUBCLASS TEARDOWN LOGIC
-        # files_to_clean = [files.renamed_file_name, files.FILE_TO_UPLOAD, files.file_name_for_copy, files.expected_copied_file_name, files.file_to_be_searched, files.file_to_be_restored, files.renamed_undo_rename, files.undo_file_move]
-        # folders_to_remove = [files.undo_move_destination_folder]
-        # for filename in files_to_clean:
-        #     cls.higher_actions.remove_file_action(filename)
-        # for folder_name in folders_to_remove:
-        #     cls.higher_actions.remove_folder_action(folder_name)
         super(cls, TestfileActions).teardown_class()  # THEN SUPERCLASS TEARDOWN
 
-
+    @pytest.mark.GROUPA
     @toast_testcase_name
     def test_rename_file(self):
         old_file_name = files.file_name
@@ -52,6 +42,7 @@ class TestfileActions(Base):
         result = self.higher_actions.rename_verification(old_file_name, new_file_name)
         assert result, "Rename failed"
 
+    @pytest.mark.GROUPA
     @toast_testcase_name
     def test_undo_rename_file(self):
         old_file_name = files.undo_rename
@@ -60,11 +51,13 @@ class TestfileActions(Base):
         result = self.higher_actions.undo_rename_verification(old_file_name, new_file_name)
         assert result, "Undo Rename failed"
 
+    @pytest.mark.GROUPA
     @toast_testcase_name
     def test_get_filenames(self):
         no_of_files = self.higher_actions.get_file_names_action()
         assert no_of_files > 0
 
+    @pytest.mark.GROUPA
     @toast_testcase_name
     def test_upload_file(self):  # this file is present in User folder
         self.higher_actions.upload_file_action(files.FILE_TO_UPLOAD)
@@ -85,10 +78,8 @@ class TestfileActions(Base):
         else:
             assert False
 
-    """
-    ## Test function to download a file in the Google Drive web GUI.
-    """
 
+    @pytest.mark.GROUPA
     @toast_testcase_name
     def test_download_file(self):
         self.higher_actions.select_item(files.file_name_for_copy)
@@ -99,20 +90,24 @@ class TestfileActions(Base):
 
         assert files.file_name_for_copy in os.listdir(file_download_directory)
 
+    @pytest.mark.GROUPA
     @toast_testcase_name
     def test_copy_file(self):
         copied_file_element = self.higher_actions.copy_file_action(files.file_name_for_copy)
         self.higher_actions.verify_copy_file_action(copied_file_element, files.file_name_for_copy)
 
+    @pytest.mark.GROUPA
     @toast_testcase_name
     def test_search_for_file_by_name(self):
         self.higher_actions.search_by_name_action(files.file_to_be_searched)
 
+    @pytest.mark.GROUPA
     @toast_testcase_name
     def test_search_for_file_by_type(self):
         no_of_files = self.higher_actions.search_by_type_action()
         assert no_of_files > 0
 
+    @pytest.mark.GROUPB
     @toast_testcase_name
     def test_move_file(self):
         filename = files.file_move_name
@@ -122,6 +117,7 @@ class TestfileActions(Base):
         self.higher_actions.verify_file_in_destination(filename, destination_folder)
         autoGUIutils.go_back_esc()
 
+    @pytest.mark.GROUPB
     @toast_testcase_name
     def test_undo_move_file(self):
         filename = files.undo_file_move
@@ -129,6 +125,7 @@ class TestfileActions(Base):
         self.higher_actions.undo_move_action(filename, folder)
         self.higher_actions.verify_undo_move_action(filename, folder)
 
+    @pytest.mark.GROUPB
     @toast_testcase_name
     def test_move_multiple_files(self):
         file_destination_pairs = [
@@ -151,18 +148,14 @@ class TestfileActions(Base):
                 # Continue to next move even if current move fails
                 assert False
 
+    @pytest.mark.GROUPB
     @toast_testcase_name
     def test_remove_file(self):
         file_name = files.file_to_be_deleted
         self.higher_actions.remove_file_action(file_name)
 
-    """
-    The following tests are commented out because they require manual intervention and cannot be run on the CI server.
-    The following tests are commented out because they
 
-    ## Test function to remove multiple files in the Google Drive web GUI.
-    """
-
+    @pytest.mark.GROUPB
     @toast_testcase_name
     def test_remove_multiple_files(self):
         self.higher_actions.navigate_to("Home")
@@ -175,6 +168,7 @@ class TestfileActions(Base):
             finally:
                 self.driver.refresh()
 
+    @pytest.mark.GROUPB
     @toast_testcase_name
     def test_delete_file_permanently(self):
         result = self.higher_actions.delete_permanently_action(files.delete_forever_file_name)
@@ -183,9 +177,7 @@ class TestfileActions(Base):
         else:
             assert True, f"{files.delete_forever_file_name} is permanently deleted"
 
-    """
-    Test function to undo delete action in the Google Drive web GUI.
-    """
+    @pytest.mark.GROUPB
     @toast_testcase_name
     def test_undo_delete_action(self):
         self.higher_actions.navigate_to("My Drive")
@@ -193,6 +185,7 @@ class TestfileActions(Base):
         restoration_successful = self.higher_actions.undo_delete_action(file_name_to_retrieve)
         assert restoration_successful is True, f"Failed to restore file '{file_name_to_retrieve}'"
 
+    @pytest.mark.GROUPB
     @toast_testcase_name
     def test_capacity_after_upload(self):
         file_name_to_upload = files.capacity_file
@@ -202,3 +195,5 @@ class TestfileActions(Base):
         storage_units = {"KB": 1024, "MB": 1024 ** 2, "GB": 1024 ** 3}
         capacity, unit = float(files.capacity_file_size.split(" ")[0]), files.capacity_file_size.split(" ")[1]
         assert final_storage - initial_storage == capacity * storage_units.get(unit, 1)
+
+    

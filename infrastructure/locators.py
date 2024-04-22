@@ -2,7 +2,15 @@ from selenium.webdriver.common.by import By
 
 import files
 
-welcome_span = (By.XPATH, "//span[contains(text(), 'Welcome')]")
+def span_with_text(text):
+    '''
+    Text can be a single word , will be checked if it is present in the text as a substring
+    If text is multiple words it has to be a valid XPATH expression like: sign or in and logout
+    Cannot be like: sign in or upload completed (no whitespaces allowed)
+    '''
+
+    return  (By.XPATH, f'//span[contains(text(), "{text}")]')
+
 sign_in_link = (By.LINK_TEXT, "Sign in")
 password_input = (By.CSS_SELECTOR, "input[name='Passwd']")
 
@@ -57,10 +65,6 @@ def action_bar_button_selector(aria_label):
 
 def left_menu_page_selector(aria_label):
     return (By.CSS_SELECTOR , f"div[aria-label='{aria_label}']")
-
-def span_with_text(text):
-    return (By.XPATH, f"//span[contains(text(), {text})]")
-
 
 
 search_bar_locator = (By.CSS_SELECTOR, 'input[aria-label="Search in Drive"]')
