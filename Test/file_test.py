@@ -226,11 +226,7 @@ class TestfileActions(Base):
     def test_undo_delete_action(self):
         self.higher_actions.navigate_to("My Drive")
         file_name_to_retrieve = files.file_to_be_restored
-        restoration_successful = self.higher_actions.undo_delete_action(
-            file_name_to_retrieve
-        )
-        assert (restoration_successful,
-        f"Failed to restore file '{file_name_to_retrieve}'")
+        self.higher_actions.undo_delete_action(file_name_to_retrieve)
 
     @pytest.mark.GROUPB
     @toast_testcase_name

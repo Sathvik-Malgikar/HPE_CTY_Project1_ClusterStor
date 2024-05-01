@@ -519,7 +519,10 @@ class HigherActions(ButtonClicker):
         sleep(small_delay)
         self.send_keys_to_focused(file_name)
         autoGUIutils.press_enter()
-        return self.wait_for_element(locators.file_selector(file_name))
+        try:
+            self.select_item(file_name)
+        except FileNotFoundError:
+            assert False, "Restore/Undo Failed!"
 
     def move_action(self, move_fname, destination_folder_name):
         """Move a file to a specified destination folder.
@@ -534,11 +537,8 @@ class HigherActions(ButtonClicker):
         Raises:
         None
         """
-        self.select_item(move_fname)
-        file_ele = self.wait_for_element(locators.file_selector(move_fname))
-        dst_fold_ele = self.wait_for_element(
-            locators.file_selector(destination_folder_name)
-        )
+        file_ele = self.select_item(move_fname)
+        dst_fold_ele = self.select_item(destination_folder_name)
         self.drag_and_drop_element(file_ele, dst_fold_ele)
         sleep(medium_delay)
 
@@ -904,12 +904,10 @@ class HigherActions(ButtonClicker):
         True if the file has been successfully restored, False otherwise.
         """
         self.navigate_to("Trash")
-        sleep(medium_delay)
         self.select_item(fname)
         self.click_action_bar_button("Restore from trash")
-        restoration_successful = self.verify_restoration(fname)
-        sleep(medium_delay)
-        return restoration_successful
+        self.verify_restoration(fname)
+        
 
     def rename_folder_action(self, old_folder_name, new_folder_name):
         """Rename a folder.
