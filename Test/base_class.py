@@ -17,6 +17,8 @@ from win10toast import ToastNotifier
 
 tn = ToastNotifier()
 
+chosen_driver = "Chrome"  # "Chrome" or "Firefox"
+
 def delete_file(file_path):
     if os.path.exists(file_path):
         os.remove(file_path)
@@ -90,15 +92,22 @@ class Base:
         print("Clearing previous test-downloads.")
         delete_file(path1)
         delete_file(path2)
-        # Create an instance of the ChromeOptions class
-        options = FirefoxOptions()
+        # Create an instance of the DriverOptions class
+        if chosen_driver == "Firefox":
+            options = FirefoxOptions()
+        else:
+            options = ChromeOptions()
+            
 
         # Add the chrome switch to disable notifications
         options.add_argument("--disable-notifications")
 
-        cls.driver = Firefox(options=options)
+        if chosen_driver == "Firefox":
+            cls.driver = Firefox(options=options)
+        else:
+            cls.driver = Chrome(options=options)
+            
         cls.web_driver_wait = WebDriverWait(cls.driver, 10)
-
         cls.driver.get("https://www.google.com/intl/en-US/drive/")
         cls.driver.maximize_window()
         sleep(3)

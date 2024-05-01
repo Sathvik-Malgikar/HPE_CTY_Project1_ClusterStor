@@ -62,10 +62,6 @@ file_move_locator = (
     f'div.uXB7xe[aria-label*="{files.file_move_name}"]',
 )
 
-copied_file_locator = (
-    By.CSS_SELECTOR,
-    f'div.uXB7xe[aria-label*="{files.expected_copied_file_name}"]',
-)
 make_a_copy_element_locator = (By.CSS_SELECTOR, 'div[aria-label="Make a copy"]')
 
 

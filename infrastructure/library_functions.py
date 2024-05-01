@@ -375,6 +375,7 @@ class HigherActions(ButtonClicker):
         if file_element:
             action_chain.move_to_element(file_element).click()
             action_chain.perform()
+            return file_element
         else:
             raise FileNotFoundError
 
@@ -651,6 +652,7 @@ class HigherActions(ButtonClicker):
         updated accordingly.
         """
         self.rename_action(old_fname, new_fname)
+        sleep(small_delay)
         # press control+z
         pyautogui.hotkey("ctrl", "z")
         result = self.undo_rename_verification(old_fname, new_fname)
@@ -682,18 +684,18 @@ class HigherActions(ButtonClicker):
         file elements or renaming mechanism changes,
         this function may need to be updated accordingly.
         """
-        # Verify that the new file doesn't exist
-        f_loc = locators.file_selector(new_fname)
+        # Verify the existence of the old file
+        f_loc = locators.file_selector(old_fname)
         old_file_ele = self.wait_for_element(f_loc)
         assert (
-            old_file_ele is None
+            old_file_ele is not None
         ), f"Old file '{old_fname}' still exists after rename operation."
-        # Verify the existence of the old file
+        # Verify that the new file doesn't exist
         renamed_file_element = self.wait_for_element(
-            locators.file_selector(old_fname)
+            locators.file_selector(new_fname)
         )
         assert (
-            renamed_file_element is not None
+            renamed_file_element is None
         ), f"New file '{new_fname}' not found after rename operation."
         # return true if both conditions are satisfied
         return True
@@ -747,9 +749,8 @@ class HigherActions(ButtonClicker):
         mkcopy_ele.click()
 
         sleep(medium_delay)
-        self.driver.refresh()
-        sleep(large_delay)
-        copied_file_ele = self.wait_for_element(locators.copied_file_locator)
+        self.refresh_and_wait_to_settle()
+        copied_file_ele = self.select_item("Copy of " + file_name_for_copy)
         return copied_file_ele
 
     def verify_copy_file_action(self, copied_file_element, file_name_for_copy):
@@ -770,9 +771,10 @@ class HigherActions(ButtonClicker):
         except FileNotFoundError:
             print("source file missing adter copy action")
             source_file_element = None
+        # second term to check if source file is still present
         assert (
-            not (copied_file_element or source_file_element)
-        )  # second term to check if source file is still present
+            copied_file_element and source_file_element
+        ) , "Copy verification failed!" 
 
     def search_by_name_action(self, file_to_be_searched):
         """Search for a file by its name.

@@ -24,7 +24,6 @@ button_names_and_tooltips = {
     "Storage": "Storage",
 }
 file_name_for_copy = "test.txt"
-expected_copied_file_name = "Copy of " + file_name_for_copy
 
 create_folder_name = "Created folder"
 
@@ -59,7 +58,7 @@ button_names_and_tooltips = {
 portCollection = ["port1.txt", "port2.txt", "port3.txt"]
 
 undo_rename = "undo_rename.txt"
-renamed_undo_rename = "renamed_undo_rename.txt"
+renamed_undo_rename = "renamed_undo_rename"
 email = "sravnihm2021@gmail.com"
 username = "Shravani Hiremath"
 
