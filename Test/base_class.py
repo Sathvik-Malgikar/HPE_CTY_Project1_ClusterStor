@@ -1,9 +1,10 @@
-import sys
-import os
+# import sys
+# import os
+
 # Add the current directory to the path to import the library functions
-sys.path.append(os.getcwd())
+# sys.path.append(os.getcwd())
 from time import sleep
-from selenium.webdriver import Chrome,ChromeOptions,Firefox,FirefoxOptions
+from selenium.webdriver import Chrome, ChromeOptions, Firefox, FirefoxOptions
 from selenium.webdriver.support.wait import WebDriverWait
 from infrastructure.library_functions import HigherActions
 from infrastructure import locators
@@ -15,6 +16,7 @@ from win10toast import ToastNotifier
 
 
 tn = ToastNotifier()
+
 
 def plain_toast(title, msg):
     """
@@ -29,6 +31,7 @@ def plain_toast(title, msg):
     """
     tn.show_toast(title, msg, duration=10)
 
+
 def toast_testcase_name(func):
     """
     A decorator function that displays a toast notification with the name of the test case being executed.
@@ -40,9 +43,15 @@ def toast_testcase_name(func):
         The decorated function.
 
     """
-    def wrapper(*args , **kwargs):
-        tn.show_toast(f"Now running - {func.__name__[5:]}",f"Testcase being executed : {func.__name__[5:]}\n - ClusterStor Web Interface Test Automation",duration=10)
-        return func(*args,**kwargs)
+
+    def wrapper(*args, **kwargs):
+        tn.show_toast(
+            f"Now running - {func.__name__[5:]}",
+            f"Testcase being executed : {func.__name__[5:]}\n - ClusterStor Web Interface Test Automation",
+            duration=10,
+        )
+        return func(*args, **kwargs)
+
     return wrapper
 
 
@@ -84,7 +93,10 @@ class Base:
         # Switch to the sign-in window explicitly based on URL or title
         for window_handle in cls.driver.window_handles:
             cls.driver.switch_to.window(window_handle)
-            if "accounts.google.com" in cls.driver.current_url or "Sign in" in cls.driver.title:
+            if (
+                "accounts.google.com" in cls.driver.current_url
+                or "Sign in" in cls.driver.title
+            ):
                 break
 
         parser = configparser.ConfigParser()
@@ -135,24 +147,26 @@ class Base:
         Returns:
             None
         """
-        plain_toast("Logging out ..." ,"Finished executing all testcases." )
+        plain_toast("Logging out ...", "Finished executing all testcases.")
         # TEARDOWN START ###
         cls.higher_actions.navigate_to("My Drive")
-        autoGUIutils.select_all() 
+        autoGUIutils.select_all()
         autoGUIutils.press_delete()
-        
+
         # cls.higher_actions.click_on_folders_button()
-        # autoGUIutils.select_all() 
+        # autoGUIutils.select_all()
         # autoGUIutils.press_delete()
-        
+
         cls.higher_actions.navigate_to("Trash")
         button_found = cls.higher_actions.wait_to_click(locators.empty_trash_button)
         if button_found:
             button_found.click()
             autoGUIutils.n_tabs_shift_focus(3)
             autoGUIutils.press_enter()
-        
-        user_profile_button_element = cls.higher_actions.wait_for_element(locators.user_profile_button_locator)
+
+        user_profile_button_element = cls.higher_actions.wait_for_element(
+            locators.user_profile_button_locator
+        )
         cls.higher_actions.click_element(user_profile_button_element)
         autoGUIutils.n_tabs_shift_focus(5)
         autoGUIutils.press_enter()
@@ -161,5 +175,3 @@ class Base:
         cls.driver.switch_to.window(before_signin)
         cls.driver.quit()
         # TEARDOWN END ###
-    
-    
