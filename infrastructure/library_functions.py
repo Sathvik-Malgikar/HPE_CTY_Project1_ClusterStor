@@ -1234,7 +1234,7 @@ class HigherActions(ButtonClicker):
             self.wait_for_element(file_selector)
             self.click_element(file_selector)
 
-    def navigate_to(self, current_path, required_path):
+    def navigate_to_path(self, current_path, required_path):
         current_path = current_path.split("/")
         required_path = required_path.split("/")
         current_depth = len(current_path)

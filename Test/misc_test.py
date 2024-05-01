@@ -74,6 +74,6 @@ class TestMiscellaneousActions(Base):
             assert True
 
     @toast_testcase_name
-    def test_navigate_to(self):
+    def test_navigate_to_path(self):
         self.higher_actions.traverse_path(files.initial_path, from_home=True)
-        self.higher_actions.navigate_to(files.initial_path, files.final_path)
+        self.higher_actions.navigate_to_path(files.initial_path, files.final_path)

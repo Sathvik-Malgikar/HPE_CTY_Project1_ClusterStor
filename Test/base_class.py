@@ -1,5 +1,4 @@
 # import sys
-# import os
 
 # Add the current directory to the path to import the library functions
 # sys.path.append(os.getcwd())
@@ -10,14 +9,21 @@ from infrastructure.library_functions import HigherActions
 from infrastructure import locators
 import configparser
 from infrastructure import autoGUIutils
+import os
+import files
 
 from selenium.webdriver.common.keys import Keys
 from win10toast import ToastNotifier
 
-
 tn = ToastNotifier()
 
-
+def delete_file(file_path):
+    if os.path.exists(file_path):
+        os.remove(file_path)
+        print(f"{file_path} deleted successfully.")
+    else:
+        print(f"{file_path} does not exist.")
+        
 def plain_toast(title, msg):
     """
     Display a plain toast notification.
@@ -30,6 +36,7 @@ def plain_toast(title, msg):
         None
     """
     tn.show_toast(title, msg, duration=10)
+
 
 
 def toast_testcase_name(func):
@@ -74,6 +81,15 @@ class Base:
         Returns:
             None
         """
+        path1 = os.path.join(
+        "C:\\Users", os.getlogin(), "Downloads", files.FILE_TO_UPLOAD
+        )
+        path2 = os.path.join(
+        "C:\\Users", os.getlogin(), "Downloads", files.file_name_for_copy
+        )
+        print("Clearing previous test-downloads.")
+        delete_file(path1)
+        delete_file(path2)
         # Create an instance of the ChromeOptions class
         options = FirefoxOptions()
 
