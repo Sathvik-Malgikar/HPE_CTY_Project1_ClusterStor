@@ -16,7 +16,8 @@ def type_into_dialogue_box(stringvalue):
     """
     Utility function to type text into a dialogue box in the GUI.
 
-    This function types the specified text into the dialogue box and presses 'Enter'.
+    This function types the specified text into 
+    the dialogue box and presses 'Enter'.
 
     Parameters:
         FILE_TO_UPLOAD (str): The text to be typed into the dialogue box.
@@ -81,7 +82,8 @@ def zoom_out():
 
 
 def select_all():
-    # Assuming the cursor is already focused on the text area where you want to select all
+    # Assuming the cursor is already focused on
+    # the text area where you want to select all
     pyautogui.hotkey("ctrl", "a")  # Presses Ctrl + A to select all text
     sleep(small_delay)
 
