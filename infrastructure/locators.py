@@ -115,7 +115,7 @@ all_locations_button_locator = (
 
 
 email_selector = (By.CSS_SELECTOR, "div[aria-label='sravnihm2021@gmail.com']")
-storage_selector = (By.CLASS_NAME, "ji-A cr-hTVF2c-r")
+storage_selector = (By.CSS_SELECTOR, "*.ji-A.cr-hTVF2c-r")
 undo_button_selector = (By.CSS_SELECTOR, "span.la-Y-A.kc-A[data-target='undo']")
 
 error_message_selector = (By.CLASS_NAME, "errorMessage")

@@ -487,17 +487,22 @@ class HigherActions(ButtonClicker):
         """
         try:
             # Double click the destination folder
-            destination_folder_element = self.wait_for_element(
-                locators.file_selector(destination_folder)
-            )
+            destination_folder_element = self.select_item(destination_folder)
+ 
             self.double_click_element(destination_folder_element)
             sleep(medium_delay)
         except EXC.StaleElementReferenceException:
             print("StaleElementReferenceException occurred...")
+        except FileNotFoundError:
+            assert False, "Destination folder not found!"
         # Verify file presence in the destination folder
-        assert (
-            not self.wait_for_element(locators.file_selector(moved_fname))
+        try:
+            assert (
+            self.select_item(moved_fname) is not None
         ), "File has not been moved successfully to the destination folder"
+        except FileNotFoundError:
+            assert False, "Moved file not found!"
+            
 
     def verify_restoration(self, file_name):
         """Verify the restoration of a file.
@@ -513,7 +518,7 @@ class HigherActions(ButtonClicker):
         self.click_on_search_in_drive()
         sleep(small_delay)
         self.send_keys_to_focused(file_name)
-        sleep(small_delay)
+        autoGUIutils.press_enter()
         return self.wait_for_element(locators.file_selector(file_name))
 
     def move_action(self, move_fname, destination_folder_name):
@@ -548,8 +553,8 @@ class HigherActions(ButtonClicker):
         bool: True if the file has been renamed
         successfully, False otherwise.
         """
-        self.navigate_to("My Drive")
         self.move_action(filename, folder)
+        sleep(small_delay)
         try:
             undo_button = self.wait_for_element(locators.undo_button_selector)
             undo_button.click()
@@ -572,25 +577,30 @@ class HigherActions(ButtonClicker):
         """
         try:
             # Double click the destination folder
-            destination_folder_element = self.wait_for_element(
-                locators.file_selector(folder)
-            )
+            destination_folder_element = self.select_item(folder)
             self.double_click_element(destination_folder_element)
-            sleep(large_delay)
+            sleep(small_delay)
         except EXC.StaleElementReferenceException:
             print(
                 "StaleElementReferenceException occurred..."
             )
-        # Verify file presence in the destination folder
-        assert (
-            self.wait_for_element(locators.file_selector(filename))
-        ), "File is not in the destination folder"
+        except FileNotFoundError:
+            assert False, "Destination Folder not found error!"
+        # Verify file not present in the destination folder
+        try :
+            assert (
+            self.select_item(filename) is None
+        ), "File is still present in the destination folder"
+        except FileNotFoundError:
+            print("File is not present in destination after undo.")
         self.navigate_to("My Drive")
-        self.driver.refresh()
-        assert self.wait_for_element(
-            locators.file_selector(filename)
-        ), "File is not present in My Drive"
-
+        self.refresh_and_wait_to_settle()
+        try :
+            self.select_item(filename)
+            assert True  # able to select file after undo 
+        except FileNotFoundError:
+            assert False , "File is not present in My Drive"
+            
     def rename_action(self, old_file_name, new_file_name):
         """Rename a file.
 
@@ -850,9 +860,7 @@ class HigherActions(ButtonClicker):
         bool:
         True if the file has been permanently deleted, False otherwise.
         """
-        self.driver.refresh()
-        sleep(large_delay)
-        self.navigate_to("Trash")
+        self.refresh_and_wait_to_settle()
         self.select_item(delete_forever_file_name)
         self.click_action_bar_button("Move to trash")
         self.navigate_to("Trash")
@@ -1248,6 +1256,5 @@ class HigherActions(ButtonClicker):
                 break
 
         for _ in range(current_depth - i):
-            self.driver.navigate().back()
-
+            self.driver.back()
         self.traverse_path("/".join(required_path[i:]))

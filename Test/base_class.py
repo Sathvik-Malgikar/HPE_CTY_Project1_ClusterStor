@@ -87,7 +87,7 @@ class Base:
         "C:\\Users", os.getlogin(), "Downloads", files.FILE_TO_UPLOAD
         )
         path2 = os.path.join(
-        "C:\\Users", os.getlogin(), "Downloads", files.file_name_for_copy
+        "C:\\Users", os.getlogin(), "Downloads", files.file_name_for_download
         )
         print("Clearing previous test-downloads.")
         delete_file(path1)
@@ -143,6 +143,7 @@ class Base:
 
         # AT HOME PAGE ,LOGGED IN , CLEANING RESIDUAL FILES
         cls.higher_actions.navigate_to("My Drive")
+        sleep(3.5)
         autoGUIutils.select_all()
         autoGUIutils.press_delete()
 

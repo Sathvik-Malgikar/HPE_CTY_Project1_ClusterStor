@@ -21,7 +21,36 @@ class TestMiscellaneousActions(Base):
         upload_button.click()
         autoGUIutils.type_into_dialogue_box(file_list_to_upload)
         cls.higher_actions.deal_duplicate_and_await_upload()
+        
+        # Creating path structure for navigate testcase.
+        for folder_name in files.initial_path.split("/"):
+            cls.higher_actions.click_on_new_button()
+            action_button = cls.higher_actions.wait_to_click(
+                locators.new_menu_button_locator("New folder")
+            )
+            action_button.click()
+            autoGUIutils.type_into_dialogue_box(folder_name)
+            
+            folder_element = cls.higher_actions.select_item(folder_name)
+            cls.higher_actions.double_click_element(folder_element)
+        
         cls.higher_actions.refresh_and_wait_to_settle()
+        cls.higher_actions.navigate_to("My Drive")
+        
+        # For creating final path 
+        folder_element = cls.higher_actions.select_item("A")
+        cls.higher_actions.double_click_element(folder_element)
+        
+        cls.higher_actions.click_on_new_button()
+        action_button = cls.higher_actions.wait_to_click(
+            locators.new_menu_button_locator("New folder")
+        )
+        action_button.click()
+        autoGUIutils.type_into_dialogue_box("D")
+        
+        cls.higher_actions.refresh_and_wait_to_settle()
+        cls.higher_actions.navigate_to("My Drive")
+        
         plain_toast(
             f"Prerequisites for suite {cls.__name__} ready.",
             f"Contains {len(inspect.getmembers(TestMiscellaneousActions,inspect.isfunction))} testcases, starting now.",

@@ -3,14 +3,20 @@ renamed_file_name = "renamed_cty"
 
 
 file_to_be_deleted = "deletion_file.txt"
-file_to_be_restored = "test.txt"
+file_to_be_restored = "deletion_file.txt"
 
 folder_name = "Applied crypto"
 renamed_folder_name = "After_rename"
 
 
-file_move_name = "test2.txt"
+file_move_name = "move_file_singular.txt"
 destination_folder_name = "MOVE Destination"
+
+file_destination_pairs = [
+            ("move_1.txt", "After_rename"),
+            ("move_2.txt", "After_rename"),
+            ("move_3.txt", "Alternate Move Folder"),
+        ]
 
 button_names_and_tooltips = {
     "Home": "Home",
@@ -23,12 +29,13 @@ button_names_and_tooltips = {
     "Trash": "Trashed items",
     "Storage": "Storage",
 }
-file_name_for_copy = "test.txt"
+file_name_for_copy = "test_copy.txt"
+file_name_for_download = "test_download.txt"
 
 create_folder_name = "Created folder"
 
-delete_forever_file_name = "abc.txt"
-view_info_file_name = "def.txt"
+delete_forever_file_name = "permanent_deletion.txt"
+view_info_file_name = "file_with_attributes.txt"
 
 FILE_TO_UPLOAD = "Screenshot (177).png"
 
@@ -41,7 +48,7 @@ file_to_be_searched_by_type = "I_PES1UG21CS542_Sathvik Sudhir Malgikar_A1.pdf"
 
 folder_name_to_be_removed = "SVM"
 
-fileCollection = ["move1.txt", "move2.txt"]
+remove_multiple_files = ["remove1.txt", "remove2.txt"]
 
 button_names_and_tooltips = {
     "Home": "Home",
