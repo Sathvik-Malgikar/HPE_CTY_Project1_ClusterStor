@@ -132,7 +132,8 @@ class ElementaryActions:
         clickable within the specified timeout.
         """
         try:
-            return self.web_driver_wait.until(EC.element_to_be_clickable(locator))
+            expectation = EC.element_to_be_clickable(locator)
+            return self.web_driver_wait.until(expectation)
         except TimeoutException:
             print(f"Timeout waiting for element with locator {locator}")
             return None
@@ -349,8 +350,6 @@ class HigherActions(ButtonClicker):
     def __init__(self, driver, web_driver_wait):
         super().__init__(driver, web_driver_wait)
 
-
-
     def select_item(self, item_name):
         """Select an item by its name.
 
@@ -362,7 +361,8 @@ class HigherActions(ButtonClicker):
         """
         action_chain = ActionChains(self.driver)
         try:
-            show_more_button = self.driver.find_element(*locators.show_more_files)
+            temp_loc = locators.show_more_files
+            show_more_button = self.driver.find_element(*temp_loc)
             if show_more_button.is_displayed():
                 show_more_button.click()
                 sleep(small_delay)
@@ -378,7 +378,7 @@ class HigherActions(ButtonClicker):
         else:
             raise FileNotFoundError
 
-    def verify_search_results(self, expected_file_list): 
+    def verify_search_results(self, expected_file_list):
         """Verify search results against expected file list.
 
         Parameters:
@@ -397,7 +397,7 @@ class HigherActions(ButtonClicker):
                 break
             self.double_click_element(
                 file_element
-            )  
+            )
             sleep(medium_delay)
             autoGUIutils.go_back_esc()
         return flag
@@ -449,7 +449,7 @@ class HigherActions(ButtonClicker):
         Note:
         This function assumes that the file upload process can
         be initiated and completed successfully. If the warning
-        detection or upload completion mechanism changes, this 
+        detection or upload completion mechanism changes, this
         function may need to be updated accordingly.
         """
         # wait till upload completes, max 10 seconds by default
@@ -481,7 +481,7 @@ class HigherActions(ButtonClicker):
         destination_folder (str): Name of the destination folder.
 
         Raises:
-        AssertionError: If the file has not been moved 
+        AssertionError: If the file has not been moved
         successfully to the destination folder.
         """
         try:
@@ -495,10 +495,10 @@ class HigherActions(ButtonClicker):
             print("StaleElementReferenceException occurred...")
         # Verify file presence in the destination folder
         assert (
-            not self.wait_for_element(locators.file_selector(moved_fname)) 
+            not self.wait_for_element(locators.file_selector(moved_fname))
         ), "File has not been moved successfully to the destination folder"
 
-    def verify_restoration(self, file_name):  
+    def verify_restoration(self, file_name):
         """Verify the restoration of a file.
 
         Parameters:
@@ -514,16 +514,15 @@ class HigherActions(ButtonClicker):
         self.send_keys_to_focused(file_name)
         sleep(small_delay)
         return self.wait_for_element(locators.file_selector(file_name))
-     
 
     def move_action(self, move_fname, destination_folder_name):
         """Move a file to a specified destination folder.
 
         Parameters:
         move_fname (str): The name of the file to be moved.
-        destination_folder_name (str): The 
+        destination_folder_name (str): The
         name of the destination folder.
-        show_more (bool): Flag indicating whether 
+        show_more (bool): Flag indicating whether
         to click the "Show More" button.
 
         Raises:
@@ -567,7 +566,7 @@ class HigherActions(ButtonClicker):
         folder (str): Name of the destination folder.
 
         Raises:
-        AssertionError: If the file is still in the destination 
+        AssertionError: If the file is still in the destination
         folder or not present in My Drive.
         """
         try:
@@ -580,7 +579,7 @@ class HigherActions(ButtonClicker):
         except EXC.StaleElementReferenceException:
             print(
                 "StaleElementReferenceException occurred..."
-            ) 
+            )
         # Verify file presence in the destination folder
         assert (
             self.wait_for_element(locators.file_selector(filename))
@@ -596,7 +595,7 @@ class HigherActions(ButtonClicker):
 
         This function renames a file from its old name to a
         new name by selecting the file, initiating the renaming process,
-        and confirming the new name. It performs these actions 
+        and confirming the new name. It performs these actions
         through the provided methods (`select_item`, `rename_selected_item`,
         and `click_on_ok_button`) in sequence.
 
@@ -609,9 +608,9 @@ class HigherActions(ButtonClicker):
 
         Note:
         This function assumes that the file can be located
-        and selected using the provided 
+        and selected using the provided
         name, and that the renaming process
-        can be completed without errors. If the file selection, 
+        can be completed without errors. If the file selection,
         renaming process, or confirmation mechanism changes,
         this function may need to be updated accordingly.
         """
@@ -622,10 +621,10 @@ class HigherActions(ButtonClicker):
     def undo_rename_action(self, old_fname, new_fname):
         """Undo the renaming of a file.
 
-        This function performs the undo operation 
-        after renaming a file by simulating the 
+        This function performs the undo operation
+        after renaming a file by simulating the
         'Ctrl+Z' keyboard shortcut.
-        After undoing the rename action, it verifies 
+        After undoing the rename action, it verifies
         the success of the undo operation by checking
         if the original file
         name has been restored and the new file
@@ -634,21 +633,21 @@ class HigherActions(ButtonClicker):
         Parameters:
         old_fname (str): The original name of
         the file before renaming.
-        new_fname (str): The new name of the 
+        new_fname (str): The new name of the
         file after renaming.
 
         Returns:
-        bool: True if the renaming is successfully 
+        bool: True if the renaming is successfully
         undone, False otherwise.
 
         Note:
-        This function assumes that the renaming action 
-        can be undone using the 'Ctrl+Z' keyboard 
+        This function assumes that the renaming action
+        can be undone using the 'Ctrl+Z' keyboard
         shortcut and that the
-        success of the undo operation can be verified 
-        by checking file elements using provided locators. 
+        success of the undo operation can be verified
+        by checking file elements using provided locators.
         If the renaming mechanism or verification
-        process changes, this function may need to be 
+        process changes, this function may need to be
         updated accordingly.
         """
         self.rename_action(old_fname, new_fname)
@@ -660,10 +659,10 @@ class HigherActions(ButtonClicker):
     def undo_rename_verification(self, old_fname, new_fname):
         """Verify the undo operation of file renaming.
 
-        This function verifies the success of the undo 
-        operation after renaming a file. It checks if 
+        This function verifies the success of the undo
+        operation after renaming a file. It checks if
         the old file (with the original name) exists
-        and if the new file (with the renamed name) 
+        and if the new file (with the renamed name)
         does not exist. If both conditions are satisfied,
         it indicates that the undo operation was successful.
 
@@ -678,9 +677,9 @@ class HigherActions(ButtonClicker):
         True if the undo operation was successful, False otherwise.
 
         Note:
-        This function assumes that the file elements can 
+        This function assumes that the file elements can
         be located using the provided locators. If the
-        file elements or renaming mechanism changes, 
+        file elements or renaming mechanism changes,
         this function may need to be updated accordingly.
         """
         # Verify that the new file doesn't exist
@@ -812,7 +811,7 @@ class HigherActions(ButtonClicker):
         self.navigate_to("My Drive")
         self.click_on_type_button()
         self.click_on_the_required_type()
-        file_elements = self.driver.find_elements(By.CSS_SELECTOR, "div.KL4NAf")
+        file_elements = self.driver.find_elements(*locators.fname_div)
         # Extract file names from file elements
         file_names = [element.text for element in file_elements]
         sleep(medium_delay)
@@ -835,17 +834,18 @@ class HigherActions(ButtonClicker):
         self.select_item(file_name)
         self.click_action_bar_button("Move to trash")
         sleep(medium_delay)
-        assert not self.wait_for_element(locators.file_selector(file_name))
+        temp_loc = locators.file_selector(file_name)
+        assert not self.wait_for_element(temp_loc)
 
     def delete_permanently_action(self, delete_forever_file_name):
         """Permanently delete a file.
 
         Parameters:
-        delete_forever_file_name (str): 
+        delete_forever_file_name (str):
         The name of the file to be permanently deleted.
 
         Returns:
-        bool: 
+        bool:
         True if the file has been permanently deleted, False otherwise.
         """
         self.driver.refresh()
@@ -886,11 +886,11 @@ class HigherActions(ButtonClicker):
         """Undo deletion of a file.
 
         Parameters:
-        fname (str): 
+        fname (str):
         The name of the file to be retrieved.
 
         Returns:
-        bool: 
+        bool:
         True if the file has been successfully restored, False otherwise.
         """
         self.navigate_to("Trash")
@@ -905,13 +905,13 @@ class HigherActions(ButtonClicker):
         """Rename a folder.
 
         Parameters:
-        old_folder_name (str): 
+        old_folder_name (str):
         The original name of the folder.
-        new_folder_name (str): 
+        new_folder_name (str):
         The new name of the folder.
 
         Returns:
-        bool: 
+        bool:
         True if the folder has been renamed successfully, False otherwise.
         """
         self.navigate_to("Home")
@@ -926,7 +926,7 @@ class HigherActions(ButtonClicker):
         """Create a new folder.
 
         Parameters:
-        folder_name (str): 
+        folder_name (str):
         The name of the folder to be created.
 
         Raises:
@@ -945,7 +945,7 @@ class HigherActions(ButtonClicker):
         """Remove a folder.
 
         Parameters:
-        folder_to_be_removed (str): 
+        folder_to_be_removed (str):
         The name of the folder to be removed.
 
         Raises:
@@ -962,13 +962,13 @@ class HigherActions(ButtonClicker):
         Verify the tooltip text of buttons like "Home", "My Drive" etc.
 
         Parameters:
-        btn_list (dict): 
+        btn_list (dict):
         A dictionary containing button names as keys and expected
         tooltip text as values.
 
         Returns:
-        bool: 
-        True if all buttons are present and their tooltips match 
+        bool:
+        True if all buttons are present and their tooltips match
         the expected text, False otherwise.
         """
         # Initialize flag to track verification status
@@ -984,15 +984,15 @@ class HigherActions(ButtonClicker):
                 )
                 action_chain = ActionChains(self.driver)
                 action_chain.move_to_element(button_element).perform()
-                sleep(small_delay)  # Short delay to allow the tooltip to appear
+                sleep(small_delay)  # Short delay for tooltip to appear
 
                 # Get the actual tooltip text
                 actual_tt_txt = button_element.get_attribute("title")
 
-                # Check if the actual tooltip text matches the expected tooltip text
+                # Check if the actual & expected tooltip text match.
                 if actual_tt_txt != expected_tt_txt:
-                    print(f"Tooltip text for button '{button_name}' does not match!")
-                    print(f"Expected: '{expected_tt_txt}', Actual: '{actual_tt_txt}'")
+                    print(f"Tooltip for '{button_name}' doesn't match!")
+                    print(f"Exp:{expected_tt_txt}, Actual:{actual_tt_txt}")
                     all_buttons_present = False
             except NoSuchElementException:
                 print(f"Button '{button_name}' not found.")
@@ -1004,9 +1004,9 @@ class HigherActions(ButtonClicker):
         """Verify tooltips for files in the Home page.
 
         This function navigates to the Home page, selects each
-        file individually to trigger the tooltip, and checks 
-        if thebtooltip text is present for each file. If any 
-        file does not have a tooltip text or 
+        file individually to trigger the tooltip, and checks
+        if thebtooltip text is present for each file. If any
+        file does not have a tooltip text or
         cannot be found, it sets the
         verification status flag to False.
 
@@ -1050,7 +1050,7 @@ class HigherActions(ButtonClicker):
         return all_files_verified
 
     def verify_copied_link(self):
-        """Verify if a link has been copied to the clipboard and 
+        """Verify if a link has been copied to the clipboard and
         access it in a new tab.
 
         This function attempts to retrieve a shared link from the clipboard
@@ -1116,9 +1116,9 @@ class HigherActions(ButtonClicker):
         None
 
         Note:
-        This function assumes that the file can be located and that a 
+        This function assumes that the file can be located and that a
         share button is present in the action bar to open
-        the share window. If the UI layout or navigation changes, this 
+        the share window. If the UI layout or navigation changes, this
         function may need to be updated accordingly.
         """
         self.navigate_to("Home")
@@ -1134,9 +1134,9 @@ class HigherActions(ButtonClicker):
     def verify_share_link_to_friend(self, shared_file, email):
         """Verify if a file has been shared with a friend via email.
 
-        This function checks if a specified file has been shared with 
+        This function checks if a specified file has been shared with
         a friend via email by attempting to locate the email
-        address of the recipient in the share window. If the email 
+        address of the recipient in the share window. If the email
         address is found, it indicates that the file has been
         shared successfully.
 
@@ -1145,13 +1145,13 @@ class HigherActions(ButtonClicker):
         email (str): The email address of the recipient.
 
         Returns:
-        bool: True if the file has been shared with the specified 
+        bool: True if the file has been shared with the specified
         email address, False otherwise.
 
         Note:
-        This function assumes that the share window displays the 
+        This function assumes that the share window displays the
         recipient's email address in a specified location
-        (represented by 'locators.email_selector'). If the layout 
+        (represented by 'locators.email_selector'). If the layout
         of the share window changes, this function may need to be
         updated accordingly.
         """
@@ -1170,7 +1170,7 @@ class HigherActions(ButtonClicker):
     def share_link_to_friend(self, file_to_share, email):
         """Share a file link with a friend via email.
 
-        This function initiates the sharing process for a specified 
+        This function initiates the sharing process for a specified
         file by opening the share window, entering the recipient's
         email address, and sending the share invitation. It also includes
         a brief message ("short notes") before finalizing

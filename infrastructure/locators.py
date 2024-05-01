@@ -32,7 +32,7 @@ upload_complete_text = (
     "//span[contains(text(), 'upload') and contains(text(), 'complete')]",
 )
 file_already_present_text = (By.CSS_SELECTOR, "div#EJL26d")
-file_name_containerdiv = (By.CSS_SELECTOR, "div.KL4NAf")
+fname_div = (By.CSS_SELECTOR, "div.KL4NAf")
 
 
 ok_button_locator = (By.CSS_SELECTOR, "button[name='ok'].h-De-Vb.h-De-Y[tabindex='0']")
@@ -117,14 +117,6 @@ all_locations_button_locator = (
     'button.VfPpkd-AznF2e.VfPpkd-AznF2e-OWXEXe-jJNx8e-QBLLGd.WbUJNb.FEsNhd.VCOGmd.u4B0v[role="tab"][aria-selected="false"][id="all_locations"]',
 )
 
-# shortcut_folder_button_locator = (By.CSS_SELECTOR, 'td[aria-label="ShortcutFolder"]')
-
-# manage_access_button_selector = (By.XPATH, "//span[text()='Manage access']")
-
-# access_list=(By.XPATH, "//div[@class='fSFQ2']//div[@class='fOEalf']//div[@class='EDtwUe']")
-
-# access_section=(By.XPATH,"//section[@class='ZvUowc']")
-# email_selector=(By.CSS_SELECTOR, f'div.fOEalf[data-hovercard-id="{files.email}"] div.Jw4Ike')
 
 email_selector = (By.CSS_SELECTOR, "div[aria-label='sravnihm2021@gmail.com']")
 storage_selector = (By.CLASS_NAME, "ji-A cr-hTVF2c-r")
