@@ -24,12 +24,7 @@ class TestMiscellaneousActions(Base):
         
         # Creating path structure for navigate testcase.
         for folder_name in files.initial_path.split("/"):
-            cls.higher_actions.click_on_new_button()
-            action_button = cls.higher_actions.wait_to_click(
-                locators.new_menu_button_locator("New folder")
-            )
-            action_button.click()
-            autoGUIutils.type_into_dialogue_box(folder_name)
+            cls.higher_actions.create_folder_action(folder_name)
             
             folder_element = cls.higher_actions.select_item(folder_name)
             cls.higher_actions.double_click_element(folder_element)
@@ -40,12 +35,7 @@ class TestMiscellaneousActions(Base):
         folder_element = cls.higher_actions.select_item("A")
         cls.higher_actions.double_click_element(folder_element)
         
-        cls.higher_actions.click_on_new_button()
-        action_button = cls.higher_actions.wait_to_click(
-            locators.new_menu_button_locator("New folder")
-        )
-        action_button.click()
-        autoGUIutils.type_into_dialogue_box("D")
+        cls.higher_actions.create_folder_action("D")
         
         cls.higher_actions.navigate_to("My Drive")
         

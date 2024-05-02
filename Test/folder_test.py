@@ -19,12 +19,7 @@ class TestfolderActions(Base):
             files.folder_name_to_be_removed,
         ]
         for folder_name in folders_to_create:
-            cls.higher_actions.click_on_new_button()
-            action_button = cls.higher_actions.wait_to_click(
-                locators.new_menu_button_locator("New folder")
-            )
-            action_button.click()
-            autoGUIutils.type_into_dialogue_box(folder_name)
+            cls.higher_actions.create_folder_action(folder_name)
 
         plain_toast(
             f"Prerequisites for suite {cls.__name__} ready.",
