@@ -1,7 +1,3 @@
-# import sys
-
-# Add the current directory to the path to import the library functions
-# sys.path.append(os.getcwd())
 from time import sleep
 from selenium.webdriver import Chrome, ChromeOptions, Firefox, FirefoxOptions
 from selenium.webdriver.support.wait import WebDriverWait
@@ -11,13 +7,17 @@ import configparser
 from infrastructure import autoGUIutils
 import os
 import files
-
+import inspect
 from selenium.webdriver.common.keys import Keys
 from win10toast import ToastNotifier
 
 tn = ToastNotifier()
-
 chosen_driver = "Chrome"  # "Chrome" or "Firefox"
+
+
+def get_number_of_testcases(test_class):
+    return len(inspect.getmembers(test_class, inspect.isfunction))
+
 
 def delete_file(file_path):
     if os.path.exists(file_path):
@@ -25,7 +25,8 @@ def delete_file(file_path):
         print(f"{file_path} deleted successfully.")
     else:
         print(f"{file_path} does not exist.")
-        
+
+
 def plain_toast(title, msg):
     """
     Display a plain toast notification.
@@ -40,10 +41,10 @@ def plain_toast(title, msg):
     tn.show_toast(title, msg, duration=10)
 
 
-
 def toast_testcase_name(func):
     """
-    A decorator function that displays a toast notification with the name of the test case being executed.
+    A decorator function that displays a toast notification with
+    the name of the test case being executed.
 
     Args:
         func: The function being decorated.
@@ -66,16 +67,20 @@ def toast_testcase_name(func):
 
 class Base:
     """
-    This is the base class for all the test case classes. It provides basic login and logout for selected driver.
+    This is the base class for all the test case classes.
+    It provides basic login and logout for selected driver.
     Supported drivers are Chrome and Firefox.
-    These can be selected by changing the driver variable in pytest.ini file.
+    These can be selected by changing the driver variable
+    in pytest.ini file.
     """
 
     @classmethod
     def setup_class(cls):
         """
-        Set up the test class by initializing the web driver, navigating to the Google Drive sign-in page,
-        and performing necessary actions to log in and clean up residual files.
+        Set up the test class by initializing the web driver,
+        navigating to the Google Drive sign-in page,
+        and performing necessary actions to log in and clean
+        up residual files.
 
         Args:
             cls: The class object.
@@ -84,10 +89,11 @@ class Base:
             None
         """
         path1 = os.path.join(
-        "C:\\Users", os.getlogin(), "Downloads", files.FILE_TO_UPLOAD
-        )
+            "C:\\Users", os.getlogin(), "Downloads", files.FILE_TO_UPLOAD
+            )
+        dwnld_dir = os.path.join("C:\\Users", os.getlogin(), "Downloads")
         path2 = os.path.join(
-        "C:\\Users", os.getlogin(), "Downloads", files.file_name_for_download
+            dwnld_dir, files.file_name_for_download
         )
         print("Clearing previous test-downloads.")
         delete_file(path1)
@@ -97,7 +103,6 @@ class Base:
             options = FirefoxOptions()
         else:
             options = ChromeOptions()
-            
 
         # Add the chrome switch to disable notifications
         options.add_argument("--disable-notifications")
@@ -107,7 +112,7 @@ class Base:
             cls.driver = Firefox(options=options)
         else:
             cls.driver = Chrome(options=options)
-            
+
         cls.web_driver_wait = WebDriverWait(cls.driver, 10)
         cls.driver.get("https://www.google.com/intl/en-US/drive/")
         cls.driver.maximize_window()
@@ -153,20 +158,22 @@ class Base:
         # autoGUIutils.press_delete()
 
         cls.higher_actions.navigate_to("Trash")
-        button_found = cls.higher_actions.wait_to_click(locators.empty_trash_button)
+        button_found = cls.higher_actions.wait_to_click(locators.empty_trash_btn)
         if button_found:
             button_found.click()
             autoGUIutils.n_tabs_shift_focus(3)
             autoGUIutils.press_enter()
 
         cls.higher_actions.navigate_to("Home")
-        plain_toast("Login successful.", "Waiting for prerequisites to complete.")
+        plain_toast("Login successful.", "Waiting for prerequisites to finish.")
 
     @classmethod
     def teardown_class(cls):
         """
-        This method is called after all test cases in the class have been executed.
-        It performs the necessary cleanup actions such as logging out, deleting files, and closing the driver.
+        This method is called after all test cases in the
+        class have been executed.
+        It performs the necessary cleanup actions such as
+        logging out, deleting files, and closing the driver.
 
         Args:
             cls: The class object representing the test class.
@@ -185,7 +192,7 @@ class Base:
         # autoGUIutils.press_delete()
 
         cls.higher_actions.navigate_to("Trash")
-        button_found = cls.higher_actions.wait_to_click(locators.empty_trash_button)
+        button_found = cls.higher_actions.wait_to_click(locators.empty_trash_btn)
         if button_found:
             button_found.click()
             autoGUIutils.n_tabs_shift_focus(3)

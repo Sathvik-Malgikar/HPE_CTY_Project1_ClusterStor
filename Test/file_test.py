@@ -1,4 +1,5 @@
-from test.base_class import Base, toast_testcase_name, plain_toast
+from test.base_class import Base, get_number_of_testcases
+from test.base_class import toast_testcase_name, plain_toast
 
 import pytest
 
@@ -7,7 +8,6 @@ import files
 from infrastructure import autoGUIutils
 import hashlib
 import os
-import inspect
 
 
 class TestfileActions(Base):
@@ -40,36 +40,37 @@ class TestfileActions(Base):
             *list(map(lambda a:a[1], files.file_destination_pairs)),
             files.undo_move_destination_folder,
         ]))
-        
+
         for folder_name in folders_to_create:
             cls.higher_actions.create_folder_action(folder_name)
 
+        n_testcases = get_number_of_testcases(TestfileActions)
         plain_toast(
             f"Prerequisites for suite {cls.__name__} ready.",
-            f"Contains {len(inspect.getmembers(TestfileActions,inspect.isfunction))} testcases, starting now.",
+            f"Contains {n_testcases} testcases, starting now.",
         )
 
     @classmethod
     def teardown_class(cls):
         # FIRST SUBCLASS TEARDOWN LOGIC
-        super(cls, TestfileActions).teardown_class()  # THEN SUPERCLASS TEARDOWN
+        super(cls, TestfileActions).teardown_class()
 
     @pytest.mark.GROUPA
     @toast_testcase_name
     def test_rename_file(self):
-        old_file_name = files.file_name
-        new_file_name = files.renamed_file_name
-        self.higher_actions.rename_action(old_file_name, new_file_name)
-        result = self.higher_actions.rename_verification(old_file_name, new_file_name)
+        old_fname = files.file_name
+        new_fname = files.renamed_file_name
+        self.higher_actions.rename_action(old_fname, new_fname)
+        result = self.higher_actions.rename_verification(old_fname, new_fname)
         assert result, "Rename failed"
 
     @pytest.mark.GROUPA
     @toast_testcase_name
     def test_undo_rename_file(self):
-        old_file_name = files.undo_rename
-        new_file_name = files.renamed_undo_rename
-        self.higher_actions.undo_rename_action(old_file_name, new_file_name)
-        self.higher_actions.undo_rename_verification(old_file_name, new_file_name)
+        old_fname = files.undo_rename
+        new_fname = files.renamed_undo_rename
+        self.higher_actions.undo_rename_action(old_fname, new_fname)
+        self.higher_actions.undo_rename_verification(old_fname, new_fname)
 
     @pytest.mark.GROUPA
     @toast_testcase_name
@@ -85,8 +86,9 @@ class TestfileActions(Base):
             locators.file_selector(files.FILE_TO_UPLOAD)
         )
         ground_truth_hash = None
+        user_dir = os.path.join("C:\\Users", os.getlogin())
         with open(
-            os.path.join("C:\\Users", os.getlogin(), files.FILE_TO_UPLOAD), "rb"
+            os.path.join(user_dir, files.FILE_TO_UPLOAD), "rb"
         ) as ground_truth_file:
 
             ground_truth_hash = hashlib.file_digest(
@@ -102,13 +104,14 @@ class TestfileActions(Base):
         )
         if autoGUIutils.wait_for_file(
             downloaded_file_path, timeout=16
-        ):  # this will skip hash checking if file not downloaded before timeout
+        ):  # skip hash checking if file not downloaded before timeout
             downloaded_file_hash = None
             with open(downloaded_file_path, "rb") as downloaded_file:
                 downloaded_file_hash = hashlib.file_digest(
                     downloaded_file, "md5"
                 ).hexdigest()
-            assert downloaded_file_hash == ground_truth_hash, "Checksum mismatch"
+            condition = downloaded_file_hash == ground_truth_hash
+            assert condition, "Checksum mismatch"
         else:
             assert False
 
@@ -120,12 +123,13 @@ class TestfileActions(Base):
             locators.action_bar_button_selector("Download")
         )
         download_button.click()
-        file_download_directory = os.path.join("C:\\Users", os.getlogin(), "Downloads")
+        download_dir = os.path.join("C:\\Users", os.getlogin(), "Downloads")
         autoGUIutils.wait_for_file(
-            os.path.join(file_download_directory, files.file_name_for_download), timeout=18
+            os.path.join(download_dir, files.file_name_for_download),
+            timeout=18
         )
 
-        assert files.file_name_for_download in os.listdir(file_download_directory)
+        assert files.file_name_for_download in os.listdir(download_dir)
 
     @pytest.mark.GROUPA
     @toast_testcase_name
@@ -152,10 +156,10 @@ class TestfileActions(Base):
     @toast_testcase_name
     def test_move_file(self):
         filename = files.file_move_name
-        destination_folder = files.destination_folder_name
+        dst_folder = files.destination_folder_name
         self.higher_actions.navigate_to("My Drive")
-        self.higher_actions.move_action(filename, destination_folder)
-        self.higher_actions.verify_file_in_destination(filename, destination_folder)
+        self.higher_actions.move_action(filename, dst_folder)
+        self.higher_actions.verify_file_in_destination(filename, dst_folder)
         autoGUIutils.go_back_esc()
 
     @pytest.mark.GROUPB
@@ -171,7 +175,6 @@ class TestfileActions(Base):
     @toast_testcase_name
     def test_move_multiple_files(self):
         self.higher_actions.navigate_to("My Drive")
-        
         for filename, destination_folder in (files.file_destination_pairs):
             try:
                 self.higher_actions.move_action(
@@ -234,4 +237,6 @@ class TestfileActions(Base):
             float(files.capacity_file_size.split(" ")[0]),
             files.capacity_file_size.split(" ")[1],
         )
-        assert final_storage - initial_storage == capacity * storage_units.get(unit, 1)
+        capacity_res = capacity * storage_units.get(unit, 1)
+        cond = final_storage - initial_storage == capacity_res
+        assert cond

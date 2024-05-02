@@ -1,10 +1,8 @@
-from test.base_class import Base, toast_testcase_name, plain_toast
+from test.base_class import Base, get_number_of_testcases
+from test.base_class import toast_testcase_name, plain_toast
 
-
-import inspect
 from infrastructure import locators
 import files
-from infrastructure import autoGUIutils
 
 
 class TestfolderActions(Base):
@@ -21,15 +19,16 @@ class TestfolderActions(Base):
         for folder_name in folders_to_create:
             cls.higher_actions.create_folder_action(folder_name)
 
+        n_testcases = get_number_of_testcases(TestfolderActions)
         plain_toast(
             f"Prerequisites for suite {cls.__name__} ready.",
-            f"Contains {len(inspect.getmembers(TestfolderActions, inspect.isfunction))} testcases, starting now.",
+            f"Contains {n_testcases} testcases, starting now.",
         )
 
     @classmethod
     def teardown_class(cls):
         # FIRST SUBCLASS TEARDOWN LOGIC
-        super(cls, TestfolderActions).teardown_class()  # THEN SUPERCLASS TEARDOWN
+        super(cls, TestfolderActions).teardown_class()
 
     @toast_testcase_name
     def test_rename_folder(self):
@@ -44,8 +43,9 @@ class TestfolderActions(Base):
     def test_create_folder(self):
         folder_name = files.create_folder_name
         self.higher_actions.create_folder_action(folder_name)
+        temp_loc = locators.file_selector(folder_name)
         assert (
-            self.higher_actions.wait_for_element(locators.file_selector(folder_name))
+            self.higher_actions.wait_for_element(temp_loc)
             is not None
         )
 
@@ -60,11 +60,11 @@ class TestfolderActions(Base):
     @toast_testcase_name
     def test_move_folder(self):
         foldername = files.folder_to_be_moved
-        destination_folder = files.destination_folder_name
+        dst_folder = files.destination_folder_name
         # self.higher_actions.navigate_to("Home")
         # self.higher_actions.click_on_folders_button()
-        self.higher_actions.move_action(foldername, destination_folder)
-        self.higher_actions.verify_file_in_destination(foldername, destination_folder)
+        self.higher_actions.move_action(foldername, dst_folder)
+        self.higher_actions.verify_file_in_destination(foldername, dst_folder)
         self.higher_actions.navigate_to("My Drive")
         assert not self.higher_actions.wait_for_element(
             locators.file_selector(foldername)

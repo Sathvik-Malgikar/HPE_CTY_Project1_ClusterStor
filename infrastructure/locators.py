@@ -66,7 +66,7 @@ make_a_copy_element_locator = (By.CSS_SELECTOR, 'div[aria-label="Make a copy"]')
 
 
 input_field_locator = (By.CLASS_NAME, "LUNIy")
-file_info_dialog_locator = (By.CSS_SELECTOR, "div.wbg7nb")
+file_info_dialog_loc = (By.CSS_SELECTOR, "div.wbg7nb")
 
 user_profile_button_locator = (By.CSS_SELECTOR, 'a.gb_d[aria-label*="Google Account"]')
 sign_out_button_locator = (
@@ -120,7 +120,7 @@ undo_button_selector = (By.CSS_SELECTOR, "span.la-Y-A.kc-A[data-target='undo']")
 
 error_message_selector = (By.CLASS_NAME, "errorMessage")
 
-empty_trash_button = (By.CSS_SELECTOR, "span.VfPpkd-vQzf8d")
+empty_trash_btn = (By.CSS_SELECTOR, "span.VfPpkd-vQzf8d")
 
 close_details_button = (
     By.CSS_SELECTOR,
