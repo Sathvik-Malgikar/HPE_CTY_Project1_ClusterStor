@@ -101,6 +101,7 @@ class Base:
 
         # Add the chrome switch to disable notifications
         options.add_argument("--disable-notifications")
+        options.add_argument("--disable-popup-blocking")
 
         if chosen_driver == "Firefox":
             cls.driver = Firefox(options=options)
@@ -127,7 +128,7 @@ class Base:
         parser = configparser.ConfigParser()
         parser.read("infrastructure/config.ini")
         cls.higher_actions.wait_for_element(locators.span_with_text("Sign"))
-        sleep(3)
+        sleep(2)
         account_email_id = parser.get("Account Credentials", "email")
         account_pwd = parser.get("Account Credentials", "password")
 
@@ -135,7 +136,7 @@ class Base:
         cls.higher_actions.send_keys_to_focused(Keys.ENTER)
         # deal with input animation
         cls.higher_actions.wait_for_element(locators.span_with_text("Welcome"))
-        sleep(3)
+        sleep(2.5)
         # not_first_sign_in = True
         cls.higher_actions.send_keys_to_focused(account_pwd)
         cls.higher_actions.send_keys_to_focused(Keys.ENTER)
@@ -143,7 +144,7 @@ class Base:
 
         # AT HOME PAGE ,LOGGED IN , CLEANING RESIDUAL FILES
         cls.higher_actions.navigate_to("My Drive")
-        sleep(3.5)
+        sleep(1.5)
         autoGUIutils.select_all()
         autoGUIutils.press_delete()
 
@@ -194,6 +195,7 @@ class Base:
             locators.user_profile_button_locator
         )
         cls.higher_actions.click_element(user_profile_button_element)
+        sleep(2)
         autoGUIutils.n_tabs_shift_focus(5)
         autoGUIutils.press_enter()
         cls.driver.close()

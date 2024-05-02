@@ -100,6 +100,7 @@ class ElementaryActions:
             action_chain.double_click(element).perform()
         except Exception as e:
             print(f"Error double clicking on element: {e}")
+        sleep(medium_delay)
 
     def drag_and_drop_element(self, src_element, dst_element):
         """Drag and drop an element from source to destination.
@@ -117,6 +118,7 @@ class ElementaryActions:
             temp.perform()
         except Exception as e:
             print(f"Error dragging and dropping element: {e}")
+        sleep(small_delay)
 
     def wait_to_click(self, locator):
         """Wait for an element to be clickable and click on it.
@@ -145,6 +147,7 @@ class ElementaryActions:
         new_file_name (str): The new name of the file.
         """
         pyautogui.press("n")
+        sleep(small_delay)
         pyautogui.write(new_file_name)
 
     def send_keys_to_element(self, element_locator, text):
@@ -190,6 +193,7 @@ class ElementaryActions:
         """
         action_chain = ActionChains(self.driver)
         action_chain.context_click().perform()
+        sleep(small_delay)
 
     def refresh_and_wait_to_settle(self):
         """Perform a refresh operation and wait till the page loads.
@@ -274,19 +278,19 @@ class ButtonClicker(ElementaryActions):
         """Click on the required type."""
         required_type = self.wait_to_click(locators.type_of_file_locator)
         required_type.click()
-        sleep(large_delay)
+        sleep(small_delay)
 
     def click_on_folders_button(self):
         """Click on the Folders button."""
         folders_btn = self.wait_to_click(locators.folders_button_locator)
         folders_btn.click()
-        sleep(large_delay)
+        sleep(very_small_delay)
 
     def click_on_search_in_drive(self):
         """Click on the Search in Drive bar."""
         search_bar = self.wait_to_click(locators.search_bar_locator)
         search_bar.click()
-        sleep(large_delay)
+        sleep(small_delay)
 
     def click_on_new_button(self):
         """Click on the New button."""
@@ -296,12 +300,7 @@ class ButtonClicker(ElementaryActions):
 
     def click_on_add_button(self):
         """Click on the Add button."""
-        # add_button.click()
-        # sleep(2)
-        autoGUIutils.press_tab()
-        autoGUIutils.press_tab()
-        autoGUIutils.press_tab()
-        autoGUIutils.press_tab()
+        autoGUIutils.n_tabs_shift_focus(4)
         autoGUIutils.press_enter()
 
     def click_on_shortcut_folder_button(self):
@@ -365,11 +364,9 @@ class HigherActions(ButtonClicker):
             show_more_button = self.driver.find_element(*temp_loc)
             if show_more_button.is_displayed():
                 show_more_button.click()
-                sleep(small_delay)
+                sleep(medium_delay)
         except NoSuchElementException:
             pass
-        # Hand
-        sleep(large_delay)
         file_selector = locators.file_selector(item_name)
         file_element = self.wait_for_element(file_selector)
         if file_element:
@@ -392,14 +389,13 @@ class HigherActions(ButtonClicker):
         for expected_file in expected_file_list:
             file_element = self.wait_to_click(
                 locators.file_selector(expected_file)
-            )  # TODO Check this once
+            )
             if not file_element:
                 flag = False
                 break
             self.double_click_element(
                 file_element
             )
-            sleep(medium_delay)
             autoGUIutils.go_back_esc()
         return flag
 
@@ -472,7 +468,6 @@ class HigherActions(ButtonClicker):
             web_driver_wait.until(
                 EC.presence_of_element_located(locators.upload_complete_text)
             )
-            sleep(small_delay)
 
     def verify_file_in_destination(self, moved_fname, destination_folder):
         """Verify the presence of a file in the destination folder.
@@ -490,7 +485,6 @@ class HigherActions(ButtonClicker):
             destination_folder_element = self.select_item(destination_folder)
  
             self.double_click_element(destination_folder_element)
-            sleep(medium_delay)
         except EXC.StaleElementReferenceException:
             print("StaleElementReferenceException occurred...")
         except FileNotFoundError:
@@ -516,7 +510,6 @@ class HigherActions(ButtonClicker):
         """
         # self.button_clicker.navigate_to("Home")
         self.click_on_search_in_drive()
-        sleep(small_delay)
         self.send_keys_to_focused(file_name)
         autoGUIutils.press_enter()
         try:
@@ -540,7 +533,6 @@ class HigherActions(ButtonClicker):
         file_ele = self.select_item(move_fname)
         dst_fold_ele = self.select_item(destination_folder_name)
         self.drag_and_drop_element(file_ele, dst_fold_ele)
-        sleep(medium_delay)
 
     def undo_move_action(self, filename, folder):
         """Rename a file.
@@ -554,7 +546,6 @@ class HigherActions(ButtonClicker):
         successfully, False otherwise.
         """
         self.move_action(filename, folder)
-        sleep(small_delay)
         try:
             undo_button = self.wait_for_element(locators.undo_button_selector)
             undo_button.click()
@@ -579,7 +570,6 @@ class HigherActions(ButtonClicker):
             # Double click the destination folder
             destination_folder_element = self.select_item(folder)
             self.double_click_element(destination_folder_element)
-            sleep(small_delay)
         except EXC.StaleElementReferenceException:
             print(
                 "StaleElementReferenceException occurred..."
@@ -594,7 +584,6 @@ class HigherActions(ButtonClicker):
         except FileNotFoundError:
             print("File is not present in destination after undo.")
         self.navigate_to("My Drive")
-        self.refresh_and_wait_to_settle()
         try :
             self.select_item(filename)
             assert True  # able to select file after undo 
@@ -664,9 +653,7 @@ class HigherActions(ButtonClicker):
         self.rename_action(old_fname, new_fname)
         sleep(small_delay)
         # press control+z
-        pyautogui.hotkey("ctrl", "z")
-        result = self.undo_rename_verification(old_fname, new_fname)
-        return result
+        pyautogui.hotkey("ctrl", "z")        
 
     def undo_rename_verification(self, old_fname, new_fname):
         """Verify the undo operation of file renaming.
@@ -699,16 +686,15 @@ class HigherActions(ButtonClicker):
         old_file_ele = self.wait_for_element(f_loc)
         assert (
             old_file_ele is not None
-        ), f"Old file '{old_fname}' still exists after rename operation."
+        ), f"ERROR old file '{old_fname}' does not exist after undo."
         # Verify that the new file doesn't exist
         renamed_file_element = self.wait_for_element(
             locators.file_selector(new_fname)
         )
         assert (
             renamed_file_element is None
-        ), f"New file '{new_fname}' not found after rename operation."
-        # return true if both conditions are satisfied
-        return True
+        ), f"ERROR new file '{new_fname}' still exists after undo."
+      
 
     def get_file_names_action(self):
         """Get the number of file names.
@@ -717,7 +703,7 @@ class HigherActions(ButtonClicker):
         int: The number of file names.
         """
         col_files = self.driver.find_elements(By.CSS_SELECTOR, "div.KL4NAf")
-        sleep(medium_delay)
+        sleep(very_small_delay)
         return len(col_files)
 
     def upload_file_action(self, file_to_upload):
@@ -734,13 +720,13 @@ class HigherActions(ButtonClicker):
             locators.new_menu_button_locator("File upload")
         )
         upload_button.click()
-        sleep(medium_delay)
+        sleep(small_delay)
         autoGUIutils.type_into_dialogue_box(file_to_upload)
         # this is utility solely because prerequisites aso reuses this function
 
         # currently max 25 minutes for large file upload
         self.deal_duplicate_and_await_upload(custom_timeout=25 * 60)
-        sleep(medium_delay)
+        
 
     def copy_file_action(self, file_name_for_copy):
         """Copy a file.
@@ -753,13 +739,10 @@ class HigherActions(ButtonClicker):
         """
         self.select_item(file_name_for_copy)
         self.context_click()
-        sleep(medium_delay)
 
         mkcopy_ele = self.wait_to_click(locators.make_a_copy_element_locator)
         mkcopy_ele.click()
-
-        sleep(medium_delay)
-        self.refresh_and_wait_to_settle()
+        sleep(small_delay)
         copied_file_ele = self.select_item("Copy of " + file_name_for_copy)
         return copied_file_ele
 
@@ -826,7 +809,6 @@ class HigherActions(ButtonClicker):
         file_elements = self.driver.find_elements(*locators.fname_div)
         # Extract file names from file elements
         file_names = [element.text for element in file_elements]
-        sleep(medium_delay)
         # Write file names to a text file
         with open("debug_file_names_by_type.log", "w") as file:
             for name in file_names:
@@ -845,7 +827,6 @@ class HigherActions(ButtonClicker):
     def remove_file_action(self, file_name):
         self.select_item(file_name)
         self.click_action_bar_button("Move to trash")
-        sleep(medium_delay)
         temp_loc = locators.file_selector(file_name)
         assert not self.wait_for_element(temp_loc)
 
@@ -860,7 +841,7 @@ class HigherActions(ButtonClicker):
         bool:
         True if the file has been permanently deleted, False otherwise.
         """
-        self.refresh_and_wait_to_settle()
+        self.navigate_to("My Drive")
         self.select_item(delete_forever_file_name)
         self.click_action_bar_button("Move to trash")
         self.navigate_to("Trash")
@@ -870,13 +851,13 @@ class HigherActions(ButtonClicker):
 
         self.select_item(delete_forever_file_name)
         self.click_action_bar_button("Delete forever")
-        sleep(small_delay)
+        sleep(very_small_delay)
         try:
             delete_confirm_btn_element = self.wait_for_element(
                 locators.delete_confirm_button_locator
             )
             self.click_element(delete_confirm_btn_element)
-            sleep(medium_delay)
+            sleep(small_delay)
         except Exception:
             return False
         return True
@@ -887,7 +868,7 @@ class HigherActions(ButtonClicker):
         autoGUIutils.press_enter()
         autoGUIutils.press_down_arrow()
         autoGUIutils.press_enter()
-        sleep(large_delay)
+        sleep(medium_delay)
         autoGUIutils.n_tabs_shift_focus(2)
         autoGUIutils.press_enter()
         autoGUIutils.go_back_esc()
@@ -945,9 +926,8 @@ class HigherActions(ButtonClicker):
             locators.new_menu_button_locator("New folder")
         )
         action_button.click()
-        sleep(small_delay)
         autoGUIutils.type_into_dialogue_box(folder_name)
-        self.refresh_and_wait_to_settle()
+        sleep(very_small_delay)
 
     def remove_folder_action(self, folder_to_be_removed):
         """Remove a folder.
@@ -963,7 +943,6 @@ class HigherActions(ButtonClicker):
         self.click_on_folders_button()
         self.select_item(folder_to_be_removed)
         self.click_action_bar_button("Move to trash")
-        sleep(medium_delay)
 
     def verify_button_tooltips(self, btn_list):
         """
@@ -992,7 +971,7 @@ class HigherActions(ButtonClicker):
                 )
                 action_chain = ActionChains(self.driver)
                 action_chain.move_to_element(button_element).perform()
-                sleep(small_delay)  # Short delay for tooltip to appear
+                sleep(very_small_delay)  # Short delay for tooltip to appear
 
                 # Get the actual tooltip text
                 actual_tt_txt = button_element.get_attribute("title")
@@ -1040,7 +1019,7 @@ class HigherActions(ButtonClicker):
             try:
                 # Select the file to trigger the tooltip
                 self.select_item(file_name)
-                sleep(small_delay)  # to allow the tooltip to appear
+                sleep(very_small_delay)  # to allow the tooltip to appear
 
                 # Get the actual tooltip text
                 f_loc = locators.file_selector(file_name)
@@ -1130,14 +1109,12 @@ class HigherActions(ButtonClicker):
         function may need to be updated accordingly.
         """
         self.navigate_to("Home")
-        sleep(small_delay)
         self.select_item(file_to_be_shared)
-        sleep(medium_delay)
         share_button = self.wait_for_element(
             locators.action_bar_button_selector("Share")
         )
         share_button.click()
-        sleep(large_delay)
+        sleep(medium_delay)
 
     def verify_share_link_to_friend(self, shared_file, email):
         """Verify if a file has been shared with a friend via email.
@@ -1166,7 +1143,6 @@ class HigherActions(ButtonClicker):
         # self.select_item(shared_file)
         self.open_share_window(shared_file)
         try:
-            # autoGUIutils.press_tab()
             element = self.wait_for_element(locators.email_selector)
             if element is not None:
                 assert True
@@ -1204,7 +1180,6 @@ class HigherActions(ButtonClicker):
         autoGUIutils.n_tabs_shift_focus(3)
         autoGUIutils.type_into_dialogue_box("short notes")
         autoGUIutils.n_tabs_shift_focus(3)
-        sleep(very_small_delay)
         autoGUIutils.press_enter()
         self.refresh_and_wait_to_settle()
 

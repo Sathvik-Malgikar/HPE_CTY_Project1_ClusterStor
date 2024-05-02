@@ -34,7 +34,6 @@ class TestMiscellaneousActions(Base):
             folder_element = cls.higher_actions.select_item(folder_name)
             cls.higher_actions.double_click_element(folder_element)
         
-        cls.higher_actions.refresh_and_wait_to_settle()
         cls.higher_actions.navigate_to("My Drive")
         
         # For creating final path 
@@ -48,7 +47,6 @@ class TestMiscellaneousActions(Base):
         action_button.click()
         autoGUIutils.type_into_dialogue_box("D")
         
-        cls.higher_actions.refresh_and_wait_to_settle()
         cls.higher_actions.navigate_to("My Drive")
         
         plain_toast(

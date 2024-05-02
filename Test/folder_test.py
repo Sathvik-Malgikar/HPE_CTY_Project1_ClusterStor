@@ -25,7 +25,6 @@ class TestfolderActions(Base):
             )
             action_button.click()
             autoGUIutils.type_into_dialogue_box(folder_name)
-            cls.higher_actions.refresh_and_wait_to_settle()
 
         plain_toast(
             f"Prerequisites for suite {cls.__name__} ready.",
@@ -72,7 +71,6 @@ class TestfolderActions(Base):
         self.higher_actions.move_action(foldername, destination_folder)
         self.higher_actions.verify_file_in_destination(foldername, destination_folder)
         self.higher_actions.navigate_to("My Drive")
-        self.driver.refresh()
         assert not self.higher_actions.wait_for_element(
             locators.file_selector(foldername)
         )

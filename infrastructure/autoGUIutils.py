@@ -35,7 +35,7 @@ def type_into_dialogue_box(stringvalue):
     # types into dialogue box
     pyautogui.typewrite(stringvalue)
     pyautogui.press("enter")
-    sleep(medium_delay)
+    sleep(small_delay)
 
 
 def go_back_esc():
@@ -47,11 +47,10 @@ def go_back_esc():
 def press_tab():
     # types into dialogue box
     pyautogui.press("tab")
-    sleep(small_delay)
+    sleep(very_small_delay)
 
 
 def n_tabs_shift_focus(n):
-    sleep(medium_delay)
     for i in range(n):
         press_tab()
         sleep(very_small_delay)
@@ -79,18 +78,19 @@ def zoom_out():
     pyautogui.press("-")
     pyautogui.press("-")
     pyautogui.keyUp("ctrl")
+    sleep(very_small_delay)
 
 
 def select_all():
     # Assuming the cursor is already focused on
     # the text area where you want to select all
     pyautogui.hotkey("ctrl", "a")  # Presses Ctrl + A to select all text
-    sleep(small_delay)
+    sleep(very_small_delay)
 
 
 def press_delete():
     pyautogui.press("delete")  # Presses the "Delete" key
-    sleep(medium_delay)
+    sleep(small_delay)
 
 
 def wait_for_file(path, timeout=None, poll_interval=2):

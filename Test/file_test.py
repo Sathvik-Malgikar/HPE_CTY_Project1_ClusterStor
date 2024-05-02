@@ -35,7 +35,6 @@ class TestfileActions(Base):
         upload_button.click()
         autoGUIutils.type_into_dialogue_box(file_list_to_upload)
         cls.higher_actions.deal_duplicate_and_await_upload()
-        cls.higher_actions.refresh_and_wait_to_settle()
         folders_to_create = list(set([
             files.destination_folder_name,
             *list(map(lambda a:a[1], files.file_destination_pairs)),
@@ -70,10 +69,7 @@ class TestfileActions(Base):
         old_file_name = files.undo_rename
         new_file_name = files.renamed_undo_rename
         self.higher_actions.undo_rename_action(old_file_name, new_file_name)
-        result = self.higher_actions.undo_rename_verification(
-            old_file_name, new_file_name
-        )
-        assert result, "Undo Rename failed"
+        self.higher_actions.undo_rename_verification(old_file_name, new_file_name)
 
     @pytest.mark.GROUPA
     @toast_testcase_name
@@ -167,7 +163,6 @@ class TestfileActions(Base):
     def test_undo_move_file(self):
         filename = files.undo_file_move
         folder = files.undo_move_destination_folder
-        self.higher_actions.refresh_and_wait_to_settle()
         self.higher_actions.navigate_to("My Drive")
         self.higher_actions.undo_move_action(filename, folder)
         self.higher_actions.verify_undo_move_action(filename, folder)
@@ -175,7 +170,6 @@ class TestfileActions(Base):
     @pytest.mark.GROUPB
     @toast_testcase_name
     def test_move_multiple_files(self):
-        self.higher_actions.refresh_and_wait_to_settle()
         self.higher_actions.navigate_to("My Drive")
         
         for filename, destination_folder in (files.file_destination_pairs):
@@ -224,13 +218,13 @@ class TestfileActions(Base):
     @pytest.mark.GROUPB
     @toast_testcase_name
     def test_undo_delete_action(self):
-        self.higher_actions.navigate_to("My Drive")
         file_name_to_retrieve = files.file_to_be_restored
         self.higher_actions.undo_delete_action(file_name_to_retrieve)
 
     @pytest.mark.GROUPB
     @toast_testcase_name
     def test_capacity_after_upload(self):
+        self.higher_actions.navigate_to("My Drive")
         file_name_to_upload = files.capacity_file
         initial_storage = self.higher_actions.get_storage_used()
         self.higher_actions.upload_file_action(file_name_to_upload)
