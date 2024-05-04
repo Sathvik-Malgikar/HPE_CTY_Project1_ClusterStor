@@ -37,7 +37,7 @@ create_folder_name = "Created folder"
 delete_forever_file_name = "permanent_deletion.txt"
 view_info_file_name = "file_with_attributes.txt"
 
-FILE_TO_UPLOAD = "Screenshot (177).png"
+FILE_TO_UPLOAD = "sample_upload.png"
 
 share_file = "short_notes.txt"
 type = "pdf"
