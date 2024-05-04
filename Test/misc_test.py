@@ -65,8 +65,7 @@ class TestMiscellaneousActions(Base):
         dlg_box_loc = locators.file_info_dialog_loc
         element = self.higher_actions.wait_to_click(dlg_box_loc)
         if not element:
-            assert (
-                False
+            assert (False
             ), f"File info for {files.view_info_file_name} is not visible"
         else:
             self.higher_actions.click_on_close_button()

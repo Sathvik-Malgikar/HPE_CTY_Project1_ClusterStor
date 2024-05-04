@@ -35,8 +35,7 @@ class TestfolderActions(Base):
         old_folder_name = files.folder_name
         new_folder_name = files.renamed_folder_name
         result = self.higher_actions.rename_folder_action(
-            old_folder_name, new_folder_name
-        )
+            old_folder_name, new_folder_name)
         assert result, "Rename failed"
 
     @toast_testcase_name

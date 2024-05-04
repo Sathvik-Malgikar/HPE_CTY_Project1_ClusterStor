@@ -128,7 +128,6 @@ class TestfileActions(Base):
             os.path.join(download_dir, files.file_name_for_download),
             timeout=18
         )
-
         assert files.file_name_for_download in os.listdir(download_dir)
 
     @pytest.mark.GROUPA

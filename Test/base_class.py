@@ -31,6 +31,7 @@ def plain_toast(title, msg):
     """
     Display a plain toast notification.
 
+
     Args:
         title (str): The title of the toast notification.
         msg (str): The message of the toast notification.
