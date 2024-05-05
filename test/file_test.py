@@ -146,13 +146,19 @@ class TestfileActions(Base):
     def test_search_for_file_by_name(self):
         self.higher_actions.search_by_name_action(files.file_to_be_searched)
 
-    # @pytest.mark.GROUPA
-    # @toast_testcase_name
-    # def test_search_for_file_by_type(self):
-    #     #  this function need to change to check for multiple types
-    #     #  files.filelist_types contains the types to iterate over
-    #     no_of_files = self.higher_actions.search_by_type_action()
-    #     assert no_of_files > 0
+    @pytest.mark.GROUPA
+    @toast_testcase_name
+    def test_search_for_files_by_types(self):
+    # Test case to search for files by multiple types
+        for file_type in files.filelist_types:
+            file_names = self.higher_actions.search_by_type_action(file_type)
+            
+            # Check if files were found for the type
+            assert len(file_names) > 0, f"No files found for type: {file_type}"
+            
+            # Check if text file was created for the type
+            file_name = f"debug_file_names_{file_type}.log"
+            assert os.path.isfile(file_name), f"Failed to create {file_name}"
 
     @pytest.mark.GROUPB
     @toast_testcase_name

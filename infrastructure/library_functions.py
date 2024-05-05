@@ -797,7 +797,7 @@ class HigherActions(ButtonClicker):
         else:
             print("No matching file elements found.")
 
-    def search_by_type_action(self):
+    def search_by_type_action(self, filetype):
         """Search for files by their type.
 
         Returns:
