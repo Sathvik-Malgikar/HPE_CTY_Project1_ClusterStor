@@ -274,9 +274,9 @@ class ButtonClicker(ElementaryActions):
         type_button = self.wait_to_click(locators.type_button_locator)
         type_button.click()
 
-    def click_on_the_required_type(self):
+    def click_on_the_required_type(self, file_type):
         """Click on the required type."""
-        required_type = self.wait_to_click(locators.type_of_file_locator)
+        required_type = self.wait_to_click(locators.type_of_file_selector(file_type))
         required_type.click()
         sleep(small_delay)
 
@@ -805,7 +805,7 @@ class HigherActions(ButtonClicker):
         """
         self.navigate_to("My Drive")
         self.click_on_type_button()
-        self.click_on_the_required_type()
+        self.click_on_the_required_type(filetype)
         file_elements = self.driver.find_elements(*locators.fname_div)
         # Extract file names from file elements
         file_names = [element.text for element in file_elements]
