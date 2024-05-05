@@ -40,11 +40,10 @@ view_info_file_name = "file_with_attributes.txt"
 FILE_TO_UPLOAD = "sample_upload.png"
 
 share_file = "short_notes.txt"
-type = "pdf"
-
 file_to_be_searched = "test"
 
-file_to_be_searched_by_type = "I_PES1UG21CS542_Sathvik Sudhir Malgikar_A1.pdf"
+filelist_search_by_type = ["bundle.zip" , "report.pdf" , "audio.mp3"]
+filelist_types = ["zip", "pdf", "mp3"]
 
 folder_name_to_be_removed = "SVM"
 

@@ -89,10 +89,10 @@ def left_menu_page_selector(aria_label):
 search_bar_locator = (By.CSS_SELECTOR, 'input[aria-label="Search in Drive"]')
 type_button_locator = (By.CSS_SELECTOR, 'div[aria-label="Type"]')
 my_drive_button_locator = (By.CSS_SELECTOR, 'div[aria-label="My Drive"]')
-type_of_file_locator = (
-    By.CSS_SELECTOR,
-    f'li[role="menuitemcheckbox"][name="{files.type}"]',
-)
+# type_of_file_locator = (
+#     By.CSS_SELECTOR,
+#     f'li[role="menuitemcheckbox"][name="{files.type}"]',
+# )
 
 folders_button_locator = (By.CSS_SELECTOR, 'button[name="T5ycX"]')
 move_to_trash_button_locator = (By.CSS_SELECTOR, 'div[aria-label="Move to trash"]')

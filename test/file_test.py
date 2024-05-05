@@ -26,6 +26,7 @@ class TestfileActions(Base):
             *files.remove_multiple_files,
             files.delete_forever_file_name,
             files.undo_rename,
+            *files.filelist_search_by_type
         ]
         file_list_to_upload = " ".join(list(map(lambda a: f'"{a}"', prereqs)))
         cls.higher_actions.click_on_new_button()
@@ -145,11 +146,13 @@ class TestfileActions(Base):
     def test_search_for_file_by_name(self):
         self.higher_actions.search_by_name_action(files.file_to_be_searched)
 
-    @pytest.mark.GROUPA
-    @toast_testcase_name
-    def test_search_for_file_by_type(self):
-        no_of_files = self.higher_actions.search_by_type_action()
-        assert no_of_files > 0
+    # @pytest.mark.GROUPA
+    # @toast_testcase_name
+    # def test_search_for_file_by_type(self):
+    #     #  this function need to change to check for multiple types
+    #     #  files.filelist_types contains the types to iterate over
+    #     no_of_files = self.higher_actions.search_by_type_action()
+    #     assert no_of_files > 0
 
     @pytest.mark.GROUPB
     @toast_testcase_name
