@@ -92,8 +92,8 @@ class TestfileActions(Base):
             os.path.join(user_dir, files.FILE_TO_UPLOAD), "rb"
         ) as ground_truth_file:
 
-            ground_truth_hash = hashlib.file_digest(
-                ground_truth_file, "md5"
+            ground_truth_hash = hashlib.md5(
+                ground_truth_file.read()
             ).hexdigest()
         self.higher_actions.select_item(files.FILE_TO_UPLOAD)
         download_button = self.higher_actions.wait_for_element(
@@ -108,8 +108,8 @@ class TestfileActions(Base):
         ):  # skip hash checking if file not downloaded before timeout
             downloaded_file_hash = None
             with open(downloaded_file_path, "rb") as downloaded_file:
-                downloaded_file_hash = hashlib.file_digest(
-                    downloaded_file, "md5"
+                downloaded_file_hash = hashlib.md5(
+                downloaded_file.read()
                 ).hexdigest()
             condition = downloaded_file_hash == ground_truth_hash
             assert condition, "Checksum mismatch"
