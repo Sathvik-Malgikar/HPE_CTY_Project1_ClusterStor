@@ -90,9 +90,9 @@ class Base:
             None
         """
         path1 = os.path.join(
-            "C:\\Users", os.getlogin(), "Downloads", files.FILE_TO_UPLOAD
+            os.path.expanduser("~"), "Downloads", files.FILE_TO_UPLOAD
             )
-        dwnld_dir = os.path.join("C:\\Users", os.getlogin(), "Downloads")
+        dwnld_dir = os.path.join(os.path.expanduser("~"), "Downloads")
         path2 = os.path.join(
             dwnld_dir, files.file_name_for_download
         )

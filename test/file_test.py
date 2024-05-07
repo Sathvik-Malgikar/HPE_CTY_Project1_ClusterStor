@@ -87,7 +87,7 @@ class TestfileActions(Base):
             locators.file_selector(files.FILE_TO_UPLOAD)
         )
         ground_truth_hash = None
-        user_dir = os.path.join("C:\\Users", os.getlogin())
+        user_dir = os.path.expanduser("~")
         with open(
             os.path.join(user_dir, files.FILE_TO_UPLOAD), "rb"
         ) as ground_truth_file:
@@ -101,7 +101,7 @@ class TestfileActions(Base):
         )
         download_button.click()
         downloaded_file_path = os.path.join(
-            "C:\\Users", os.getlogin(), "Downloads", files.FILE_TO_UPLOAD
+            os.path.expanduser("~"), "Downloads", files.FILE_TO_UPLOAD
         )
         if autoGUIutils.wait_for_file(
             downloaded_file_path, timeout=16
@@ -124,7 +124,7 @@ class TestfileActions(Base):
             locators.action_bar_button_selector("Download")
         )
         download_button.click()
-        download_dir = os.path.join("C:\\Users", os.getlogin(), "Downloads")
+        download_dir = os.path.join(os.path.expanduser("~"), "Downloads")
         autoGUIutils.wait_for_file(
             os.path.join(download_dir, files.file_name_for_download),
             timeout=18
