@@ -19,6 +19,11 @@ def get_num_selected_testcases():
         return len(f.read().split("\n"))
 
 
+def is_selected(testcase_name):
+    with open("test/selected_test_cases.txt", "r") as f:
+        sel_list = f.read().split("\n")
+    return testcase_name in sel_list
+
 def get_number_of_testcases(test_class):
     return len(inspect.getmembers(test_class, inspect.isfunction))
 

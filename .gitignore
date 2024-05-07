@@ -9,3 +9,4 @@
 *.log
 **/pytest_html_report.html
 **/output.json
+test/selected_test_cases.txt

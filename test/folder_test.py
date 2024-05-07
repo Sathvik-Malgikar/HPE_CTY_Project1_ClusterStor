@@ -1,21 +1,30 @@
 from test.base_class import Base, get_num_selected_testcases
 from test.base_class import toast_testcase_name, plain_toast
+from test.base_class import is_selected
 
 from infrastructure import locators
 import files
 
+prereq_map = {
+    "test_remove_folder" : files.folder_name_to_be_removed,
+"test_move_folder" : [files.destination_folder_name, files.folder_to_be_moved],
+"test_create_folder" : files.create_folder_name,
+"test_rename_folder" : files.folder_name,
+}
 
 class TestfolderActions(Base):
     @classmethod
     def setup_class(cls):
         super(cls, TestfolderActions).setup_class()  # FIRST SUPER CLASS
         # THEN SUBCLASS SETUP
-        folders_to_create = [
-            files.destination_folder_name,
-            files.folder_to_be_moved,
-            files.folder_name,
-            files.folder_name_to_be_removed,
-        ]
+        folders_to_create = []
+        for key in prereq_map:
+            if is_selected(key):
+                val = prereq_map[key]
+                if type(val) == list:
+                    folders_to_create.extend(val)
+                else:
+                    folders_to_create.append(val)
         for folder_name in folders_to_create:
             cls.higher_actions.create_folder_action(folder_name)
 

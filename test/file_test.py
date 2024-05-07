@@ -1,5 +1,6 @@
 from test.base_class import Base, get_num_selected_testcases
 from test.base_class import toast_testcase_name, plain_toast
+from test.base_class import is_selected
 
 import pytest
 
@@ -30,12 +31,6 @@ prereq_mapping_folders = {
 "test_undo_move_file" : files.undo_move_destination_folder,
 "test_move_multiple_files" : files.move_multiple_destinations
 }
-
-
-def is_selected(testcase_name):
-    with open("test/selected_test_cases.txt", "r") as f:
-        sel_list = f.read().split("\n")
-    return testcase_name in sel_list
 
 class TestfileActions(Base):
     @classmethod
