@@ -483,7 +483,7 @@ class HigherActions(ButtonClicker):
         try:
             # Double click the destination folder
             destination_folder_element = self.select_item(destination_folder)
- 
+
             self.double_click_element(destination_folder_element)
         except EXC.StaleElementReferenceException:
             print("StaleElementReferenceException occurred...")
@@ -496,7 +496,6 @@ class HigherActions(ButtonClicker):
         ), "File has not been moved successfully to the destination folder"
         except FileNotFoundError:
             assert False, "Moved file not found!"
-            
 
     def verify_restoration(self, file_name):
         """Verify the restoration of a file.
@@ -582,19 +581,19 @@ class HigherActions(ButtonClicker):
         except FileNotFoundError:
             assert False, "Destination Folder not found error!"
         # Verify file not present in the destination folder
-        try :
+        try:
             assert (
             self.select_item(filename) is None
         ), "File is still present in the destination folder"
         except FileNotFoundError:
             print("File is not present in destination after undo.")
         self.navigate_to("My Drive")
-        try :
+        try:
             self.select_item(filename)
-            assert True  # able to select file after undo 
+            assert True  # able to select file after undo
         except FileNotFoundError:
-            assert False , "File is not present in My Drive"
-            
+            assert False, "File is not present in My Drive"
+
     def rename_action(self, old_file_name, new_file_name):
         """Rename a file.
 
@@ -658,7 +657,7 @@ class HigherActions(ButtonClicker):
         self.rename_action(old_fname, new_fname)
         sleep(small_delay)
         # press control+z
-        pyautogui.hotkey("ctrl", "z")        
+        pyautogui.hotkey("ctrl", "z")
 
     def undo_rename_verification(self, old_fname, new_fname):
         """Verify the undo operation of file renaming.
@@ -699,7 +698,6 @@ class HigherActions(ButtonClicker):
         assert (
             renamed_file_element is None
         ), f"ERROR new file '{new_fname}' still exists after undo."
-      
 
     def get_file_names_action(self):
         """Get the number of file names.
@@ -731,7 +729,7 @@ class HigherActions(ButtonClicker):
 
         # currently max 25 minutes for large file upload
         self.deal_duplicate_and_await_upload(custom_timeout=25 * 60)
-        
+
 
     def copy_file_action(self, file_name_for_copy):
         """Copy a file.
@@ -772,11 +770,10 @@ class HigherActions(ButtonClicker):
         # second term to check if source file is still present
         assert (
             copied_file_element and source_file_element
-        ) , "Copy verification failed!" 
+        ), "Copy verification failed!"
 
     def search_by_name_action(self, file_to_be_searched):
         """Search for a file by its name.
-
         Parameters:
         file_to_be_searched (str): The name of the file to be searched.
 
@@ -894,11 +891,9 @@ class HigherActions(ButtonClicker):
         self.select_item(fname)
         self.click_action_bar_button("Restore from trash")
         self.verify_restoration(fname)
-        
 
     def rename_folder_action(self, old_folder_name, new_folder_name):
         """Rename a folder.
-
         Parameters:
         old_folder_name (str):
         The original name of the folder.
@@ -1221,7 +1216,6 @@ class HigherActions(ButtonClicker):
         for i in path.split("/"):
             folder_element = self.select_item(i)
             self.double_click_element(folder_element)
-        
 
     def one_level_up(self):
         navigation_bar_item = locators.navigation_bar_items
@@ -1238,12 +1232,12 @@ class HigherActions(ButtonClicker):
                 i += 1
             else:
                 break
-        
+
         for _ in range(current_depth - i):
             # self.driver.back()
             self.one_level_up()
 
-        with open('x.log','w') as f:        
+        with open('x.log', 'w') as f:
             f.write("/".join(required_path[i:]))
         sleep(small_delay)
         remaining_path = "/".join(required_path[i:])

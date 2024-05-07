@@ -93,17 +93,20 @@ def select_all():
     pyautogui.hotkey("ctrl", "a")  # Presses Ctrl + A to select all text
     sleep(very_small_delay)
 
+
 def cut_selection():
     # Assuming the cursor is already focused on
     # the text area where you want to select all
     pyautogui.hotkey("ctrl", "x")  # Presses Ctrl + X to select all text
     sleep(very_small_delay)
 
+
 def copy_selection():
     # Assuming the cursor is already focused on
     # the text area where you want to select all
     pyautogui.hotkey("ctrl", "c")  # Presses Ctrl + C to select all text
     sleep(very_small_delay)
+
 
 def paste_clipboard():
     # Assuming the cursor is already focused on

@@ -10,34 +10,36 @@ from infrastructure import autoGUIutils
 import hashlib
 import os
 
-prereq_mapping_files = {"test_remove_multiple_files" : files.remove_multiple_files,
-"test_upload_file" : files.FILE_TO_UPLOAD,
-"test_move_file" : files.file_move_name,
-"test_rename_file" : files.file_name,
-"test_undo_rename_file" : files.undo_rename,
-"test_search_for_files_by_types"  : files.filelist_search_by_type,
-"test_copy_file" : files.file_name_for_copy,
-"test_undo_move_file" : files.undo_file_move,
-"test_search_for_file_by_name" : files.file_to_be_searched,
-"test_download_file" : files.file_name_for_download,
-"test_capacity_after_upload" : files.capacity_file,
-"test_move_multiple_files" : files.move_multiple_fnames,
-"test_remove_file" : files.file_to_be_deleted,
-"test_delete_file_permanently" : files.delete_forever_file_name,
-"test_undo_delete_action" : files.file_to_be_restored
+prereq_mapping_files = {
+    "test_remove_multiple_files": files.remove_multiple_files,
+    "test_upload_file": files.FILE_TO_UPLOAD,
+    "test_move_file": files.file_move_name,
+    "test_rename_file": files.file_name,
+    "test_undo_rename_file": files.undo_rename,
+    "test_search_for_files_by_types": files.filelist_search_by_type,
+    "test_copy_file": files.file_name_for_copy,
+    "test_undo_move_file": files.undo_file_move,
+    "test_search_for_file_by_name": files.file_to_be_searched,
+    "test_download_file": files.file_name_for_download,
+    "test_capacity_after_upload": files.capacity_file,
+    "test_move_multiple_files": files.move_multiple_fnames,
+    "test_remove_file": files.file_to_be_deleted,
+    "test_delete_file_permanently": files.delete_forever_file_name,
+    "test_undo_delete_action": files.file_to_be_restored
 }
 prereq_mapping_folders = {
-"test_move_file" : files.destination_folder_name,
-"test_undo_move_file" : files.undo_move_destination_folder,
-"test_move_multiple_files" : files.move_multiple_destinations
+    "test_move_file": files.destination_folder_name,
+    "test_undo_move_file": files.undo_move_destination_folder,
+    "test_move_multiple_files": files.move_multiple_destinations
 }
+
 
 class TestfileActions(Base):
     @classmethod
     def setup_class(cls):
         super(cls, TestfileActions).setup_class()  # FIRST SUPER CLASS
         # THEN SUBCLASS SETUP
-        prereqs=[]
+        prereqs = []
         for key in prereq_mapping_files:
             if is_selected(key):
                 val = prereq_mapping_files[key]
@@ -45,7 +47,7 @@ class TestfileActions(Base):
                     prereqs.extend(val)
                 else:
                     prereqs.append(val)
-        print(prereqs,"Being uploaded as prerequisites.")
+        print(prereqs, "Being uploaded as prerequisites.")
         file_list_to_upload = " ".join(list(map(lambda a: f'"{a}"', prereqs)))
         cls.higher_actions.click_on_new_button()
         upload_button = cls.higher_actions.wait_to_click(
@@ -60,8 +62,8 @@ class TestfileActions(Base):
         autoGUIutils.paste_clipboard()
         autoGUIutils.n_tabs_shift_focus(2)
         autoGUIutils.press_space()
-        
-        folders_to_create=[]
+
+        folders_to_create = []
         for key in prereq_mapping_folders:
             if is_selected(key):
                 val = prereq_mapping_folders[key]
@@ -70,7 +72,7 @@ class TestfileActions(Base):
                 else:
                     folders_to_create.append(val)
         folders_to_create = list(set(folders_to_create))
-        print(folders_to_create,"Folders being created as prerequisites.")
+        print(folders_to_create, "Folders being created as prerequisites.")
 
         for folder_name in folders_to_create:
             cls.higher_actions.create_folder_action(folder_name)
@@ -139,8 +141,8 @@ class TestfileActions(Base):
             downloaded_file_hash = None
             with open(downloaded_file_path, "rb") as downloaded_file:
                 downloaded_file_hash = hashlib.md5(
-                downloaded_file.read()
-                ).hexdigest()
+                    downloaded_file.read()
+                    ).hexdigest()
             condition = downloaded_file_hash == ground_truth_hash
             assert condition, "Checksum mismatch"
         else:
@@ -179,7 +181,7 @@ class TestfileActions(Base):
     @pytest.mark.GROUPA
     @toast_testcase_name
     def test_search_for_files_by_types(self):
-    # Test case to search for files by multiple types
+        # Test case to search for files by multiple types
         for file_type in files.filelist_types:
             file_names = self.higher_actions.search_by_type_action(file_type)
 

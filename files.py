@@ -12,8 +12,8 @@ renamed_folder_name = "After_rename"
 file_move_name = "move_file_singular.txt"
 destination_folder_name = "MOVE Destination"
 
-move_multiple_fnames = [ "move_1.txt", "move_2.txt", "move_3.txt"] 
-move_multiple_destinations = [ "After_rename", "After_rename", "Alternate Move Folder"]
+move_multiple_fnames = ["move_1.txt", "move_2.txt", "move_3.txt"]
+move_multiple_destinations = ["After_rename", "After_rename", "Alternate Move Folder"]
 
 button_names_and_tooltips = {
     "Home": "Home",
@@ -39,11 +39,11 @@ FILE_TO_UPLOAD = "sample_upload.png"
 share_file = "short_notes.txt"
 file_to_be_searched = "test"
 
-filelist_search_by_type = ["bundle.zip" , "report.pdf" , "audio.mp3"]
+filelist_search_by_type = ["bundle.zip", "report.pdf", "audio.mp3"]
 filelist_types = {
-    "zip" : "archive",
-    "pdf" : "pdf",
-    "mp3" : "audio"}
+    "zip": "archive",
+    "pdf": "pdf",
+    "mp3": "audio"}
 
 folder_name_to_be_removed = "SVM"
 

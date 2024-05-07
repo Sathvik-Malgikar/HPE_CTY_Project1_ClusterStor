@@ -14,6 +14,7 @@ from win10toast import ToastNotifier
 tn = ToastNotifier()
 chosen_driver = "Chrome"  # "Chrome" or "Firefox"
 
+
 def get_num_selected_testcases():
     with open("test/selected_test_cases.txt", "r") as f:
         return len(f.read().split("\n"))
@@ -23,6 +24,7 @@ def is_selected(testcase_name):
     with open("test/selected_test_cases.txt", "r") as f:
         sel_list = f.read().split("\n")
     return testcase_name in sel_list
+
 
 def get_number_of_testcases(test_class):
     return len(inspect.getmembers(test_class, inspect.isfunction))
@@ -119,16 +121,6 @@ class Base:
         options.add_argument("--disable-popup-blocking")
         options.add_argument("--disable-animations")
         options.add_argument("--disable-infobars")
-                # Add preferences
-        prefs = {
-            "profile.default_content_setting_values.notifications": 2,  # Disable notifications
-            "profile.default_content_setting_values.popups": 2,          # Disable popups
-            "profile.default_content_setting_values.animations": 2,      # Disable animations
-            # Add more preferences as needed
-        }
-
-        # Add preferences to Chrome options
-        options.add_experimental_option("prefs", prefs)
 
         if chosen_driver == "Firefox":
             cls.driver = Firefox("tools/geckodriver.exe", options=options)

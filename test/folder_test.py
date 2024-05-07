@@ -6,11 +6,12 @@ from infrastructure import locators
 import files
 
 prereq_map = {
-    "test_remove_folder" : files.folder_name_to_be_removed,
-"test_move_folder" : [files.destination_folder_name, files.folder_to_be_moved],
-"test_create_folder" : files.create_folder_name,
-"test_rename_folder" : files.folder_name,
+    "test_remove_folder": files.folder_name_to_be_removed,
+"test_move_folder": [files.destination_folder_name, files.folder_to_be_moved],
+"test_create_folder": files.create_folder_name,
+"test_rename_folder": files.folder_name,
 }
+
 
 class TestfolderActions(Base):
     @classmethod

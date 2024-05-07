@@ -9,7 +9,6 @@ from infrastructure import autoGUIutils
 class TestMiscellaneousActions(Base):
     @classmethod
     def setup_class(cls):
-
         super(cls, TestMiscellaneousActions).setup_class()
         prereqs = [files.view_info_file_name, files.share_file]
         file_list_to_upload = " ".join(list(map(lambda a: f'"{a}"', prereqs)))
