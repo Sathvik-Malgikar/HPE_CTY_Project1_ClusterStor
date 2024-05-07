@@ -90,9 +90,9 @@ class Base:
             None
         """
         path1 = os.path.join(
-            "C:\\Users", os.getlogin(), "Downloads", files.FILE_TO_UPLOAD
+            os.path.expanduser("~"), "Downloads", files.FILE_TO_UPLOAD
             )
-        dwnld_dir = os.path.join("C:\\Users", os.getlogin(), "Downloads")
+        dwnld_dir = os.path.join(os.path.expanduser("~"), "Downloads")
         path2 = os.path.join(
             dwnld_dir, files.file_name_for_download
         )
@@ -110,9 +110,9 @@ class Base:
         options.add_argument("--disable-popup-blocking")
 
         if chosen_driver == "Firefox":
-            cls.driver = Firefox(options=options)
+            cls.driver = Firefox("tools/geckodriver.exe", options=options)
         else:
-            cls.driver = Chrome(options=options)
+            cls.driver = Chrome("tools/chromedriver.exe", options=options)
 
         cls.web_driver_wait = WebDriverWait(cls.driver, 10)
         cls.driver.get("https://www.google.com/intl/en-US/drive/")
