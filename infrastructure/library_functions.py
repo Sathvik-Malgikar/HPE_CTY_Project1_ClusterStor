@@ -810,10 +810,11 @@ class HigherActions(ButtonClicker):
         # Extract file names from file elements
         file_names = [element.text for element in file_elements]
         # Write file names to a text file
-        with open("debug_file_names_by_type.log", "w") as file:
+        file_name = f"debug_file_names_{filetype}.log"
+        with open(file_name, "w") as file:
             for name in file_names:
                 file.write(name + "\n")
-        return len(file_names)
+        return file_names
 
     """Remove a file.
 

@@ -94,8 +94,9 @@ my_drive_button_locator = (By.CSS_SELECTOR, 'div[aria-label="My Drive"]')
 def type_of_file_selector(file_type):
     return (
         By.CSS_SELECTOR,
-        f'li[role="menuitemcheckbox"][name="{file_type}"]',
+        f'li[role="menuitemcheckbox"][name="{files.filelist_types[file_type]}"]',
     )
+
 
 
 folders_button_locator = (By.CSS_SELECTOR, 'button[name="T5ycX"]')

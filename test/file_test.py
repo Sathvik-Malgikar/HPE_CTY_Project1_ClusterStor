@@ -152,10 +152,10 @@ class TestfileActions(Base):
     # Test case to search for files by multiple types
         for file_type in files.filelist_types:
             file_names = self.higher_actions.search_by_type_action(file_type)
-            
+
             # Check if files were found for the type
             assert len(file_names) > 0, f"No files found for type: {file_type}"
-            
+
             # Check if text file was created for the type
             file_name = f"debug_file_names_{file_type}.log"
             assert os.path.isfile(file_name), f"Failed to create {file_name}"

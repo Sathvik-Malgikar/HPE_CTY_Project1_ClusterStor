@@ -43,7 +43,10 @@ share_file = "short_notes.txt"
 file_to_be_searched = "test"
 
 filelist_search_by_type = ["bundle.zip" , "report.pdf" , "audio.mp3"]
-filelist_types = ["zip", "pdf", "mp3"]
+filelist_types = {
+    "zip" : "archive",
+    "pdf" : "pdf",
+    "mp3" : "audio"}
 
 folder_name_to_be_removed = "SVM"
 
