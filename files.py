@@ -12,11 +12,8 @@ renamed_folder_name = "After_rename"
 file_move_name = "move_file_singular.txt"
 destination_folder_name = "MOVE Destination"
 
-file_destination_pairs = [
-            ("move_1.txt", "After_rename"),
-            ("move_2.txt", "After_rename"),
-            ("move_3.txt", "Alternate Move Folder"),
-        ]
+move_multiple_fnames = [ "move_1.txt", "move_2.txt", "move_3.txt"] 
+move_multiple_destinations = [ "After_rename", "After_rename", "Alternate Move Folder"]
 
 button_names_and_tooltips = {
     "Home": "Home",

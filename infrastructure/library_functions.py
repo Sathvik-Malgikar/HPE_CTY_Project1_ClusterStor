@@ -426,7 +426,7 @@ class HigherActions(ButtonClicker):
         # return true if both conditions are satisfied
         return True
 
-    def deal_duplicate_and_await_upload(self, custom_timeout=10):
+    def deal_duplicate_and_await_upload(self, custom_timeout=80):
         """Handle duplicate file and await upload completion.
 
         This function deals with the situation where a file
@@ -530,9 +530,14 @@ class HigherActions(ButtonClicker):
         Raises:
         None
         """
-        file_ele = self.select_item(move_fname)
-        dst_fold_ele = self.select_item(destination_folder_name)
-        self.drag_and_drop_element(file_ele, dst_fold_ele)
+        self.select_item(move_fname)
+        autoGUIutils.cut_selection()
+        ele = self.select_item(destination_folder_name)
+        self.double_click_element(ele)
+        sleep(very_small_delay)
+        autoGUIutils.paste_clipboard()
+        self.driver.back()
+        sleep(small_delay)
 
     def undo_move_action(self, filename, folder):
         """Rename a file.

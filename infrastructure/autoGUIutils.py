@@ -56,6 +56,12 @@ def n_tabs_shift_focus(n):
         sleep(very_small_delay)
 
 
+def press_space():
+    # types into dialogue box
+    pyautogui.press("space")
+    sleep(small_delay)
+
+
 def press_enter():
     # types into dialogue box
     pyautogui.press("enter")
@@ -87,6 +93,23 @@ def select_all():
     pyautogui.hotkey("ctrl", "a")  # Presses Ctrl + A to select all text
     sleep(very_small_delay)
 
+def cut_selection():
+    # Assuming the cursor is already focused on
+    # the text area where you want to select all
+    pyautogui.hotkey("ctrl", "x")  # Presses Ctrl + X to select all text
+    sleep(very_small_delay)
+
+def copy_selection():
+    # Assuming the cursor is already focused on
+    # the text area where you want to select all
+    pyautogui.hotkey("ctrl", "c")  # Presses Ctrl + C to select all text
+    sleep(very_small_delay)
+
+def paste_clipboard():
+    # Assuming the cursor is already focused on
+    # the text area where you want to select all
+    pyautogui.hotkey("ctrl", "v")  # Presses Ctrl + V to select all text
+    sleep(very_small_delay)
 
 def press_delete():
     pyautogui.press("delete")  # Presses the "Delete" key

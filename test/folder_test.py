@@ -1,4 +1,4 @@
-from test.base_class import Base, get_number_of_testcases
+from test.base_class import Base, get_num_selected_testcases
 from test.base_class import toast_testcase_name, plain_toast
 
 from infrastructure import locators
@@ -19,7 +19,7 @@ class TestfolderActions(Base):
         for folder_name in folders_to_create:
             cls.higher_actions.create_folder_action(folder_name)
 
-        n_testcases = get_number_of_testcases(TestfolderActions)
+        n_testcases = get_num_selected_testcases()
         plain_toast(
             f"Prerequisites for suite {cls.__name__} ready.",
             f"Contains {n_testcases} testcases, starting now.",

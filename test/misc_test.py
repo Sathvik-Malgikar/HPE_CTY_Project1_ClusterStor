@@ -1,4 +1,4 @@
-from test.base_class import Base, get_number_of_testcases
+from test.base_class import Base, get_num_selected_testcases
 from test.base_class import toast_testcase_name, plain_toast
 
 from infrastructure import locators
@@ -34,7 +34,7 @@ class TestMiscellaneousActions(Base):
         cls.higher_actions.double_click_element(folder_element)
         cls.higher_actions.create_folder_action("D")
         cls.higher_actions.navigate_to("My Drive")
-        n_testcases = get_number_of_testcases(TestMiscellaneousActions)
+        n_testcases = get_num_selected_testcases()
         plain_toast(
             f"Prerequisites for suite {cls.__name__} ready.",
             f"Contains {n_testcases} testcases, starting now.",)
