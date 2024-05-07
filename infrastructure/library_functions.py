@@ -1211,11 +1211,16 @@ class HigherActions(ButtonClicker):
 
     def traverse_path(self, path, from_home=False):
         if from_home:
-            self.navigate_to("Home")
+            self.navigate_to("My Drive")
         for i in path.split("/"):
-            file_selector = locators.file_selector(i)
-            self.wait_for_element(file_selector)
-            self.click_element(file_selector)
+            folder_element = self.select_item(i)
+            self.double_click_element(folder_element)
+        
+
+    def one_level_up(self):
+        navigation_bar_item = locators.navigation_bar_items
+        navbar_items = self.wait_for_elements(navigation_bar_item)
+        self.click_element(navbar_items[-2])
 
     def navigate_to_path(self, current_path, required_path):
         current_path = current_path.split("/")
@@ -1227,7 +1232,13 @@ class HigherActions(ButtonClicker):
                 i += 1
             else:
                 break
-
+        
         for _ in range(current_depth - i):
-            self.driver.back()
-        self.traverse_path("/".join(required_path[i:]))
+            # self.driver.back()
+            self.one_level_up()
+
+        with open('x.log','w') as f:        
+            f.write("/".join(required_path[i:]))
+        sleep(small_delay)
+        remaining_path = "/".join(required_path[i:])
+        self.traverse_path(remaining_path)

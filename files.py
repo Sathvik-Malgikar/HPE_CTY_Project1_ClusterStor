@@ -77,3 +77,5 @@ capacity_file_size = "1.94 GB"
 
 initial_path = r"A/B/C"
 final_path = r"A/D"
+
+nav_dir = "A"

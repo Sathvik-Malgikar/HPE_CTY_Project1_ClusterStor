@@ -130,3 +130,5 @@ close_details_button = (
     By.CSS_SELECTOR,
     "div[data-target='hideDetails'][role='button']",
 )
+
+navigation_bar_items = (By.CSS_SELECTOR,".o-Yc-o")
