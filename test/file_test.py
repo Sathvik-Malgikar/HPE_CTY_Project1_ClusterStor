@@ -188,7 +188,7 @@ class TestfileActions(Base):
             assert len(file_names) > 0, f"No files found for type: {file_type}"
 
             # Check if text file was created for the type
-            file_name = f"debug_file_names_{file_type}.log"
+            file_name = f"results/debug_file_names_{file_type}.log"
             assert os.path.isfile(file_name), f"Failed to create {file_name}"
 
     @pytest.mark.GROUPB
@@ -271,7 +271,6 @@ class TestfileActions(Base):
         initial_storage = self.higher_actions.get_storage_used()
         print(initial_storage, "Initial storage")
         self.higher_actions.upload_file_action(file_name_to_upload)
-        self.higher_actions.deal_duplicate_and_await_upload()
         final_storage = self.higher_actions.get_storage_used()
         print(final_storage, "Final storage")
         storage_units = {"KB": 1024, "MB": 1024*2, "GB": 1024*3}

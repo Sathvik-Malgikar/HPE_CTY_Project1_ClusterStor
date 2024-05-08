@@ -24,6 +24,7 @@ This is a simple UI automation framework built with:
 - Python 3.6.8
 - Windows 10/11 32/64 bit
 - Git CLI
+- Anaconda Distribution
 
 ### Usage locally
 

@@ -12,7 +12,7 @@ class TestMiscellaneousActions(Base):
         super(cls, TestMiscellaneousActions).setup_class()
         prereqs = [files.view_info_file_name, files.share_file]
         file_list_to_upload = " ".join(list(map(lambda a: f'"{a}"', prereqs)))
-        if file_list_to_upload  != "":
+        if file_list_to_upload != "":
             cls.higher_actions.click_on_new_button()
             upload_button = cls.higher_actions.wait_to_click(
                 locators.new_menu_button_locator("File upload")
@@ -65,8 +65,8 @@ class TestMiscellaneousActions(Base):
         dlg_box_loc = locators.file_info_dialog_loc
         element = self.higher_actions.wait_to_click(dlg_box_loc)
         if not element:
-            assert (False
-            ), f"File info for {files.view_info_file_name} is not visible"
+            err_msg = f"File info for {files.view_info_file_name} is not visible"
+            assert False, err_msg
         else:
             self.higher_actions.click_on_close_button()
             assert True

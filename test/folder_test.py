@@ -7,8 +7,8 @@ import files
 
 prereq_map = {
     "test_remove_folder": files.folder_name_to_be_removed,
-"test_move_folder": [files.destination_folder_name, files.folder_to_be_moved],
-"test_rename_folder": files.folder_name,
+    "test_move_folder": [files.destination_folder_name, files.folder_to_be_moved],
+    "test_rename_folder": files.folder_name,
 }
 
 
@@ -29,13 +29,13 @@ class TestfolderActions(Base):
             cls.higher_actions.create_folder_action(folder_name)
 
         cls.higher_actions.navigate_to("My Drive")
-        if len(folders_to_create) > 0:   
+        if len(folders_to_create) > 0:
             cls.higher_actions.select_item(folders_to_create[0])
             autoGUIutils.cut_selection()
             autoGUIutils.paste_clipboard()
             autoGUIutils.n_tabs_shift_focus(2)
             autoGUIutils.press_space()
-            
+
         n_testcases = get_num_selected_testcases()
         plain_toast(
             f"Prerequisites for suite {cls.__name__} ready.",

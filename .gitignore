@@ -1,6 +1,6 @@
 *.pyc -f
 **/__pycache__ 
-*.ini
+config.ini
 /.vscode
 =
 /results/*

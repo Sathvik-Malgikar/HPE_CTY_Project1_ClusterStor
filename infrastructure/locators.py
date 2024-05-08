@@ -29,11 +29,10 @@ file_selector_ = (By.CSS_SELECTOR, "div.tyTrke.M3pype")
 
 upload_complete_text = (
     By.XPATH,
-    "//span[contains(text(), 'upload') and contains(text(), 'complete')]",
+    "//span[contains(text(), 'complete')]",
 )
 file_already_present_text = (By.CSS_SELECTOR, "div#EJL26d")
 fname_div = (By.CSS_SELECTOR, "div.KL4NAf")
-
 
 ok_button_locator = (By.CSS_SELECTOR, "button[name='ok'].h-De-Vb.h-De-Y[tabindex='0']")
 
@@ -63,7 +62,6 @@ file_move_locator = (
 )
 
 make_a_copy_element_locator = (By.CSS_SELECTOR, 'div[aria-label="Make a copy"]')
-
 
 input_field_locator = (By.CLASS_NAME, "LUNIy")
 file_info_dialog_loc = (By.CSS_SELECTOR, "div.wbg7nb")
@@ -98,13 +96,10 @@ def type_of_file_selector(file_type):
     )
 
 
-
 folders_button_locator = (By.CSS_SELECTOR, 'button[name="T5ycX"]')
 move_to_trash_button_locator = (By.CSS_SELECTOR, 'div[aria-label="Move to trash"]')
 
-
 sign_in_account_locator = (By.CSS_SELECTOR, "div[data-authuser='-1']")
-
 
 add_button_locator = (
     By.CSS_SELECTOR,
@@ -117,7 +112,6 @@ all_locations_button_locator = (
     By.CSS_SELECTOR,
     'button.VfPpkd-AznF2e.VfPpkd-AznF2e-OWXEXe-jJNx8e-QBLLGd.WbUJNb.FEsNhd.VCOGmd.u4B0v[role="tab"][aria-selected="false"][id="all_locations"]',
 )
-
 
 email_selector = (By.CSS_SELECTOR, "div[aria-label='sravnihm2021@gmail.com']")
 storage_selector = (By.CSS_SELECTOR, '[data-target="quota"]')
@@ -132,4 +126,4 @@ close_details_button = (
     "div[data-target='hideDetails'][role='button']",
 )
 
-navigation_bar_items = (By.CSS_SELECTOR,".o-Yc-o")
+navigation_bar_items = (By.CSS_SELECTOR, ".o-Yc-o")

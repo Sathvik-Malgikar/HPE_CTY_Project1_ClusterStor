@@ -321,6 +321,8 @@ class ButtonClicker(ElementaryActions):
         button_element.click()
         sleep(small_delay)
 
+import time
+
 
 class HigherActions(ButtonClicker):
     """Class for performing higher-level
@@ -466,10 +468,13 @@ class HigherActions(ButtonClicker):
         finally:
 
             print("deal_duplicate_finally_part")
-            web_driver_wait = WebDriverWait(self.driver, custom_timeout)
+            web_driver_wait = WebDriverWait(self.driver, timeout=custom_timeout)
+            t1 = time.time()
             web_driver_wait.until(
                 EC.presence_of_element_located(locators.upload_complete_text)
             )
+            t2 = time.time()
+            print(f"Waited for {t2-t1} seconds.")
 
     def verify_file_in_destination(self, moved_fname, destination_folder):
         """Verify the presence of a file in the destination folder.
@@ -495,8 +500,8 @@ class HigherActions(ButtonClicker):
         # Verify file presence in the destination folder
         try:
             assert (
-            self.select_item(moved_fname) is not None
-        ), "File has not been moved successfully to the destination folder"
+                self.select_item(moved_fname) is not None
+                ), "File has not been moved successfully to the destination folder"
         except FileNotFoundError:
             assert False, "Moved file not found!"
 
@@ -557,7 +562,7 @@ class HigherActions(ButtonClicker):
         try:
             undo_button = self.wait_for_element(locators.undo_button_selector)
             undo_button.click()
-        except (TimeoutException, AttributeError) as e:
+        except (TimeoutException, AttributeError):
             print("Undo button timed out! simulating ctrl+z ...")
             # keyboard.press("ctrl+z")
             pyautogui.hotkey("ctrl", "z")
@@ -586,8 +591,8 @@ class HigherActions(ButtonClicker):
         # Verify file not present in the destination folder
         try:
             assert (
-            self.select_item(filename) is None
-        ), "File is still present in the destination folder"
+                self.select_item(filename) is None
+                ), "File is still present in the destination folder"
         except FileNotFoundError:
             print("File is not present in destination after undo.")
         self.navigate_to("My Drive")
@@ -731,8 +736,7 @@ class HigherActions(ButtonClicker):
         # this is utility solely because prerequisites also reuses this function
 
         # currently max 25 minutes for large file upload
-        self.deal_duplicate_and_await_upload(custom_timeout=25 * 60)
-
+        self.deal_duplicate_and_await_upload()
 
     def copy_file_action(self, file_name_for_copy):
         """Copy a file.
@@ -796,7 +800,7 @@ class HigherActions(ButtonClicker):
         if file_elements:
             file_names = [element.text for element in file_elements]
             # Write file names to a text file
-            with open("debug_file_names.log", "w") as file:
+            with open("results/debug_file_names.log", "w") as file:
                 for name in file_names:
                     file.write(name + "\n")
         else:
@@ -815,7 +819,7 @@ class HigherActions(ButtonClicker):
         # Extract file names from file elements
         file_names = [element.text for element in file_elements]
         # Write file names to a text file
-        file_name = f"debug_file_names_{filetype}.log"
+        file_name = f"results/debug_file_names_{filetype}.log"
         with open(file_name, "w") as file:
             for name in file_names:
                 file.write(name + "\n")
@@ -1240,7 +1244,7 @@ class HigherActions(ButtonClicker):
             # self.driver.back()
             self.one_level_up()
 
-        with open('x.log', 'w') as f:
+        with open('results/x.log', 'w') as f:
             f.write("/".join(required_path[i:]))
         sleep(small_delay)
         remaining_path = "/".join(required_path[i:])
