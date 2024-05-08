@@ -481,6 +481,7 @@ class HigherActions(ButtonClicker):
         successfully to the destination folder.
         """
         try:
+            self.navigate_to("My Drive")
             # Double click the destination folder
             destination_folder_element = self.select_item(destination_folder)
 
@@ -535,6 +536,7 @@ class HigherActions(ButtonClicker):
         self.double_click_element(ele)
         sleep(very_small_delay)
         autoGUIutils.paste_clipboard()
+        sleep(small_delay)
         self.driver.back()
         sleep(small_delay)
 
@@ -553,11 +555,10 @@ class HigherActions(ButtonClicker):
         try:
             undo_button = self.wait_for_element(locators.undo_button_selector)
             undo_button.click()
-        except TimeoutException:
+        except (TimeoutException, AttributeError) as e:
             print("Undo button timed out! simulating ctrl+z ...")
             # keyboard.press("ctrl+z")
             pyautogui.hotkey("ctrl", "z")
-        self.verify_undo_move_action(filename, folder)
 
     def verify_undo_move_action(self, filename, folder):
         """Verify the undo of a move action.

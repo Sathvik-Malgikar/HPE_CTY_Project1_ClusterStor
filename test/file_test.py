@@ -12,14 +12,12 @@ import os
 
 prereq_mapping_files = {
     "test_remove_multiple_files": files.remove_multiple_files,
-    "test_upload_file": files.FILE_TO_UPLOAD,
     "test_move_file": files.file_move_name,
     "test_rename_file": files.file_name,
     "test_undo_rename_file": files.undo_rename,
     "test_search_for_files_by_types": files.filelist_search_by_type,
     "test_copy_file": files.file_name_for_copy,
     "test_undo_move_file": files.undo_file_move,
-    "test_search_for_file_by_name": files.file_to_be_searched,
     "test_download_file": files.file_name_for_download,
     "test_capacity_after_upload": files.capacity_file,
     "test_move_multiple_files": files.move_multiple_fnames,

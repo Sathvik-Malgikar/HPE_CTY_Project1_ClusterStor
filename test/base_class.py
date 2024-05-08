@@ -17,7 +17,7 @@ chosen_driver = "Chrome"  # "Chrome" or "Firefox"
 
 def get_num_selected_testcases():
     with open("test/selected_test_cases.txt", "r") as f:
-        return len(f.read().split("\n"))
+        return len(f.read().split("\n"))-1
 
 
 def is_selected(testcase_name):
