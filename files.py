@@ -72,8 +72,10 @@ folder_to_be_moved = "Cloud computing"
 
 undo_file_move = "undo_move.txt"
 undo_move_destination_folder = "Undo move destination folder"
-capacity_file = "large"
-capacity_file_size = "1.94 GB"
+
+capacity_file = "large_file.pdf"
+capacity_file_size = "60.1"
+capacity_file_bytes = "MB"
 
 initial_path = r"A/B/C"
 final_path = r"A/D"

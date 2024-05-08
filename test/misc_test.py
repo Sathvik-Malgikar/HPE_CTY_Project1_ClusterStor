@@ -12,13 +12,14 @@ class TestMiscellaneousActions(Base):
         super(cls, TestMiscellaneousActions).setup_class()
         prereqs = [files.view_info_file_name, files.share_file]
         file_list_to_upload = " ".join(list(map(lambda a: f'"{a}"', prereqs)))
-        cls.higher_actions.click_on_new_button()
-        upload_button = cls.higher_actions.wait_to_click(
-            locators.new_menu_button_locator("File upload")
-        )
-        upload_button.click()
-        autoGUIutils.type_into_dialogue_box(file_list_to_upload)
-        cls.higher_actions.deal_duplicate_and_await_upload()
+        if file_list_to_upload  != "":
+            cls.higher_actions.click_on_new_button()
+            upload_button = cls.higher_actions.wait_to_click(
+                locators.new_menu_button_locator("File upload")
+            )
+            upload_button.click()
+            autoGUIutils.type_into_dialogue_box(file_list_to_upload)
+            cls.higher_actions.deal_duplicate_and_await_upload()
 
         # Creating path structure for navigate testcase.
         for folder_name in files.initial_path.split("/"):

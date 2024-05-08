@@ -458,12 +458,14 @@ class HigherActions(ButtonClicker):
 
             print("file not already in google drive, uploading as new file")
         else:
+            print("deal_duplicate_else_part")
             # to deal with file already exisiting
             autoGUIutils.n_tabs_shift_focus(2)
             pyautogui.press("space")
             sleep(small_delay)
         finally:
 
+            print("deal_duplicate_finally_part")
             web_driver_wait = WebDriverWait(self.driver, custom_timeout)
             web_driver_wait.until(
                 EC.presence_of_element_located(locators.upload_complete_text)
@@ -726,7 +728,7 @@ class HigherActions(ButtonClicker):
         upload_button.click()
         sleep(small_delay)
         autoGUIutils.type_into_dialogue_box(file_to_upload)
-        # this is utility solely because prerequisites aso reuses this function
+        # this is utility solely because prerequisites also reuses this function
 
         # currently max 25 minutes for large file upload
         self.deal_duplicate_and_await_upload(custom_timeout=25 * 60)

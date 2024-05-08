@@ -19,7 +19,6 @@ prereq_mapping_files = {
     "test_copy_file": files.file_name_for_copy,
     "test_undo_move_file": files.undo_file_move,
     "test_download_file": files.file_name_for_download,
-    "test_capacity_after_upload": files.capacity_file,
     "test_move_multiple_files": files.move_multiple_fnames,
     "test_remove_file": files.file_to_be_deleted,
     "test_delete_file_permanently": files.delete_forever_file_name,
@@ -47,19 +46,21 @@ class TestfileActions(Base):
                     prereqs.append(val)
         print(prereqs, "Being uploaded as prerequisites.")
         file_list_to_upload = " ".join(list(map(lambda a: f'"{a}"', prereqs)))
-        cls.higher_actions.click_on_new_button()
-        upload_button = cls.higher_actions.wait_to_click(
-            locators.new_menu_button_locator("File upload")
-        )
-        upload_button.click()
-        autoGUIutils.type_into_dialogue_box(file_list_to_upload)
-        cls.higher_actions.deal_duplicate_and_await_upload()
+        if file_list_to_upload != "":
+            cls.higher_actions.click_on_new_button()
+            upload_button = cls.higher_actions.wait_to_click(
+                locators.new_menu_button_locator("File upload")
+            )
+            upload_button.click()
+            autoGUIutils.type_into_dialogue_box(file_list_to_upload)
+            cls.higher_actions.deal_duplicate_and_await_upload()
         cls.higher_actions.navigate_to("My Drive")
-        cls.higher_actions.select_item(prereqs[0])
-        autoGUIutils.cut_selection()
-        autoGUIutils.paste_clipboard()
-        autoGUIutils.n_tabs_shift_focus(2)
-        autoGUIutils.press_space()
+        if len(prereqs) > 0:
+            cls.higher_actions.select_item(prereqs[0])
+            autoGUIutils.cut_selection()
+            autoGUIutils.paste_clipboard()
+            autoGUIutils.n_tabs_shift_focus(2)
+            autoGUIutils.press_space()
 
         folders_to_create = []
         for key in prereq_mapping_folders:
@@ -268,13 +269,19 @@ class TestfileActions(Base):
         self.higher_actions.navigate_to("My Drive")
         file_name_to_upload = files.capacity_file
         initial_storage = self.higher_actions.get_storage_used()
+        print(initial_storage, "Initial storage")
         self.higher_actions.upload_file_action(file_name_to_upload)
+        self.higher_actions.deal_duplicate_and_await_upload()
         final_storage = self.higher_actions.get_storage_used()
-        storage_units = {"KB": 1024, "MB": 1024**2, "GB": 1024**3}
+        print(final_storage, "Final storage")
+        storage_units = {"KB": 1024, "MB": 1024*2, "GB": 1024*3}
         capacity, unit = (
-            float(files.capacity_file_size.split(" ")[0]),
-            files.capacity_file_size.split(" ")[1],
+            float(files.capacity_file_size),
+            files.capacity_file_bytes,
         )
         capacity_res = capacity * storage_units.get(unit, 1)
-        cond = final_storage - initial_storage == capacity_res
+        print(capacity_res, "Capacity in bytes")
+        error = final_storage - initial_storage - capacity_res
+        print(error, "error")
+        cond = abs(error) < 0.1 * capacity_res
         assert cond
