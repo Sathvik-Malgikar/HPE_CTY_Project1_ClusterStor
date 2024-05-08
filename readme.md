@@ -42,32 +42,19 @@ cd HPE_CTY_Project1_ClusterStor
 conda env create -f hpe_env.yml
 conda activate hpe_env
 ```
-4. Create config.ini file in infrastructure folder and set the placeholders below to your google account to be used for tests. 
-```
-; Testing requires a Google account to be used.
-; WARNING : All data present in this account's google drive is wiped out permanently !!
-[Account Credentials]
-email = <your-email-here>
-password = <your-password-here>
+4. 
+- Modify config.ini file in infrastructure folder and set the placeholders below to your google account to be used for tests. <br/> ```WARNING : All data present in this account's google drive is wiped out permanently !!```<br/> 
+- [Optional] The delay params can be tweaked as needed, use only in case of unusually slow network. Increasing delay helps to avoid false negatives in case of high network latency.<br/> 
 
-; These can be tweaked as needed, use only in case of unusually slow network. Increasing delay helps to avoid false negatives in case of high network latency.
-[Delay Parameters]
-very_small_delay = 0.7
-small_delay = 2
-medium_delay = 3
-large_delay = 5
-```
-
-5. Create pytest.ini file in root folder(HPE_CTY_Project1_ClusterStor) with following configurations :
-```
-[pytest]
-addopts = --html-report=results/report.html --self-contained-html
-
-```
-
-6. Lastly extract the below provided prerequisites.zip containing dummy testfiles for all 3 test suites into your user folder ```C:\Users\<your-username>```
+5. Lastly,
+ - Download the below provided prerequisites.zip containing dummy testfiles for all 3 test suites
+ - Extract the zip into your user folder  ```C:\Users\<your-username>```
+<br/> -- OR --<br/>
+Make use of bat script provided to do the extraction
 
 - #### [Click here to download Prerequisites](https://dl.dropbox.com/scl/fi/nlvt2cu52axbyx6tdb5en/prerequisites.zip?rlkey=z2k6n4vj064gk1z65tqzs3o5a&st=h5xuv9nl&dl=0)
+- #### [Click here to download extraction script](https://dl.dropbox.com/scl/fi/xi9bmfxtay8svzk6lgfy0/extract_to_userfolder.bat?rlkey=o38j9zrpvj4w771eos5nv8tff&st=kotblukf&dl=0)
+
 
 ### Dependencies / modules used:
 1. Pytest
