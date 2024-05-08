@@ -43,6 +43,8 @@ conda activate hpe_env
 ```
 4. Create config.ini file in infrastructure folder and set the placeholders below to your google account to be used for tests. 
 ```
+; Testing requires a Google account to be used.
+; WARNING : All data present in this account's google drive is wiped out permanently !!
 [Account Credentials]
 email = <your-email-here>
 password = <your-password-here>
@@ -66,3 +68,12 @@ addopts = --html-report=results/report.html --self-contained-html
 
 - #### [Click here to download Prerequisites](https://dl.dropbox.com/scl/fi/nlvt2cu52axbyx6tdb5en/prerequisites.zip?rlkey=z2k6n4vj064gk1z65tqzs3o5a&st=h5xuv9nl&dl=0)
 
+### Dependencies / modules used:
+1. Pytest
+2. Selenium
+3. PyAutoGUI
+4. Pyperclip
+5. win10toast
+6. pytest-html-reporter
+
+Checkout hpe_env.yml for more info !
