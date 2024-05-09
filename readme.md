@@ -50,7 +50,8 @@ conda activate hpe_env
  - Download the below provided prerequisites.zip containing dummy testfiles for all 3 test suites
  - Extract the zip into your user folder  ```C:\Users\<your-username>```
 <br/> -- OR --<br/>
-Make use of bat script provided to do the extraction
+Make use of bat script provided to do the extraction<br/>
+( prerequisites.zip must be in same folder as bat file before running )
 
 - #### [Click here to download Prerequisites](https://dl.dropbox.com/scl/fi/nlvt2cu52axbyx6tdb5en/prerequisites.zip?rlkey=z2k6n4vj064gk1z65tqzs3o5a&st=h5xuv9nl&dl=0)
 - #### [Click here to download extraction script](https://dl.dropbox.com/scl/fi/xi9bmfxtay8svzk6lgfy0/extract_to_userfolder.bat?rlkey=o38j9zrpvj4w771eos5nv8tff&st=kotblukf&dl=0)
