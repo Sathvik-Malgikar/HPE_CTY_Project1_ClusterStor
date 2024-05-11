@@ -7,7 +7,6 @@ import configparser
 from infrastructure import autoGUIutils
 import os
 import files
-import inspect
 from selenium.webdriver.common.keys import Keys
 from win10toast import ToastNotifier
 
@@ -24,10 +23,6 @@ def is_selected(testcase_name):
     with open("test/selected_test_cases.txt", "r") as f:
         sel_list = f.read().split("\n")
     return testcase_name in sel_list
-
-
-def get_number_of_testcases(test_class):
-    return len(inspect.getmembers(test_class, inspect.isfunction))
 
 
 def delete_file(file_path):
