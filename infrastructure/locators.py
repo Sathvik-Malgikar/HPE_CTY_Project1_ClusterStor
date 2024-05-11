@@ -27,10 +27,6 @@ def new_menu_button_locator(button_text):
 
 file_selector_ = (By.CSS_SELECTOR, "div.tyTrke.M3pype")
 
-upload_complete_text = (
-    By.XPATH,
-    "//span[contains(text(), 'complete')]",
-)
 file_already_present_text = (By.CSS_SELECTOR, "div#EJL26d")
 fname_div = (By.CSS_SELECTOR, "div.KL4NAf")
 
@@ -55,6 +51,8 @@ delete_confirm_button_locator = (
     By.XPATH,
     "//button[contains(@jsname, 'moQGCc') and contains(@jsaction, 'click:cOuCgd')]/span[text()='Delete forever']",
 )
+
+upload_status_span = (By.CSS_SELECTOR, "span.af-V")
 
 file_move_locator = (
     By.CSS_SELECTOR,

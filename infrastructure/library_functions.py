@@ -236,7 +236,7 @@ class ButtonClicker(ElementaryActions):
     the Helper class for performing helper actions.
     """
 
-    def __init__(self, driver, web_driver_wait):
+    def __init__(self, driver : Chrome, web_driver_wait : WebDriverWait):
 
         super().__init__(driver, web_driver_wait)
         # self.web_driver_wait = web_driver_wait
@@ -348,7 +348,7 @@ class HigherActions(ButtonClicker):
     class for performing helper actions.
     """
 
-    def __init__(self, driver, web_driver_wait):
+    def __init__(self, driver : Chrome, web_driver_wait : WebDriverWait):
         super().__init__(driver, web_driver_wait)
 
     def select_item(self, item_name):
@@ -453,29 +453,28 @@ class HigherActions(ButtonClicker):
         """
         # wait till upload completes, max 10 seconds by default
         # try block to deal with situation of file being there already
-        try:
-            # to see if the warning of file being alreay ent shows up
-            self.wait_for_element(locators.file_already_present_text)
-        except EXC.NoSuchElementException:
-
+        # to see if the warning of file being already present shows up
+        temp_ele = self.wait_for_element(locators.file_already_present_text)
+        if temp_ele == None:
             print("file not already in google drive, uploading as new file")
         else:
-            print("deal_duplicate_else_part")
             # to deal with file already exisiting
             autoGUIutils.n_tabs_shift_focus(2)
             pyautogui.press("space")
             sleep(small_delay)
-        finally:
-
-            print("deal_duplicate_finally_part")
-            web_driver_wait = WebDriverWait(self.driver, timeout=custom_timeout)
-            t1 = time.time()
-            web_driver_wait.until(
-                EC.presence_of_element_located(locators.upload_complete_text)
+        t1 = time.time()
+        WebDriverWait(self.driver, custom_timeout).until_not(
+        EC.text_to_be_present_in_element(locators.upload_status_span, "Uploading")
             )
-            t2 = time.time()
-            print(f"Waited for {t2-t1} seconds.")
-
+        
+        t2 = time.time()
+        print(f"Waited for {t2-t1} seconds.")
+                
+        # to close the upload box (bottom-left)
+        autoGUIutils.n_tabs_shift_focus(2)
+        pyautogui.press("space")
+        sleep(small_delay)
+        
     def verify_file_in_destination(self, moved_fname, destination_folder):
         """Verify the presence of a file in the destination folder.
 

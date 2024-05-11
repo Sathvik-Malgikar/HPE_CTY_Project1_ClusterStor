@@ -273,7 +273,7 @@ class TestfileActions(Base):
         self.higher_actions.upload_file_action(file_name_to_upload)
         final_storage = self.higher_actions.get_storage_used()
         print(final_storage, "Final storage")
-        storage_units = {"KB": 1024, "MB": 1024*2, "GB": 1024*3}
+        storage_units = {"KB": 1024, "MB": 1024**2, "GB": 1024**3}
         capacity, unit = (
             float(files.capacity_file_size),
             files.capacity_file_bytes,
