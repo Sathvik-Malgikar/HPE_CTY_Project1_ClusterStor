@@ -66,3 +66,23 @@ Make use of bat script provided to do the extraction<br/>
 6. pytest-html-reporter
 
 Checkout hpe_env.yml for more info !
+
+## Source map
+```
+/infrastructure - Contains config files with credentials, utility files and locators for various elements.
+
+/test - Folder with all three test suites and the base class for all of them.
+
+/tools - Contains the different driver version needed to run selenium.
+
+/results - Empty folder where reports and logs will be generated upon first run and consequently replaced.
+
+hpe_env.yml - The file to create the conda environment for testing
+
+files.py - Contains the various file & folder names used for testcases , these map to prerequisites.zip mentioned in above sections.
+
+pytest.ini - To tweak pytest.
+
+conftest.py - Contains pytest hooks needed to implement features like selective prerequisites.(Only setup prereq for selected testcases.)
+
+```
