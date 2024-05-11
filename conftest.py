@@ -1,8 +1,6 @@
 # conftest.py
 import pytest
 
-EXEC_MODE = "GUI"  #  "GUI" or "CLI"
-
 
 def pytest_collection_finish(session):
     """

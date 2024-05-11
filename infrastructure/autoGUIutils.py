@@ -165,3 +165,28 @@ def wait_for_file(path: str, timeout: float = None, poll_interval: float = 2) ->
         if timeout is not None and time.time() - start_time >= timeout:
             return False
         time.sleep(poll_interval)
+
+
+def get_clipboard_permission():
+    """
+    Utility function to simulate obtaining clipboard permission.
+
+    This function simulates the process of obtaining clipboard permission
+    by performing a series of GUI actions, including cutting a selection,
+    pasting the clipboard contents, shifting focus with tabs, and pressing
+    the space key.
+
+    Parameters:
+        None
+
+    Returns:
+        None
+
+    Raises:
+        None
+    """
+    cut_selection()  # Cut the current selection
+    paste_clipboard()  # Paste the clipboard contents
+    sleep(small_delay)  # Wait for a short delay
+    n_tabs_shift_focus(2)  # Shift focus by pressing the Tab key multiple times
+    press_space()  # Press the Space key

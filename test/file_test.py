@@ -57,10 +57,7 @@ class TestfileActions(Base):
         cls.higher_actions.navigate_to("My Drive")
         if len(prereqs) > 0:
             cls.higher_actions.select_item(prereqs[0])
-            autoGUIutils.cut_selection()
-            autoGUIutils.paste_clipboard()
-            autoGUIutils.n_tabs_shift_focus(2)
-            autoGUIutils.press_space()
+            autoGUIutils.get_clipboard_permission()
 
         folders_to_create = []
         for key in prereq_mapping_folders:
