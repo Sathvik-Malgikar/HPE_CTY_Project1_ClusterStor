@@ -16,7 +16,7 @@ def type_into_dialogue_box(stringvalue):
     """
     Utility function to type text into a dialogue box in the GUI.
 
-    This function types the specified text into 
+    This function types the specified text into
     the dialogue box and presses 'Enter'.
 
     Parameters:
@@ -113,6 +113,7 @@ def paste_clipboard():
     # the text area where you want to select all
     pyautogui.hotkey("ctrl", "v")  # Presses Ctrl + V to select all text
     sleep(very_small_delay)
+
 
 def press_delete():
     pyautogui.press("delete")  # Presses the "Delete" key

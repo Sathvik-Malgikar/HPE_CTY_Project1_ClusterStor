@@ -27,7 +27,7 @@ class ElementaryActions:
     This class provides methods to perform basic actions such as waiting for elements,
     double-clicking on elements, dragging and dropping elements, sending keys to elements,
     performing context clicks, and clicking on elements.
-    
+
     Parameters:
     driver (Chrome): The Selenium Chrome WebDriver instance.
     web_driver_wait (WebDriverWait): The Selenium WebDriverWait instance for waiting on elements.
@@ -66,7 +66,8 @@ class ElementaryActions:
             and value (e.g., (By.ID, 'element_id')).
 
         Returns:
-            list: A list of matching elements, or an empty list if no elements are found within the timeout.
+            list: A list of matching elements, or an empty list if no elements are
+            found within the timeout.
         """
         try:
             elements = self.web_driver_wait.until(
@@ -209,7 +210,8 @@ class ButtonClicker(ElementaryActions):
 
     Parameters:
     driver (Chrome): The Selenium Chrome WebDriver instance.
-    web_driver_wait (WebDriverWait): The Selenium WebDriverWait instance for waiting on elements.
+    web_driver_wait (WebDriverWait): The Selenium WebDriverWait instance for
+    waiting on elements.
     """
 
     def __init__(self, driver: Chrome, web_driver_wait: WebDriverWait):
@@ -293,17 +295,24 @@ class ButtonClicker(ElementaryActions):
         )
         button_element.click()
         sleep(small_delay)
+
+
 class HigherActions(ButtonClicker):
     """Class for performing higher-level actions using Selenium WebDriver.
 
-    This class provides methods to perform various higher-level actions such as moving files,
-    renaming files, uploading files, copying files, searching for files, removing files,
-    permanently deleting files, undoing deletions, renaming folders, creating folders, and removing folders.
+    This class provides methods to perform various higher-level 
+    actions such as moving files,
+    renaming files, uploading files, copying files, searching for files,
+    removing files,
+    permanently deleting files, undoing deletions, renaming folders, creating
+    folders, and removing folders.
 
     Parameters:
     driver (Chrome): The Selenium Chrome WebDriver instance.
-    web_driver_wait (WebDriverWait): The Selenium WebDriverWait instance for waiting on elements.
-    button_clicker (ButtonClicker): An instance of the ButtonClicker class for performing button-clicking actions.
+    web_driver_wait (WebDriverWait): The Selenium WebDriverWait instance for
+    waiting on elements.
+    button_clicker (ButtonClicker): An instance of the ButtonClicker class for
+    performing button-clicking actions.
     """
 
     def __init__(self, driver: Chrome, web_driver_wait: WebDriverWait):
@@ -388,10 +397,12 @@ class HigherActions(ButtonClicker):
     def deal_duplicate_and_await_upload(self, custom_timeout=80):
         """Handle duplicate file and await upload completion.
 
-        This function deals with the situation where a file being uploaded already exists in Google Drive.
+        This function deals with the situation where a file being uploaded already
+        exists in Google Drive.
         It waits for the warning of the file being already present to show up.
         If the warning does not appear, it assumes the file is not already in Google Drive
-        and proceeds to upload it as a new file. If the warning does appear, it assumes the file
+        and proceeds to upload it as a new file. If the warning does appear,
+        it assumes the file
         already exists and simulates pressing the spacebar to deal with the file.
         Finally, it waits until the upload completes, with a maximum wait time of 10 seconds.
 
@@ -399,7 +410,8 @@ class HigherActions(ButtonClicker):
         None
 
         Note:
-        This function assumes that the file upload process can be initiated and completed successfully.
+        This function assumes that the file upload process can be initiated
+        and completed successfully.
         If the warning detection or upload completion mechanism changes,
         this function may need to be updated accordingly.
         """
@@ -407,7 +419,7 @@ class HigherActions(ButtonClicker):
         # try block to deal with situation of file being there already
         # to see if the warning of file being already present shows up
         temp_ele = self.wait_for_element(locators.file_already_present_text)
-        if temp_ele == None:
+        if temp_ele is None:
             print("file not already in google drive, uploading as new file")
         else:
             # to deal with file already exisiting
@@ -415,13 +427,13 @@ class HigherActions(ButtonClicker):
             pyautogui.press("space")
             sleep(small_delay)
         WebDriverWait(self.driver, custom_timeout).until_not(
-        EC.text_to_be_present_in_element(locators.upload_status_span, "Uploading")
+            EC.text_to_be_present_in_element(locators.upload_status_span, "Uploading")
             )
         # to close the upload box (bottom-left)
         autoGUIutils.n_tabs_shift_focus(2)
         pyautogui.press("space")
         sleep(small_delay)
-        
+
     def verify_file_in_destination(self, moved_fname, destination_folder):
         """Verify the presence of a file in the destination folder.
 
@@ -430,7 +442,8 @@ class HigherActions(ButtonClicker):
         destination_folder (str): Name of the destination folder.
 
         Raises:
-        AssertionError: If the file has not been moved successfully to the destination folder.
+        AssertionError: If the file has not been moved successfully to the
+        destination folder.
         """
         try:
             self.navigate_to("My Drive")
@@ -515,7 +528,8 @@ class HigherActions(ButtonClicker):
         folder (str): Name of the destination folder.
 
         Raises:
-        AssertionError: If the file is still in the destination folder or not present in My Drive.
+        AssertionError: If the file is still in the destination folder
+        or not present in My Drive.
         """
         try:
             # Double click the destination folder
