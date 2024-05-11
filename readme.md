@@ -57,6 +57,9 @@ Make use of bat script provided to do the extraction<br/>
 - #### [Click here to download extraction script](https://dl.dropbox.com/scl/fi/xi9bmfxtay8svzk6lgfy0/extract_to_userfolder.bat?rlkey=o38j9zrpvj4w771eos5nv8tff&st=kotblukf&dl=0)
 
 
+6. All set !! You can use default pytest CLI or use pytest-commander for GUI.
+
+
 ### Dependencies / modules used:
 1. Pytest
 2. Selenium
@@ -64,6 +67,7 @@ Make use of bat script provided to do the extraction<br/>
 4. Pyperclip
 5. win10toast
 6. pytest-html-reporter
+7. pytest-commander
 
 Checkout hpe_env.yml for more info !
 
