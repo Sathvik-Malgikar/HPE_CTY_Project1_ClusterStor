@@ -300,7 +300,7 @@ class ButtonClicker(ElementaryActions):
 class HigherActions(ButtonClicker):
     """Class for performing higher-level actions using Selenium WebDriver.
 
-    This class provides methods to perform various higher-level 
+    This class provides methods to perform various higher-level
     actions such as moving files,
     renaming files, uploading files, copying files, searching for files,
     removing files,
@@ -428,7 +428,7 @@ class HigherActions(ButtonClicker):
             sleep(small_delay)
         WebDriverWait(self.driver, custom_timeout).until_not(
             EC.text_to_be_present_in_element(locators.upload_status_span, "Uploading")
-            )
+        )
         # to close the upload box (bottom-left)
         autoGUIutils.n_tabs_shift_focus(2)
         pyautogui.press("space")
@@ -459,7 +459,7 @@ class HigherActions(ButtonClicker):
         try:
             assert (
                 self.select_item(moved_fname) is not None
-                ), "File has not been moved successfully to the destination folder"
+            ), "File has not been moved successfully to the destination folder"
         except FileNotFoundError:
             assert False, "Moved file not found!"
 
@@ -545,7 +545,7 @@ class HigherActions(ButtonClicker):
         try:
             assert (
                 self.select_item(filename) is None
-                ), "File is still present in the destination folder"
+            ), "File is still present in the destination folder"
         except FileNotFoundError:
             print("File is not present in destination after undo.")
         self.navigate_to("My Drive")
@@ -951,6 +951,7 @@ class HigherActions(ButtonClicker):
 
         except pyperclip.exceptions.PyperclipException:
             print("Failed to access clipboard.")
+
     def open_share_window(self, file_to_be_shared):
         """Open the share window for a specified file.
 

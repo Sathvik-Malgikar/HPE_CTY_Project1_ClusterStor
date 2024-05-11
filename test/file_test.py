@@ -141,7 +141,7 @@ class TestfileActions(Base):
             with open(downloaded_file_path, "rb") as downloaded_file:
                 downloaded_file_hash = hashlib.md5(
                     downloaded_file.read()
-                    ).hexdigest()
+                ).hexdigest()
             condition = downloaded_file_hash == ground_truth_hash
             assert condition, "Checksum mismatch"
         else:

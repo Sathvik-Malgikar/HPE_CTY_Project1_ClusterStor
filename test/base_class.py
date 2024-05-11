@@ -69,7 +69,8 @@ def toast_testcase_name(func):
     def wrapper(*args, **kwargs):
         tn.show_toast(
             f"Now running - {func.__name__[5:]}",
-            f"Testcase being executed : {func.__name__[5:]}\n - ClusterStor Web Interface Test Automation",
+            f'''Testcase being executed : {func.__name__[
+                5:]}\n - ClusterStor Web Interface Test Automation''',
             duration=10,
         )
         return func(*args, **kwargs)
@@ -102,7 +103,7 @@ class Base:
         """
         path1 = os.path.join(
             os.path.expanduser("~"), "Downloads", files.FILE_TO_UPLOAD
-            )
+        )
         dwnld_dir = os.path.join(os.path.expanduser("~"), "Downloads")
         path2 = os.path.join(
             dwnld_dir, files.file_name_for_download
