@@ -293,33 +293,20 @@ class ButtonClicker(ElementaryActions):
         )
         button_element.click()
         sleep(small_delay)
-
-        
 class HigherActions(ButtonClicker):
-    """Class for performing higher-level
-    actions using Selenium WebDriver in Google Drive.
+    """Class for performing higher-level actions using Selenium WebDriver.
 
-    This class provides methods to
-    perform various higher-level
-    actions such as moving files, renaming files,
-    uploading files, copying files,
-    searching for files,removing files,
-    permanently deleting files, undoing
-    deletions, renaming folders,
-    creating folders, and removing folders.
+    This class provides methods to perform various higher-level actions such as moving files,
+    renaming files, uploading files, copying files, searching for files, removing files,
+    permanently deleting files, undoing deletions, renaming folders, creating folders, and removing folders.
 
     Parameters:
-    driver (WebDriver): The Selenium WebDriver instance.
-    web_driver_wait (WebDriverWait):
-    The Selenium WebDriverWait instance for waiting on elements.
-    button_clicker (ButtonClicker): An instance
-    of the ButtonClicker class for performing
-    button-clicking actions.
-    helper (Helper): An instance of the Helper
-    class for performing helper actions.
+    driver (Chrome): The Selenium Chrome WebDriver instance.
+    web_driver_wait (WebDriverWait): The Selenium WebDriverWait instance for waiting on elements.
+    button_clicker (ButtonClicker): An instance of the ButtonClicker class for performing button-clicking actions.
     """
 
-    def __init__(self, driver : Chrome, web_driver_wait : WebDriverWait):
+    def __init__(self, driver: Chrome, web_driver_wait: WebDriverWait):
         super().__init__(driver, web_driver_wait)
 
     def select_item(self, item_name):
@@ -327,9 +314,9 @@ class HigherActions(ButtonClicker):
 
         Parameters:
         item_name (str): Name of the item to be selected.
+
         Raises:
-        FileNotFoundError: If the item with
-        the specified name is not found.
+        FileNotFoundError: If the item with the specified name is not found.
         """
         action_chain = ActionChains(self.driver)
         try:
@@ -380,8 +367,7 @@ class HigherActions(ButtonClicker):
         new_file_name (str): The new name of the file.
 
         Returns:
-        bool: True if the file has been
-        renamed successfully, False otherwise.
+        bool: True if the file has been renamed successfully, False otherwise.
         """
         # Verify that the old file doesn't exist
         old_f_loc = locators.file_selector(old_file_name)
@@ -402,25 +388,20 @@ class HigherActions(ButtonClicker):
     def deal_duplicate_and_await_upload(self, custom_timeout=80):
         """Handle duplicate file and await upload completion.
 
-        This function deals with the situation where a file
-        being uploaded already exists in Google Drive. It
-        waits for the
-        warning of the file being already present to show up.
-        If the warning does not appear, it assumes the file is not
-        already in Google Drive and proceeds to upload it as
-        a new file. If the warning does appear, it assumes the file
-        already exists and simulates pressing the spacebar to
-        deal with the file. Finally, it waits until the upload
-        completes, with a maximum wait time of 10 seconds.
+        This function deals with the situation where a file being uploaded already exists in Google Drive.
+        It waits for the warning of the file being already present to show up.
+        If the warning does not appear, it assumes the file is not already in Google Drive
+        and proceeds to upload it as a new file. If the warning does appear, it assumes the file
+        already exists and simulates pressing the spacebar to deal with the file.
+        Finally, it waits until the upload completes, with a maximum wait time of 10 seconds.
 
         Returns:
         None
 
         Note:
-        This function assumes that the file upload process can
-        be initiated and completed successfully. If the warning
-        detection or upload completion mechanism changes, this
-        function may need to be updated accordingly.
+        This function assumes that the file upload process can be initiated and completed successfully.
+        If the warning detection or upload completion mechanism changes,
+        this function may need to be updated accordingly.
         """
         # wait till upload completes, max 10 seconds by default
         # try block to deal with situation of file being there already
@@ -449,8 +430,7 @@ class HigherActions(ButtonClicker):
         destination_folder (str): Name of the destination folder.
 
         Raises:
-        AssertionError: If the file has not been moved
-        successfully to the destination folder.
+        AssertionError: If the file has not been moved successfully to the destination folder.
         """
         try:
             self.navigate_to("My Drive")
@@ -477,8 +457,7 @@ class HigherActions(ButtonClicker):
         file_name (str): Name of the file to be restored.
 
         Returns:
-        bool: True if the file has been
-        restored successfully, False otherwise.
+        bool: True if the file has been restored successfully, False otherwise.
         """
         # self.button_clicker.navigate_to("Home")
         self.click_on_search_in_drive()
@@ -494,10 +473,7 @@ class HigherActions(ButtonClicker):
 
         Parameters:
         move_fname (str): The name of the file to be moved.
-        destination_folder_name (str): The
-        name of the destination folder.
-        show_more (bool): Flag indicating whether
-        to click the "Show More" button.
+        destination_folder_name (str): The name of the destination folder.
 
         Raises:
         None
@@ -513,15 +489,14 @@ class HigherActions(ButtonClicker):
         sleep(small_delay)
 
     def undo_move_action(self, filename, folder):
-        """Rename a file.
+        """Undo the move action of a file.
 
         Parameters:
-        old_file_name (str): The original name of the file.
-        new_file_name (str): The new name of the file.
+        filename (str): The name of the file that was moved.
+        folder (str): The name of the destination folder.
 
-        Returns:
-        bool: True if the file has been renamed
-        successfully, False otherwise.
+        Raises:
+        None
         """
         self.move_action(filename, folder)
         try:
@@ -540,8 +515,7 @@ class HigherActions(ButtonClicker):
         folder (str): Name of the destination folder.
 
         Raises:
-        AssertionError: If the file is still in the destination
-        folder or not present in My Drive.
+        AssertionError: If the file is still in the destination folder or not present in My Drive.
         """
         try:
             # Double click the destination folder
@@ -570,26 +544,12 @@ class HigherActions(ButtonClicker):
     def rename_action(self, old_file_name, new_file_name):
         """Rename a file.
 
-        This function renames a file from its old name to a
-        new name by selecting the file, initiating the renaming process,
-        and confirming the new name. It performs these actions
-        through the provided methods (`select_item`, `rename_selected_item`,
-        and `click_on_ok_button`) in sequence.
-
         Parameters:
         old_file_name (str): The original name of the file.
         new_file_name (str): The new name to be assigned to the file.
 
         Returns:
         None
-
-        Note:
-        This function assumes that the file can be located
-        and selected using the provided
-        name, and that the renaming process
-        can be completed without errors. If the file selection,
-        renaming process, or confirmation mechanism changes,
-        this function may need to be updated accordingly.
         """
         self.select_item(old_file_name)
         self.rename_selected_item(new_file_name)
@@ -598,34 +558,12 @@ class HigherActions(ButtonClicker):
     def undo_rename_action(self, old_fname, new_fname):
         """Undo the renaming of a file.
 
-        This function performs the undo operation
-        after renaming a file by simulating the
-        'Ctrl+Z' keyboard shortcut.
-        After undoing the rename action, it verifies
-        the success of the undo operation by checking
-        if the original file
-        name has been restored and the new file
-        name no longer exists.
-
         Parameters:
-        old_fname (str): The original name of
-        the file before renaming.
-        new_fname (str): The new name of the
-        file after renaming.
+        old_fname (str): The original name of the file before renaming.
+        new_fname (str): The new name of the file after renaming.
 
         Returns:
-        bool: True if the renaming is successfully
-        undone, False otherwise.
-
-        Note:
-        This function assumes that the renaming action
-        can be undone using the 'Ctrl+Z' keyboard
-        shortcut and that the
-        success of the undo operation can be verified
-        by checking file elements using provided locators.
-        If the renaming mechanism or verification
-        process changes, this function may need to be
-        updated accordingly.
+        bool: True if the renaming is successfully undone, False otherwise.
         """
         self.rename_action(old_fname, new_fname)
         sleep(small_delay)
@@ -635,28 +573,12 @@ class HigherActions(ButtonClicker):
     def undo_rename_verification(self, old_fname, new_fname):
         """Verify the undo operation of file renaming.
 
-        This function verifies the success of the undo
-        operation after renaming a file. It checks if
-        the old file (with the original name) exists
-        and if the new file (with the renamed name)
-        does not exist. If both conditions are satisfied,
-        it indicates that the undo operation was successful.
-
         Parameters:
-        old_fname (str):
-        The original name of the file before renaming.
-        new_fname (str):
-        The new name of the file after renaming.
+        old_fname (str): The original name of the file before renaming.
+        new_fname (str): The new name of the file after renaming.
 
         Returns:
-        bool:
-        True if the undo operation was successful, False otherwise.
-
-        Note:
-        This function assumes that the file elements can
-        be located using the provided locators. If the
-        file elements or renaming mechanism changes,
-        this function may need to be updated accordingly.
+        bool: True if the undo operation was successful, False otherwise.
         """
         # Verify the existence of the old file
         f_loc = locators.file_selector(old_fname)
@@ -671,6 +593,7 @@ class HigherActions(ButtonClicker):
         assert (
             renamed_file_element is None
         ), f"ERROR new file '{new_fname}' still exists after undo."
+
 
     def get_file_names_action(self):
         """Get the number of file names.
