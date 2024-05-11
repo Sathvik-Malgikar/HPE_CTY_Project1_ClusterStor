@@ -732,6 +732,7 @@ class HigherActions(ButtonClicker):
         self.select_item(file_name)
         self.click_action_bar_button("Move to trash")
         temp_loc = locators.file_selector(file_name)
+        sleep(small_delay)
         assert not self.wait_for_element(temp_loc)
 
     def delete_permanently_action(self, delete_forever_file_name):
