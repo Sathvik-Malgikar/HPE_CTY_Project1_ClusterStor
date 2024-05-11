@@ -594,7 +594,6 @@ class HigherActions(ButtonClicker):
             renamed_file_element is None
         ), f"ERROR new file '{new_fname}' still exists after undo."
 
-
     def get_file_names_action(self):
         """Get the number of file names.
 
@@ -621,9 +620,6 @@ class HigherActions(ButtonClicker):
         upload_button.click()
         sleep(small_delay)
         autoGUIutils.type_into_dialogue_box(file_to_upload)
-        # this is utility solely because prerequisites also reuses this function
-
-        # currently max 25 minutes for large file upload
         self.deal_duplicate_and_await_upload()
 
     def copy_file_action(self, file_name_for_copy):
@@ -656,19 +652,18 @@ class HigherActions(ButtonClicker):
         Returns:
         None
         """
-
         try:
             source_file_element = self.select_item(file_name_for_copy)
         except FileNotFoundError:
             print("source file missing adter copy action")
             source_file_element = None
-        # second term to check if source file is still present
         assert (
             copied_file_element and source_file_element
         ), "Copy verification failed!"
 
     def search_by_name_action(self, file_to_be_searched):
         """Search for a file by its name.
+
         Parameters:
         file_to_be_searched (str): The name of the file to be searched.
 
@@ -680,14 +675,11 @@ class HigherActions(ButtonClicker):
         sleep(small_delay)
         self.send_keys_to_focused(file_to_be_searched)
         autoGUIutils.press_enter()
-        # Retrieve file elements from the search results
         file_elements = self.wait_for_elements(
             locators.file_selector(file_to_be_searched)
         )
-        # Extract file names from file elements
         if file_elements:
             file_names = [element.text for element in file_elements]
-            # Write file names to a text file
             with open("results/debug_file_names.log", "w") as file:
                 for name in file_names:
                     file.write(name + "\n")
@@ -697,6 +689,9 @@ class HigherActions(ButtonClicker):
     def search_by_type_action(self, filetype):
         """Search for files by their type.
 
+        Parameters:
+        filetype (str): The file type to search for.
+
         Returns:
         int: The number of files found by type.
         """
@@ -704,25 +699,22 @@ class HigherActions(ButtonClicker):
         self.click_on_type_button()
         self.click_on_the_required_type(filetype)
         file_elements = self.driver.find_elements(*locators.fname_div)
-        # Extract file names from file elements
         file_names = [element.text for element in file_elements]
-        # Write file names to a text file
         file_name = f"results/debug_file_names_{filetype}.log"
         with open(file_name, "w") as file:
             for name in file_names:
                 file.write(name + "\n")
         return file_names
 
-    """Remove a file.
+    def remove_file_action(self, file_name):
+        """Remove a file.
 
         Parameters:
         file_name (str): The name of the file to be removed.
 
         Raises:
         AssertionError: If the file still exists after removal.
-    """
-
-    def remove_file_action(self, file_name):
+        """
         self.select_item(file_name)
         self.click_action_bar_button("Move to trash")
         temp_loc = locators.file_selector(file_name)
@@ -761,6 +753,14 @@ class HigherActions(ButtonClicker):
         return True
 
     def share_via_link(self, filename):
+        """Share a file via link.
+
+        Parameters:
+        filename (str): The name of the file to be shared.
+
+        Returns:
+        None
+        """
         self.open_share_window(filename)
         autoGUIutils.n_tabs_shift_focus(2)
         autoGUIutils.press_enter()
@@ -775,12 +775,10 @@ class HigherActions(ButtonClicker):
         """Undo deletion of a file.
 
         Parameters:
-        fname (str):
-        The name of the file to be retrieved.
+        fname (str): The name of the file to be retrieved.
 
         Returns:
-        bool:
-        True if the file has been successfully restored, False otherwise.
+        bool: True if the file has been successfully restored, False otherwise.
         """
         self.navigate_to("Trash")
         self.select_item(fname)
@@ -789,15 +787,13 @@ class HigherActions(ButtonClicker):
 
     def rename_folder_action(self, old_folder_name, new_folder_name):
         """Rename a folder.
+
         Parameters:
-        old_folder_name (str):
-        The original name of the folder.
-        new_folder_name (str):
-        The new name of the folder.
+        old_folder_name (str): The original name of the folder.
+        new_folder_name (str): The new name of the folder.
 
         Returns:
-        bool:
-        True if the folder has been renamed successfully, False otherwise.
+        bool: True if the folder has been renamed successfully, False otherwise.
         """
         self.navigate_to("Home")
         self.click_on_folders_button()
@@ -811,8 +807,7 @@ class HigherActions(ButtonClicker):
         """Create a new folder.
 
         Parameters:
-        folder_name (str):
-        The name of the folder to be created.
+        folder_name (str): The name of the folder to be created.
 
         Raises:
         None
@@ -829,8 +824,7 @@ class HigherActions(ButtonClicker):
         """Remove a folder.
 
         Parameters:
-        folder_to_be_removed (str):
-        The name of the folder to be removed.
+        folder_to_be_removed (str): The name of the folder to be removed.
 
         Raises:
         None
@@ -854,25 +848,20 @@ class HigherActions(ButtonClicker):
         True if all buttons are present and their tooltips match
         the expected text, False otherwise.
         """
-        # Initialize flag to track verification status
         all_buttons_present = True
         self.navigate_to("Home")
 
-        # Loop through each button name and expected tooltip text
         for button_name, expected_tt_txt in btn_list.items():
             try:
-                # Hover over the button to trigger the tooltip
                 button_element = self.wait_for_element(
                     locators.left_menu_page_selector(button_name)
                 )
                 action_chain = ActionChains(self.driver)
                 action_chain.move_to_element(button_element).perform()
-                sleep(very_small_delay)  # Short delay for tooltip to appear
+                sleep(very_small_delay)
 
-                # Get the actual tooltip text
                 actual_tt_txt = button_element.get_attribute("title")
 
-                # Check if the actual & expected tooltip text match.
                 if actual_tt_txt != expected_tt_txt:
                     print(f"Tooltip for '{button_name}' doesn't match!")
                     print(f"Exp:{expected_tt_txt}, Actual:{actual_tt_txt}")
@@ -886,43 +875,24 @@ class HigherActions(ButtonClicker):
     def verify_file_tooltips(self):
         """Verify tooltips for files in the Home page.
 
-        This function navigates to the Home page, selects each
-        file individually to trigger the tooltip, and checks
-        if thebtooltip text is present for each file. If any
-        file does not have a tooltip text or
-        cannot be found, it sets the
-        verification status flag to False.
-
         Returns:
         bool: True if all files have tooltips, False otherwise.
-
-        Note:
-        This function assumes that each file element has a tooltip
-        attribute and can be selected individually. If the UI
-        layout or tooltip mechanism changes, this function may need
-        to be updated accordingly.
         """
         self.navigate_to("Home")
-        # Initialize flag to track verification status
         all_files_verified = True
 
-        # Get the list of file names
         fname_divs = self.driver.find_elements(By.CSS_SELECTOR, "div.KL4NAf")
         file_names = [file_name_div.text for file_name_div in fname_divs]
 
-        # Loop through each file name
         for file_name in file_names:
             try:
-                # Select the file to trigger the tooltip
                 self.select_item(file_name)
-                sleep(very_small_delay)  # to allow the tooltip to appear
+                sleep(very_small_delay)
 
-                # Get the actual tooltip text
                 f_loc = locators.file_selector(file_name)
                 file_element = self.wait_for_element(f_loc)
                 actual_tooltip_text = file_element.get_attribute("title")
 
-                # Check if the tooltip text is present
                 if not actual_tooltip_text:
                     print(f"Tooltip text for '{file_name}' isn't present.")
                     all_files_verified = False
@@ -936,24 +906,8 @@ class HigherActions(ButtonClicker):
         """Verify if a link has been copied to the clipboard and
         access it in a new tab.
 
-        This function attempts to retrieve a shared link from the clipboard
-        using the `pyperclip` module. If a link is found,
-        it simulates keyboard shortcuts to open a new tab in the web browser,
-        paste the link into the address bar, and
-        verifies if any error message is displayed on the new page. If the
-        link cannot be retrieved from the clipboard or
-        there is any error during the process, appropriate error messages
-        are printed.
-
         Returns:
         None
-
-        Note:
-        This function assumes that the shared link is copied to the
-        clipboard and can be accessed in a new tab without any
-        authentication requirements. If the clipboard access or browser
-        interaction changes, this function may need to be
-        updated accordingly.
         """
         try:
             shared_link = pyperclip.paste()
@@ -963,7 +917,7 @@ class HigherActions(ButtonClicker):
                 pyautogui.hotkey("ctrl", "t")
                 self.driver.switch_to.window(
                     self.driver.window_handles[-1]
-                )  # Switch to the new tab
+                )
                 pyautogui.hotkey("ctrl", "l")
                 autoGUIutils.type_into_dialogue_box(shared_link)
                 try:
@@ -974,7 +928,6 @@ class HigherActions(ButtonClicker):
                         not error_message.is_displayed()
                     ), "Error message is displayed"
                 except NoSuchElementException:
-                    # element absent, no error msg needed.
                     pass
                 self.driver.close()
                 self.driver.switch_to.window(self.driver.window_handles[-1])
@@ -984,7 +937,6 @@ class HigherActions(ButtonClicker):
 
         except pyperclip.exceptions.PyperclipException:
             print("Failed to access clipboard.")
-
     def open_share_window(self, file_to_be_shared):
         """Open the share window for a specified file.
 
@@ -1036,7 +988,6 @@ class HigherActions(ButtonClicker):
         of the share window changes, this function may need to be
         updated accordingly.
         """
-        # self.select_item(shared_file)
         self.open_share_window(shared_file)
         try:
             element = self.wait_for_element(locators.email_selector)
@@ -1106,6 +1057,20 @@ class HigherActions(ButtonClicker):
         return bytes
 
     def traverse_path(self, path, from_home=False):
+        """Traverse a given path in Google Drive.
+
+        This function navigates through the folders in Google Drive
+        to reach a specific path. It starts from the Home page by
+        default or the current page if 'from_home' is set to True.
+
+        Parameters:
+        path (str): The path to traverse.
+        from_home (bool): Flag indicating whether to start from the Home
+        page. Defaults to False.
+
+        Returns:
+        None
+        """
         if from_home:
             self.navigate_to("My Drive")
         for i in path.split("/"):
@@ -1113,11 +1078,32 @@ class HigherActions(ButtonClicker):
             self.double_click_element(folder_element)
 
     def one_level_up(self):
+        """Navigate one level up in the folder hierarchy.
+
+        This function simulates clicking the navigation button
+        to go one level up in the folder hierarchy.
+
+        Returns:
+        None
+        """
         navigation_bar_item = locators.navigation_bar_items
         navbar_items = self.wait_for_elements(navigation_bar_item)
         self.click_element(navbar_items[-2])
 
     def navigate_to_path(self, current_path, required_path):
+        """Navigate to a specified path in Google Drive.
+
+        This function navigates to a specified path in Google Drive
+        by comparing the current path with the required path and
+        traversing through the folders accordingly.
+
+        Parameters:
+        current_path (str): The current path in Google Drive.
+        required_path (str): The required path to navigate to.
+
+        Returns:
+        None
+        """
         current_path = current_path.split("/")
         required_path = required_path.split("/")
         current_depth = len(current_path)
@@ -1129,11 +1115,7 @@ class HigherActions(ButtonClicker):
                 break
 
         for _ in range(current_depth - i):
-            # self.driver.back()
             self.one_level_up()
 
-        with open('results/x.log', 'w') as f:
-            f.write("/".join(required_path[i:]))
-        sleep(small_delay)
         remaining_path = "/".join(required_path[i:])
         self.traverse_path(remaining_path)
