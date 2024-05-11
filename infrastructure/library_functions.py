@@ -12,7 +12,6 @@ from selenium.webdriver.common.by import By
 import configparser
 from infrastructure import autoGUIutils
 
-
 parser = configparser.ConfigParser()
 parser.read("infrastructure/config.ini")
 
@@ -23,18 +22,15 @@ large_delay = float(parser.get("Delay Parameters", "large_delay"))
 
 
 class ElementaryActions:
-    """Class for performing elementary actions using
-    Selenium WebDriver for Google Drive.
+    """Class for performing elementary actions using Selenium WebDriver.
 
-    This class provides methods to perform basic
-    actions such as waiting for elements,
-    double-clicking on elements, dragging and dropping
-    elements, sending keys to elements,
-    and performing context clicks.
+    This class provides methods to perform basic actions such as waiting for elements,
+    double-clicking on elements, dragging and dropping elements, sending keys to elements,
+    performing context clicks, and clicking on elements.
+    
     Parameters:
-    driver (WebDriver): The Selenium WebDriver instance.
-    web_driver_wait (WebDriverWait): The Selenium WebDriverWait
-    instance for waiting on elements.
+    driver (Chrome): The Selenium Chrome WebDriver instance.
+    web_driver_wait (WebDriverWait): The Selenium WebDriverWait instance for waiting on elements.
     """
 
     def __init__(self, driver: Chrome, web_driver_wait: WebDriverWait):
@@ -51,8 +47,7 @@ class ElementaryActions:
         WebElement: The located WebElement.
 
         Raises:
-        TimeoutException: If the element is not found
-        within the specified timeout.
+        TimeoutException: If the element is not found within the specified timeout.
         """
         try:
             element = self.web_driver_wait.until(
@@ -64,18 +59,14 @@ class ElementaryActions:
             return None
 
     def wait_for_elements(self, locator):
-        """
-        Wait for elements matching the locator to be present in the DOM.
+        """Wait for elements matching the locator to be present in the DOM.
 
-        Args:
-            locator: A tuple containing the locator strategy
+        Parameters:
+            locator (tuple): A tuple containing the locator strategy
             and value (e.g., (By.ID, 'element_id')).
-            timeout: Maximum time to
-            wait for the elements (default is 10 seconds).
 
         Returns:
-            A list of matching elements, or an empty list if
-            no elements are found within the timeout.
+            list: A list of matching elements, or an empty list if no elements are found within the timeout.
         """
         try:
             elements = self.web_driver_wait.until(
@@ -124,14 +115,13 @@ class ElementaryActions:
         """Wait for an element to be clickable and click on it.
 
         Parameters:
-        locator (tuple): Locator strategy and
-        value for identifying the element.
+        locator (tuple): Locator strategy and value for identifying the element.
+
         Returns:
         WebElement: The clickable WebElement.
 
         Raises:
-        TimeoutException: If the element is not
-        clickable within the specified timeout.
+        TimeoutException: If the element is not clickable within the specified timeout.
         """
         try:
             expectation = EC.element_to_be_clickable(locator)
@@ -154,8 +144,7 @@ class ElementaryActions:
         """Send keys to a specified element.
 
         Parameters:
-        element_locator (tuple): Locator
-        strategy and value for identifying the element.
+        element_locator (tuple): Locator strategy and value for identifying the element.
         text (str): The text to be sent to the element.
 
         Raises:
@@ -168,14 +157,13 @@ class ElementaryActions:
             print(f"Error sending keys to element: {e}")
 
     def send_keys_to_focused(self, text):
-        """Send keys to the currently focussed element.
+        """Send keys to the currently focused element.
 
         Parameters:
         text (str): The text to be sent to the focused element.
 
         Raises:
-        Exception: If an error occurs
-        while sending keys to the focused element.
+        Exception: If an error occurs while sending keys to the focused element.
         """
         try:
             action_chain = ActionChains(self.driver)
@@ -186,21 +174,13 @@ class ElementaryActions:
             print(f"Error sending keys to element: {e}")
 
     def context_click(self):
-        """Perform a context click (right-click) operation.
-        Parameters:None
-        Raises:
-        None
-        """
+        """Perform a context click (right-click) operation."""
         action_chain = ActionChains(self.driver)
         action_chain.context_click().perform()
         sleep(small_delay)
 
     def refresh_and_wait_to_settle(self):
-        """Perform a refresh operation and wait till the page loads.
-        Parameters:None
-        Raises:
-        None
-        """
+        """Perform a refresh operation and wait till the page loads."""
         self.driver.refresh()
         sleep(large_delay)
 
@@ -221,29 +201,24 @@ class ElementaryActions:
 
 
 class ButtonClicker(ElementaryActions):
-    """Class for performing button-clicking actions
-    using Selenium WebDriver in Google Drive.
+    """Class for performing button-clicking actions using Selenium WebDriver.
 
-    This class provides methods to click on
-    various buttons such as action bar buttons, navigation buttons,
-    OK button, Type button, folders button,
-    search in Drive bar, and New button.
+    This class provides methods to click on various buttons such as action bar buttons,
+    navigation buttons, OK button, Type button, folders button, search in Drive bar,
+    New button, and other specific buttons.
+
     Parameters:
-    driver (WebDriver): The Selenium WebDriver instance.
-    web_driver_wait (WebDriverWait): The
-    Selenium WebDriverWait instance for waiting on elements.
-    helper (Helper): An instance of
-    the Helper class for performing helper actions.
+    driver (Chrome): The Selenium Chrome WebDriver instance.
+    web_driver_wait (WebDriverWait): The Selenium WebDriverWait instance for waiting on elements.
     """
 
-    def __init__(self, driver : Chrome, web_driver_wait : WebDriverWait):
+    def __init__(self, driver: Chrome, web_driver_wait: WebDriverWait):
 
         super().__init__(driver, web_driver_wait)
-        # self.web_driver_wait = web_driver_wait
-        # self = ElementaryActions(self.driver, self.web_driver_wait)
 
     def click_action_bar_button(self, button_name):
         """Click on a button in the action bar.
+
         Parameters:
         button_name (str): The name of the button to be clicked.
         """
@@ -253,18 +228,13 @@ class ButtonClicker(ElementaryActions):
         button_element.click()
 
     def click_on_ok_button(self):
-
-        """Click on the OK button.
-        Parameters: None
-        """
+        """Click on the OK button."""
         ok_button = self.wait_to_click(locators.ok_button_locator)
         ok_button.click()
         sleep(small_delay)
 
     def click_on_close_button(self):
-        """Click on the close button.
-        Parameters: None
-        """
+        """Click on the close button."""
         close_button = self.wait_to_click(locators.close_details_button)
         close_button.click()
         sleep(small_delay)
@@ -275,7 +245,11 @@ class ButtonClicker(ElementaryActions):
         type_button.click()
 
     def click_on_the_required_type(self, file_type):
-        """Click on the required type."""
+        """Click on the required type.
+
+        Parameters:
+        file_type (str): The type of file to be clicked (e.g., 'Document', 'Folder').
+        """
         required_type = self.wait_to_click(locators.type_of_file_selector(file_type))
         required_type.click()
         sleep(small_delay)
@@ -309,11 +283,10 @@ class ButtonClicker(ElementaryActions):
         autoGUIutils.press_enter()
 
     def navigate_to(self, button_name):
-        """Navigate to a specific page(available on the left menu.
+        """Navigate to a specific page available on the left menu.
 
         Parameters:
-        button_name (str): The name
-        of the button representing the page to navigate to.
+        button_name (str): The name of the button representing the page to navigate to.
         """
         button_element = self.wait_to_click(
             locators.left_menu_page_selector(button_name)
@@ -321,9 +294,7 @@ class ButtonClicker(ElementaryActions):
         button_element.click()
         sleep(small_delay)
 
-import time
-
-
+        
 class HigherActions(ButtonClicker):
     """Class for performing higher-level
     actions using Selenium WebDriver in Google Drive.
@@ -462,14 +433,9 @@ class HigherActions(ButtonClicker):
             autoGUIutils.n_tabs_shift_focus(2)
             pyautogui.press("space")
             sleep(small_delay)
-        t1 = time.time()
         WebDriverWait(self.driver, custom_timeout).until_not(
         EC.text_to_be_present_in_element(locators.upload_status_span, "Uploading")
             )
-        
-        t2 = time.time()
-        print(f"Waited for {t2-t1} seconds.")
-                
         # to close the upload box (bottom-left)
         autoGUIutils.n_tabs_shift_focus(2)
         pyautogui.press("space")
