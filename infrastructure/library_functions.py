@@ -1105,6 +1105,7 @@ class HigherActions(ButtonClicker):
         navigation_bar_item = locators.navigation_bar_items
         navbar_items = self.wait_for_elements(navigation_bar_item)
         self.click_element(navbar_items[-2])
+        sleep(small_delay)
 
     def navigate_to_path(self, current_path, required_path):
         """Navigate to a specified path in Google Drive.
