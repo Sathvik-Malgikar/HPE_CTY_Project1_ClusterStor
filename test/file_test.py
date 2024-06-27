@@ -239,7 +239,7 @@ class TestfileActions(Base):
     @pytest.mark.GROUPB
     @toast_testcase_name
     def test_remove_multiple_files(self):
-        self.higher_actions.navigate_to("Home")
+        self.higher_actions.navigate_to("My Drive")
         for file in files.remove_multiple_files:
             try:
                 self.higher_actions.remove_file_action(file)

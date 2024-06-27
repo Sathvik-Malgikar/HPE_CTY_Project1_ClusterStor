@@ -729,6 +729,7 @@ class HigherActions(ButtonClicker):
         Raises:
         AssertionError: If the file still exists after removal.
         """
+        self.navigate_to("My Drive")
         self.select_item(file_name)
         self.click_action_bar_button("Move to trash")
         temp_loc = locators.file_selector(file_name)
@@ -972,7 +973,7 @@ class HigherActions(ButtonClicker):
         the share window. If the UI layout or navigation changes, this
         function may need to be updated accordingly.
         """
-        self.navigate_to("Home")
+        self.navigate_to("My Drive")
         self.select_item(file_to_be_shared)
         share_button = self.wait_for_element(
             locators.action_bar_button_selector("Share")
